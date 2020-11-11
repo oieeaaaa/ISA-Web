@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -10,8 +9,81 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ===========================================================================
+// MAIN-MODELS
+// ===========================================================================
 model Inventory {
-  id String @id
+  // default
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // references
+  referenceDate DateTime @default(now())
+  referenceNumber String?
+
+  // item
+  dateReceived  DateTime @default(now())
+  partsNumber String?
+  size String?
+  particular String?
+  description String?
+  quantity Int @default(0)
+  applications Application[]
+  brand Brand?
+
+  // item price
+  unitCost Float @default(0)
+  amount Float @default(0)
+  srp Float?
+  uom UOM
+  codes Code[]
+
+  // supplier
+  supplier Supplier
+
+  // other
+  remarks String?
+  receivedBy String?
+  checkedBy String?
+  codedBy String?
+}
+
+model Supplier {
+  id Int @id @default(autoincrement())
   name String
-  description String
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+}
+
+// ===========================================================================
+// MINI-MODELS
+// ===========================================================================
+model Application {
+  id Int @id @default(autoincrement())
+  name String @unique
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+}
+
+model Brand {
+  id Int @id @default(autoincrement())
+  name String @unique
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+}
+
+model UOM {
+  id Int @id @default(autoincrement())
+  name String @unique
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+}
+
+model Code {
+  id Int @id @default(autoincrement())
+  name String @unique
+  value Float @default(0)
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
 }
