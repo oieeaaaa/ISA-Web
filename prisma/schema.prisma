@@ -10,7 +10,7 @@ generator client {
 }
 
 // ===========================================================================
-// MAIN-MODELS
+// Inventory
 // ===========================================================================
 model Inventory {
   // default
@@ -49,41 +49,44 @@ model Inventory {
   codedBy String?
 }
 
+// ===========================================================================
+// Supplier
+// ===========================================================================
 model Supplier {
-  id Int @id @default(autoincrement())
+  id String @id
   name String
-  inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId String
+  inventory Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
 }
 
 // ===========================================================================
-// MINI-MODELS
+// Add-ons
 // ===========================================================================
 model Application {
   id Int @id @default(autoincrement())
   name String @unique
-  inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId String
+  inventory Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
 }
 
 model Brand {
   id Int @id @default(autoincrement())
   name String @unique
-  inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId String
+  inventory Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
 }
 
 model UOM {
   id Int @id @default(autoincrement())
   name String @unique
-  inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId String
+  inventory Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
 }
 
 model Code {
   id Int @id @default(autoincrement())
   name String @unique
   value Float @default(0)
-  inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId String
+  inventory Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
 }
