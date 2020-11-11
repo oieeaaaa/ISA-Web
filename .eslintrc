@@ -38,6 +38,6 @@
     "react/jsx-props-no-spreading": "off",
     "func-names": "off",
     "no-param-reassign": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "jsx-a11y/anchor-is-valid": "off",
   }
 }

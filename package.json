@@ -10,7 +10,7 @@
     "fix:eslint": "eslint --fix ./ --ext .js --ext .jsx",
     "fix:stylelint": "stylelint --fix ./**/*.{css,scss,sass}",
     "fix": "npm run fix:eslint && npm run fix:stylelint",
-    "component": "plop component",
+    "component": "node ./internals/component.js",
     "prisma:migrate": "npx prisma migrate save --experimental",
     "prisma:migrate:up": "npx prisma migrate up --experimental",
     "prisma:studio": "npx prisma studio",
@@ -25,6 +25,7 @@
     "next": "9.3.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-svg": "^11.1.1",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
