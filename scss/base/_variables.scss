@@ -1,8 +1,16 @@
-// colors
-$light-1: #fff;
-$light-2: #c4c4c4;
-$dark-1: #000;
-$dark-2: #333;
-
-// widths
+// breakpoints
+$mobile: 375px;
+$tablet-p: 768px;
+$tablet-l: 1024px;
+$desktop: 1280px;
 $max-width: 1280px;
+
+:root {
+  --primary-accent-1: #f4f6fa;
+  --primary-accent-2: #92a3c5;
+  --primary-accent-3: #9b9fa8;
+  --primary-accent-4: #dee1e7;
+  --primary: #516ea6;
+  --dark: #333;
+  --white: #fff;
+}

@@ -3,22 +3,22 @@
 // GUIDES
 $grid-guides: (
 	mobile: (
-		size: 375px,
+		size: $mobile,
 		cols: 10,
 		gutter: 0,
 	),
 	tablet-p: (
-		size: 768px,
+		size: $tablet-p,
 		cols: 12,
 		gutter: 0,
 	),
 	tablet-l: (
-		size: 1024px,
+		size: $tablet-l,
 		cols: 12,
 		gutter: 0,
 	),
 	desktop: (
-		size: 1280px,
+		size: $desktop,
 		cols: 20,
 		gutter: 0,
 	),

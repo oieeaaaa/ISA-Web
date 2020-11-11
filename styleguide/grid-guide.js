@@ -6,16 +6,16 @@ const maxWidth = 768;
 const gridList = [
   {
     name: 'mobile',
-    cols: 8,
-    gutter: 10,
-    margin: 20,
+    cols: 10,
+    gutter: 0,
+    margin: 0,
     size: 375,
   },
   {
-    name: 'tablet-p',
-    cols: 12,
-    gutter: 15,
-    margin: 30,
+    name: 'desktop',
+    cols: 20,
+    gutter: 0,
+    margin: 0,
     size: 768,
   },
 ];
