@@ -1,3 +1,6 @@
+import responses from 'js/shapes/responses';
+import isJson from './isJson';
+
 /**
  * api.
  *
@@ -15,9 +18,27 @@
    ```
  */
 const api = (methods) => async (req, res) => {
+  const response = responses(res);
+
+  // parse query types to its corresponding value
+  if (req.query) {
+    req.query = Object.keys(req.query).reduce((values, currentKey) => {
+      const currentValue = values[currentKey];
+
+      // parsing part.
+      if (isJson(currentValue)) {
+        values[currentKey] = JSON.parse(currentValue);
+      }
+
+      return values;
+    }, req.query);
+  }
+
   for (const method of Object.keys(methods)) {
-    if (req.method === method.toUpperCase()) {
-      await methods[method](req, res);
+    const matchedRequest = req.method === method.toUpperCase();
+
+    if (matchedRequest) {
+      await methods[method](req, response);
       return;
     }
   }
