@@ -2,22 +2,42 @@ import { PrismaClient } from '@prisma/client';
 import { v4 } from 'uuid';
 import api from 'js/utils/api';
 
-const addItem = async (req, res) => {
-  const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
-  try {
-    const newItem = await prisma.inventory.create({
-      data: {
-        id: v4(),
-        ...req.body,
-      },
-    });
+export default api({
+  get: async (req, res) => {
+    try {
+      const { page = 1, limit = 5 } = req.query;
 
-    res.status(200).send(newItem);
-  } catch (error) {
-    console.log(error);
-    res.status(400).send(error);
-  }
-};
+      const allItems = await prisma.inventory.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          supplier: true,
+          applications: true,
+          brand: true,
+          uom: true,
+          codes: true,
+        },
+      });
 
-export default api({ post: addItem });
+      res.success(allItems);
+    } catch (error) {
+      res.error(error);
+    }
+  },
+  post: async (req, res) => {
+    try {
+      const newItem = await prisma.inventory.create({
+        data: {
+          id: v4(),
+          ...req.body,
+        },
+      });
+
+      res.success(newItem);
+    } catch (error) {
+      res.error(error);
+    }
+  },
+});
