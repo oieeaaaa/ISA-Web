@@ -14,7 +14,7 @@ generator client {
 // ===========================================================================
 model Inventory {
   // default
-  id Int @id @default(autoincrement())
+  id String @id
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
@@ -53,7 +53,7 @@ model Supplier {
   id Int @id @default(autoincrement())
   name String
   inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId Int
+  inventoryId String
 }
 
 // ===========================================================================
@@ -63,21 +63,21 @@ model Application {
   id Int @id @default(autoincrement())
   name String @unique
   inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId Int
+  inventoryId String
 }
 
 model Brand {
   id Int @id @default(autoincrement())
   name String @unique
   inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId Int
+  inventoryId String
 }
 
 model UOM {
   id Int @id @default(autoincrement())
   name String @unique
   inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId Int
+  inventoryId String
 }
 
 model Code {
@@ -85,5 +85,5 @@ model Code {
   name String @unique
   value Float @default(0)
   inventory Inventory @relation(fields: [inventoryId], references: [id])
-  inventoryId Int
+  inventoryId String
 }

@@ -11,10 +11,12 @@
     "fix:stylelint": "stylelint --fix ./**/*.{css,scss,sass}",
     "fix": "npm run fix:eslint && npm run fix:stylelint",
     "component": "plop component",
-    "migrate": "npx prisma migrate save --experimental",
-    "migrate:up": "npx prisma migrate up --experimental",
-    "studio": "npx prisma studio",
-    "generate": "npx prisma generate"
+    "prisma:migrate": "npx prisma migrate save --experimental",
+    "prisma:migrate:up": "npx prisma migrate up --experimental",
+    "prisma:studio": "npx prisma studio",
+    "prisma:generate": "npx prisma generate",
+    "prisma:update": "yarn prisma:migrate && yarn prisma:migrate:up && yarn prisma:generate",
+    "prisma:reset": "sh ./internals/db-clean.sh"
   },
   "dependencies": {
     "@prisma/client": "2.10.2",
@@ -22,7 +24,8 @@
     "lodash.throttle": "^4.1.1",
     "next": "9.3.2",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

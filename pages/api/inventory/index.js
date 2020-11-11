@@ -1,19 +1,16 @@
 import { PrismaClient } from '@prisma/client';
+import { v4 } from 'uuid';
+import api from 'js/utils/api';
 
-/**
- * handle.
- *
- * @param {object} req
- * @param {object} res
- */
-export default async function handle(req, res) {
-  if (req.method !== 'POST') return;
-
+const addItem = async (req, res) => {
   const prisma = new PrismaClient();
 
   try {
     const newItem = await prisma.inventory.create({
-      data: req.body,
+      data: {
+        id: v4(),
+        ...req.body,
+      },
     });
 
     res.status(200).send(newItem);
@@ -21,4 +18,6 @@ export default async function handle(req, res) {
     console.log(error);
     res.status(400).send(error);
   }
-}
+};
+
+export default api({ post: addItem });
