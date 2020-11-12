@@ -1,0 +1,7 @@
+.inventory-add {
+  &-container {
+    > * {
+      grid-column: 2 / -2;
+    }
+  }
+}
