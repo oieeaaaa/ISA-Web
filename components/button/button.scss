@@ -1,0 +1,20 @@
+.button {
+  @include button-reset;
+  @include padding-y(10);
+  @include padding-x(20);
+  @include font('Bold');
+
+  display: inline-block;
+  border-radius: rem(10);
+  font-size: rem(16);
+
+  &--default {
+    background-color: var(--white);
+    color: var(--primary);
+  }
+
+  &--primary {
+    background-color: var(--primary);
+    color: var(--white);
+  }
+}
