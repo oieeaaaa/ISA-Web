@@ -1,9 +1,16 @@
-// breakpoints
+// BREAKPOINTS
 $mobile: 375px;
 $tablet-p: 768px;
 $tablet-l: 1024px;
 $desktop: 1280px;
 $max-width: 1280px;
+
+// BORDERS
+// Name: <border> <primary> <accent>
+$bp2--mobile: solid 1px var(--primary-accent-2);
+
+// Z-INDEX
+$z-dropdown: 99;
 
 :root {
   --primary-accent-1: #f4f6fa;
