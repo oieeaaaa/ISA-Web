@@ -1,0 +1,20 @@
+.form-title {
+  margin-bottom: rem(30);
+  display: flex;
+  align-items: center;
+
+  .icon {
+    margin-right: rem(10);
+
+    svg {
+      color: var(--primary-accent-3);
+    }
+  }
+
+  &__text {
+    @include font('Bold');
+
+    font-size: rem(20);
+    color: var(--primary-accent-3);
+  }
+}
