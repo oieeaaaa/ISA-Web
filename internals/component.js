@@ -18,7 +18,8 @@ const scssContent = (fileName) => `.${fileName} {
 }
 `;
 
-const scssImport = (fileName) => `@import 'components/${fileName}/${fileName}';`;
+const scssImport = (fileName) => `
+@import 'components/${fileName}/${fileName}';`;
 
 const component = () => {
   const componentName = process.argv.slice(2)[0] || 'new-component';
