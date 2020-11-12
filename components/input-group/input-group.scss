@@ -1,0 +1,12 @@
+.input-group {
+  margin-bottom: rem(20);
+
+  &__label {
+    @include font('Bold');
+
+    margin-bottom: rem(10);
+    display: block;
+    font-size: rem(16);
+    color: var(--primary-accent-3);
+  }
+}
