@@ -15,6 +15,9 @@
 @import './utils/padding';
 @import './utils/button-reset';
 
+// pages
+@import './pages/inventory-add.scss';
+
 // styleguide
 @import 'styleguide/grid-guide';
 
@@ -23,4 +26,10 @@
 @import 'components/layout/layout';
 @import 'components/footer/footer';
 @import 'components/icon/icon';
+@import 'components/form-title/form-title';
+@import 'components/input/input';
+@import 'components/input-group/input-group';
+@import 'components/form-section-title/form-section-title';
 
+
+@import 'components/form-section/form-section';
