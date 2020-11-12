@@ -12,7 +12,11 @@
   transform: translateX(-50%);
 
   & > span {
-    background-color: var(--tree-poppy);
+    border-right: rem(1) solid var(--primary);
     opacity: 0.3;
+  }
+
+  & > span:first-of-type {
+    border-left: rem(1) solid var(--primary);
   }
 }
