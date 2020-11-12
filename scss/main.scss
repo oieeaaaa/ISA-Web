@@ -10,8 +10,17 @@
 @import './utils/rem';
 @import './utils/font';
 @import './utils/grid';
+@import './utils/circle';
+@import './utils/margin';
+@import './utils/padding';
+@import './utils/button-reset';
 
 // styleguide
 @import 'styleguide/grid-guide';
 
 // components
+@import 'components/header/header';
+@import 'components/layout/layout';
+@import 'components/footer/footer';
+@import 'components/icon/icon';
+
