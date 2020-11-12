@@ -6,14 +6,15 @@ const fileNameToComponentName = (fileName) => fileName
   .join('');
 
 const jsContent = (fileName) => `const ${fileNameToComponentName(fileName)} = () => (
-  <p>new component!</p>
+  <div className="${fileName}">New component!</div>
 );
 
 export default ${fileNameToComponentName(fileName)};
 `;
 
 const scssContent = (fileName) => `.${fileName} {
-  background-color: papayawhip;
+  font-size: rem(24);
+  line-height: rem(34);
 }
 `;
 
