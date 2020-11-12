@@ -1,0 +1,7 @@
+.footer {
+  @include font('Bold');
+
+  margin-top: rem(100);
+  margin-bottom: rem(30);
+  text-align: center;
+}
