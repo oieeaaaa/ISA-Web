@@ -4,4 +4,23 @@
       grid-column: 2 / -2;
     }
   }
+
+  &-actions {
+    @include padding-y(10);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary-accent-1);
+    border-top: rem(2) solid var(--primary-accent-2);
+
+    .grid > .button:first-child {
+      grid-column: 2 / 5;
+    }
+
+    .grid > .button:last-child {
+      grid-column: -2 / -6;
+    }
+  }
 }
