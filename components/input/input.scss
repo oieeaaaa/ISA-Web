@@ -1,0 +1,11 @@
+.input {
+  @include font('Bold');
+
+  width: 100%;
+  padding: rem(10);
+  border-radius: rem(10);
+  border: none;
+  font-size: rem(16);
+  background-color: var(--primary-accent-4);
+  color: var(--dar);
+}
