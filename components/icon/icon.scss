@@ -1,0 +1,5 @@
+.icon {
+  > div {
+    @include flex-center;
+  }
+}
