@@ -1,15 +1,15 @@
 const fs = require('fs');
 
-const fileNameToComponentName = (fileName) => fileName
+const toPascalCase = (fileName) => fileName
   .split('-')
   .map((name) => name[0].toUpperCase() + name.substr(1))
   .join('');
 
-const jsContent = (fileName) => `const ${fileNameToComponentName(fileName)} = () => (
+const jsContent = (fileName) => `const ${toPascalCase(fileName)} = () => (
   <div className="${fileName}">New component!</div>
 );
 
-export default ${fileNameToComponentName(fileName)};
+export default ${toPascalCase(fileName)};
 `;
 
 const scssContent = (fileName) => `.${fileName} {
