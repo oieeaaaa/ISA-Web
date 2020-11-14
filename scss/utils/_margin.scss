@@ -1,3 +1,8 @@
+@mixin margin-y($value) {
+  margin-top: rem($value);
+  margin-bottom: rem($value);
+}
+
 @mixin margin-x($value) {
   margin-left: rem($value);
   margin-right: rem($value);
