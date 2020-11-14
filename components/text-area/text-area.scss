@@ -1,0 +1,6 @@
+.text-area {
+  @include input;
+
+  min-height: rem(120);
+  resize: vertical;
+}
