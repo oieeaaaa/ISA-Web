@@ -1,0 +1,120 @@
+.multi-select {
+  $multi-select: &;
+
+  position: relative;
+
+  &--open {
+    #{$multi-select}-list {
+      display: block;
+    }
+
+    #{$multi-select}-group {
+      background-color: var(--white);
+
+      .icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &-group {
+    @include padding-x(10);
+
+    display: grid;
+    grid-template-columns: 1fr rem(30);
+    align-items: start;
+    background-color: var(--primary-accent-4);
+    border-radius: rem(10);
+
+    .icon {
+      margin-top: rem(4);
+    }
+  }
+
+  &__toggler {
+    @include button-reset;
+  }
+
+  &-values {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__value {
+    @include padding-y(0);
+    @include padding-x(10);
+    @include margin-y(4);
+    @include flex-center;
+    @include font('Bold');
+
+    margin-right: rem(10);
+    height: rem(31);
+    font-size: rem(16);
+    color: var(--white);
+    border: $bp--mobile;
+    border-radius: rem(10);
+    background-color: var(--primary-accent-2);
+  }
+
+  &__input {
+    @include margin-y(10);
+    @include flex-center;
+    @include font('Bold');
+
+    background: none;
+    border: none;
+    min-width: rem(10);
+    font-size: rem(16);
+  }
+
+  &-list {
+    margin-top: rem(10);
+    padding: rem(10);
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    border-radius: rem(10);
+    border: $bp2--mobile;
+    background-color: var(--white);
+
+    &__button {
+      @include button-reset;
+      @include font('Bold');
+
+      padding: rem(10);
+      width: 100%;
+      display: block;
+      min-width: rem(205);
+      border: $bp2--mobile;
+      border-color: transparent;
+      color: var(--dark);
+      text-decoration: none;
+      text-align: left;
+      font-size: rem(16);
+      border-radius: rem(10);
+
+      &--active {
+        color: var(--white);
+        background-color: var(--primary-accent-2);
+        border-color: var(--primary);
+      }
+
+      &--create {
+        @include padding-x(0);
+
+        display: flex;
+        align-items: center;
+
+        & > span:last-child {
+          margin-left: rem(10);
+        }
+      }
+
+      & > span:first-child {
+        width: rem(30);
+        display: inline-block;
+      }
+    }
+  }
+}
