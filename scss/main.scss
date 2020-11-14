@@ -14,6 +14,8 @@
 @import './utils/margin';
 @import './utils/padding';
 @import './utils/button-reset';
+@import './utils/input';
+@import './utils/ratio';
 
 // pages
 @import './pages/inventory-add.scss';
@@ -33,4 +35,9 @@
 @import 'components/form-section/form-section';
 @import 'components/button/button';
 @import 'components/multi-select/multi-select';
+@import 'components/date-picker/date-picker';
 
+
+@import 'components/select/select';
+@import 'components/text-area/text-area';
+@import 'components/mini-card/mini-card';
