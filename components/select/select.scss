@@ -1,0 +1,16 @@
+.select {
+  @include input;
+  @include hide-appearance;
+
+  &-container {
+    position: relative;
+
+    .icon {
+      position: absolute;
+      top: $dropdown-icon-y-position;
+      right: rem(10);
+      user-select: none;
+      pointer-events: none;
+    }
+  }
+}
