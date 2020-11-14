@@ -1,0 +1,24 @@
+.mini-card {
+  @include padding-y(20);
+  @include padding-x(20);
+
+  text-align: center;
+  border: $bp2--mobile;
+  border-radius: rem(10);
+  background-color: var(--white);
+
+  &__title {
+    @include font('Bold');
+
+    font-size: rem(14);
+    color: var(--primary-accent-3);
+  }
+
+  &__content {
+    @include font('Bold');
+
+    margin-top: rem(10);
+    font-size: rem(16);
+    color: var(--primary);
+  }
+}
