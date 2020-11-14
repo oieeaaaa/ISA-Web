@@ -1,0 +1,3 @@
+@function ratio($target, $base) {
+  @return ($target / $base) * 100%;
+}
