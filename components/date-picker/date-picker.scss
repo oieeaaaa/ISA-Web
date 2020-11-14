@@ -1,0 +1,16 @@
+.react-datepicker {
+  &-wrapper {
+    display: block;
+  }
+}
+
+.date-picker {
+  &-input {
+    @include input;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: rem(40);
+  }
+}
