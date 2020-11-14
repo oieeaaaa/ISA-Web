@@ -1,1 +1,7 @@
-.form-section {}
+.form-section {
+  margin-top: rem(30);
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+}
