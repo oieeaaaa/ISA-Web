@@ -11,7 +11,11 @@ $bp--mobile: solid 1px var(--primary);
 $bp2--mobile: solid 1px var(--primary-accent-2);
 
 // Z-INDEX
-$z-dropdown: 99;
+$z-dropdown: 100;
+$z-form-actions: 99;
+
+// MISC
+$dropdown-icon-y-position: 7px;
 
 :root {
   --primary-accent-1: #f4f6fa;
