@@ -1,0 +1,18 @@
+@mixin input {
+  @include font('bold');
+
+  width: 100%;
+  padding: rem(10);
+  border-radius: rem(10);
+  border: none;
+  font-size: rem(16);
+  background-color: var(--primary-accent-4);
+  color: var(--dark);
+  min-height: rem(40);
+}
+
+@mixin hide-appearance {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+}
