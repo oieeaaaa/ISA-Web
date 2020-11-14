@@ -18,21 +18,19 @@
   }
 
   &-group {
-    @include padding-x(10);
+    @include input;
+    @include padding-y(0);
 
-    display: grid;
-    grid-template-columns: 1fr rem(30);
-    align-items: start;
-    background-color: var(--primary-accent-4);
-    border-radius: rem(10);
-
-    .icon {
-      margin-top: rem(4);
-    }
+    position: relative;
   }
 
   &__toggler {
     @include button-reset;
+
+    margin-top: $dropdown-icon-y-position;
+    position: absolute;
+    top: 0;
+    right: rem(10);
   }
 
   &-values {
@@ -77,6 +75,7 @@
     border-radius: rem(10);
     border: $bp2--mobile;
     background-color: var(--white);
+    z-index: $z-dropdown;
 
     &__button {
       @include button-reset;

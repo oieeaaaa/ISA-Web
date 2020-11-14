@@ -13,21 +13,6 @@ import {
 import throttle from 'lodash.throttle';
 import Icon from 'components/icon/icon';
 
-const fakeApplications = [
-  {
-    id: 1,
-    name: 'ISUZU 4BC2',
-  },
-  {
-    id: 2,
-    name: 'APX1',
-  },
-  {
-    id: 3,
-    name: '45A SINGLE PULLE',
-  },
-];
-
 const fakeOptions = [
   {
     id: 1231,
@@ -44,7 +29,7 @@ const fakeOptions = [
 ];
 
 const MultiSelect = () => {
-  const [values, setValues] = useState(fakeApplications);
+  const [values, setValues] = useState([]);
   const [options, setOptions] = useState(fakeOptions);
   const [query, setQuery] = useState();
   const [isOpen, setIsOpen] = useState(false);
