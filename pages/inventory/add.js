@@ -2,7 +2,9 @@ import Layout from 'components/layout/layout';
 import FormTitle from 'components/form-title/form-title';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
+import Input from 'components/input/input';
 import Button from 'components/button/button';
+import MultiSelect from 'components/multi-select/multi-select';
 
 const InventoryAdd = () => (
   <Layout>
@@ -24,7 +26,8 @@ const InventoryAdd = () => (
       </div>
       <div className="inventory-add-container grid">
         <FormSection title="References">
-          <InputGroup name="number" label="Number" />
+          <InputGroup name="number" label="Number" component={Input} />
+          <InputGroup name="applications" label="Applications" component={MultiSelect} />
         </FormSection>
       </div>
     </div>

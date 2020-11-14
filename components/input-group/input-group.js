@@ -1,11 +1,14 @@
-import Input from 'components/input/input';
-
-const InputGroup = ({ name, label, ...etc }) => (
+const InputGroup = ({
+  name,
+  label,
+  component: Component,
+  ...etc
+}) => (
   <div className="input-group">
     <label className="input-group__label" htmlFor={name}>
       {label}
     </label>
-    <Input id={name} {...etc} />
+    <Component id={name} {...etc} />
   </div>
 );
 
