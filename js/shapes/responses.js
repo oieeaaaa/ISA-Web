@@ -1,6 +1,6 @@
 import messages from 'js/messages';
 
-export const response = (res, status, messageType = 'casual') => (data = {}) => {
+export const response = (res, status) => (data = {}, messageType = 'casual') => {
   const isSuccess = status === 200;
 
   return res.status(status).send({
