@@ -1,8 +1,9 @@
 import { ReactSVG } from 'react-svg';
+import joinClassName from 'js/utils/joinClassName';
 
-const Icon = ({ icon }) => (
+const Icon = ({ className, icon }) => (
   <ReactSVG
-    className="icon"
+    className={joinClassName('icon', className)}
     src={`/icons/${icon}.svg`}
   />
 );
