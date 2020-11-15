@@ -1,0 +1,46 @@
+.input-select {
+  position: relative;
+
+  &__input {
+    @include input;
+  }
+
+  &__list {
+    margin-top: rem(10);
+    padding: rem(10);
+    position: absolute;
+    left: 0;
+    border-radius: rem(10);
+    border: $bp2--mobile;
+    background-color: var(--white);
+    z-index: $z-dropdown;
+  }
+
+  &__button {
+    @include button-reset;
+    @include font('Bold');
+
+    padding: rem(10);
+    width: 100%;
+    display: block;
+    min-width: rem(205);
+    border: $bp2--mobile;
+    border-color: transparent;
+    color: var(--dark);
+    text-decoration: none;
+    text-align: left;
+    font-size: rem(16);
+    border-radius: rem(10);
+
+    &--active {
+      color: var(--white);
+      background-color: var(--primary-accent-2);
+      border-color: var(--primary);
+    }
+
+    & > span:first-child {
+      width: rem(30);
+      display: inline-block;
+    }
+  }
+}
