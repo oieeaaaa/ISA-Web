@@ -8,7 +8,7 @@ const InputGroup = ({
     <label className="input-group__label" htmlFor={name}>
       {label}
     </label>
-    <Component id={name} {...etc} />
+    <Component id={name} name={name} {...etc} />
   </div>
 );
 
