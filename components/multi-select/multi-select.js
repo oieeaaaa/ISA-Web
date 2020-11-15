@@ -35,11 +35,14 @@ const MultiSelect = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // refs
+  const multiSelectValues = useRef();
   const input = useRef();
 
   // callbacks
-  const closeDropdownListener = useCallback(throttle(() => {
-    setIsOpen(false);
+  const closeDropdownListener = useCallback(throttle((e) => {
+    if (e.target !== multiSelectValues.current) {
+      setIsOpen(false);
+    }
   }, 300), []);
 
   const handleOpen = () => {
@@ -52,9 +55,7 @@ const MultiSelect = () => {
     setIsOpen(false);
   };
 
-  const handleToggler = (e) => {
-    e.stopPropagation();
-
+  const handleToggler = () => {
     if (isOpen) {
       handleClose();
     } else {
@@ -73,37 +74,32 @@ const MultiSelect = () => {
     if (e.type === 'keypress' && e.key !== 'Enter') return;
 
     addValue();
+    setQuery('');
   };
 
-  const removeValue = (e, id) => {
-    e.stopPropagation();
-
+  const removeValue = (id) => {
     setValues((prevValues) => prevValues.filter((value) => value.id !== id));
   };
 
-  const addValue = (e) => {
+  const addValue = () => {
     if (!input.current.innerText) return;
-
-    if (e) {
-      e.stopPropagation();
-    }
 
     input.current.innerHTML = null;
 
     setValues((prevValues) => ([
       ...prevValues,
       {
-        id: prevValues.length + 1,
+        id: query,
         name: query,
       },
     ]));
-    setQuery(null);
   };
 
   const selectValue = (e, newValue) => {
     e.stopPropagation();
 
-    setQuery('');
+    input.current.focus();
+
     setValues((prevValues) => prevValues.concat(newValue));
   };
 
@@ -133,33 +129,27 @@ const MultiSelect = () => {
         type="button"
         role="button"
       >
-        <div className="multi-select-values">
+        <div ref={multiSelectValues} className="multi-select-values">
           {values.map((item) => (
             <button
               key={item.id}
               className="multi-select__value"
               type="button"
-              onClick={(e) => removeValue(e, item.id)}
+              onClick={() => removeValue(item.id)}
             >
               {item.name}
             </button>
           ))}
           <div
             ref={input}
-            contentEditable
             className="multi-select__input"
+            contentEditable
             type="text"
             onInput={handleInput}
             onKeyPress={handleKeyPress}
           />
         </div>
-        <button
-          className="multi-select__toggler"
-          onClick={handleToggler}
-          type="button"
-        >
-          <Icon icon="chevron-down" />
-        </button>
+        <Icon className="multi-select__toggler" icon="chevron-down" />
       </div>
       <ul className="multi-select-list">
         {options.map((option, index) => (

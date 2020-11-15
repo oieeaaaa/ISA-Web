@@ -20,6 +20,7 @@
   &-group {
     @include input;
     @include padding-y(0);
+    @include padding-x(0);
 
     position: relative;
   }
@@ -31,9 +32,13 @@
     position: absolute;
     top: 0;
     right: rem(10);
+    pointer-events: none;
+    user-select: none;
   }
 
   &-values {
+    @include padding-x(10);
+
     display: flex;
     flex-wrap: wrap;
   }
@@ -46,7 +51,7 @@
     @include font('Bold');
 
     margin-right: rem(10);
-    height: rem(31);
+    min-height: rem(31);
     font-size: rem(16);
     color: var(--white);
     border: $bp--mobile;
@@ -63,6 +68,8 @@
     border: none;
     min-width: rem(10);
     font-size: rem(16);
+    user-select: none;
+    pointer-events: none;
   }
 
   &-list {
@@ -71,7 +78,6 @@
     display: none;
     position: absolute;
     left: 0;
-    width: 100%;
     border-radius: rem(10);
     border: $bp2--mobile;
     background-color: var(--white);
