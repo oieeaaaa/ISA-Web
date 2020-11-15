@@ -1,5 +1,7 @@
-const Input = ({ name, ...etc }) => (
-  <input className="input" type="text" {...etc} />
+import { Field } from 'formik';
+
+const Input = ({ ...etc }) => (
+  <Field className="input" type="text" {...etc} />
 );
 
 export default Input;
