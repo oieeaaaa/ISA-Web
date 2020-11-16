@@ -1,5 +1,7 @@
+import { Field } from 'formik';
+
 const TextArea = ({ ...etc }) => (
-  <textarea className="text-area" {...etc} />
+  <Field className="text-area" as="textarea" {...etc} />
 );
 
 export default TextArea;

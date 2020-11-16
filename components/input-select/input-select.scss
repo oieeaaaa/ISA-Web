@@ -38,9 +38,13 @@
       border-color: var(--primary);
     }
 
-    & > span:first-child {
+    &-index {
       width: rem(30);
       display: inline-block;
+    }
+
+    &-text {
+      width: 100%;
     }
   }
 }

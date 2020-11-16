@@ -1,10 +1,20 @@
 import {
-  useState, useEffect, useCallback, useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
 } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
+import joinClassName from 'js/utils/joinClassName';
 
-const InputSelect = ({ id, options, ...etc }) => {
+const InputSelect = ({
+  id,
+  options,
+  onSearch,
+  accessKey = 'name',
+  ...etc
+}) => {
   // refs
   const input = useRef();
 
@@ -20,6 +30,14 @@ const InputSelect = ({ id, options, ...etc }) => {
 
   // custom hooks
   const [field, , helpers] = useField({ type: 'text', ...etc });
+
+  const handleSearch = (e) => {
+    if (onSearch) {
+      onSearch(e.target.value);
+    }
+
+    helpers.setValue({ [accessKey]: e.target.value });
+  };
 
   const handleDropdownOpen = () => {
     setIsDropdownOpen(true);
@@ -39,30 +57,47 @@ const InputSelect = ({ id, options, ...etc }) => {
   return (
     <div className="input-select">
       <input
-        {...field}
         ref={input}
         id={id}
         className="input-select__input"
         onFocus={handleDropdownOpen}
+        onChange={handleSearch}
+        onBlur={field.onBlur}
+        value={field.value[accessKey]}
         autoComplete="off"
       />
       {isDropdownOpen && (
         <ul className="input-select__list">
           {options.map((option, index) => (
-            <li className="input-select__item" key={option.id}>
+            <li className="input-select__item" key={option[accessKey]}>
               <button
-                className="input-select__button"
+                className={joinClassName('input-select__button', option[accessKey] === field.value[accessKey] && 'input-select__button--active')}
                 type="button"
-                onClick={() => selectValue(option.name)}
+                onClick={() => selectValue({ [accessKey]: option[accessKey] })}
               >
-                <span>
+                <span className="input-select__button-index">
                   {index + 1}
                   .
                 </span>
-                <span>{option.name}</span>
+                <span>{option[accessKey]}</span>
               </button>
             </li>
           ))}
+          {(options && !options.length) && (
+            <li className="input-select__item">
+              <button
+                className="input-select__button"
+                type="button"
+                onClick={() => selectValue(field.value[accessKey])}
+              >
+                <span className="input-select__button-text">
+                  Adding
+                  {' '}
+                  {`"${field.value[accessKey]}"`}
+                </span>
+              </button>
+            </li>
+          )}
         </ul>
       )}
     </div>

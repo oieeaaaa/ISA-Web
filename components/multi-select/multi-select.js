@@ -10,28 +10,20 @@ import {
   useEffect,
   useCallback,
 } from 'react';
+import { useField } from 'formik';
 import throttle from 'lodash.throttle';
 import Icon from 'components/icon/icon';
 
-const fakeOptions = [
-  {
-    id: 1231,
-    name: 'ISUZU 4BC3',
-  },
-  {
-    id: 42,
-    name: 'ISUZU 4BC4',
-  },
-  {
-    id: 4343,
-    name: 'ISUZU 4BC5',
-  },
-];
-
-const MultiSelect = () => {
-  const [values, setValues] = useState([]);
-  const [options, setOptions] = useState(fakeOptions);
-  const [query, setQuery] = useState();
+const MultiSelect = ({
+  name,
+  accessKey = 'name',
+  options = [],
+  onSearch,
+  updateOptions,
+  ...etc
+}) => {
+  // states
+  const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
   // refs
@@ -44,6 +36,9 @@ const MultiSelect = () => {
       setIsOpen(false);
     }
   }, 300), []);
+
+  // custom hooks
+  const [field, , helpers] = useField({ name, multiple: true });
 
   const handleOpen = () => {
     input.current.focus();
@@ -63,44 +58,69 @@ const MultiSelect = () => {
     }
   };
 
+  const updateQuery = (val) => {
+    if (onSearch) {
+      onSearch(val);
+    }
+
+    setQuery(val);
+  };
+
   const handleInput = (e) => {
     e.persist();
 
-    setQuery(e.target.innerText);
+    updateQuery(e.target.value);
   };
 
   const handleKeyPress = (e) => {
     // add item on enter
     if (e.type === 'keypress' && e.key !== 'Enter') return;
 
-    addValue();
+    createNewValue();
     setQuery('');
   };
 
-  const removeValue = (id) => {
-    setValues((prevValues) => prevValues.filter((value) => value.id !== id));
+  const removeValue = (key) => {
+    helpers.setValue(field.value.filter((value) => value[accessKey] !== key));
   };
 
-  const addValue = () => {
-    if (!input.current.innerText) return;
+  const createNewValue = () => {
+    const isInValue = field.value.some((val) => val.name === query);
 
-    input.current.innerHTML = null;
+    if (!query || isInValue) return;
 
-    setValues((prevValues) => ([
-      ...prevValues,
-      {
-        id: query,
-        name: query,
-      },
+    const isInOptions = options.some((option) => option[accessKey] === query);
+
+    let value = {
+      name: query,
+    };
+
+    if (!isInOptions) {
+      value = {
+        ...value,
+        isNew: true,
+      };
+    }
+
+    helpers.setValue(([
+      ...field.value,
+      value,
     ]));
+
+    updateQuery('');
   };
 
-  const selectValue = (e, newValue) => {
+  const selectValue = (e, value) => {
     e.stopPropagation();
 
-    input.current.focus();
+    // update value
+    const newValue = field.value.concat(value);
+    helpers.setValue(newValue);
 
-    setValues((prevValues) => prevValues.concat(newValue));
+    // clear input
+    updateQuery('');
+
+    input.current.focus();
   };
 
   useEffect(() => {
@@ -108,18 +128,6 @@ const MultiSelect = () => {
 
     return () => window.removeEventListener('click', closeDropdownListener);
   }, []);
-
-  useEffect(() => {
-    setOptions((prevOptions) => prevOptions.reduce((newOptions, currentOption) => {
-      const isExistsInValues = values.find((value) => currentOption.name === value.name);
-
-      if (!isExistsInValues) {
-        return newOptions.concat(currentOption);
-      }
-
-      return newOptions;
-    }, []));
-  }, [values]);
 
   return (
     <div className={`multi-select ${isOpen ? 'multi-select--open' : ''}`}>
@@ -130,59 +138,67 @@ const MultiSelect = () => {
         role="button"
       >
         <div ref={multiSelectValues} className="multi-select-values">
-          {values.map((item) => (
+          {field.value.map((value) => (
             <button
-              key={item.id}
+              key={value[accessKey]}
               className="multi-select__value"
               type="button"
-              onClick={() => removeValue(item.id)}
+              onClick={() => removeValue(value[accessKey])}
             >
-              {item.name}
+              {value.name}
             </button>
           ))}
-          <div
+          <input
+            {...etc}
             ref={input}
             className="multi-select__input"
-            contentEditable
             type="text"
-            onInput={handleInput}
             onKeyPress={handleKeyPress}
+            onChange={handleInput}
+            onBlur={field.onBlur}
+            value={query}
+            size={query.length || 1}
           />
         </div>
         <Icon className="multi-select__toggler" icon="chevron-down" />
       </div>
       <ul className="multi-select-list">
-        {options.map((option, index) => (
-          <li key={option.id} className="multi-select-list__item">
+        {options
+          .filter((option) => !field.value
+            .some((value) => value[accessKey] === option[accessKey]))
+          .map((option, index) => (
+            <li key={option[accessKey]} className="multi-select-list__item">
+              <button
+                className="multi-select-list__button"
+                type="button"
+                onClick={(e) => selectValue(e, option)}
+              >
+                <span>
+                  {index + 1}
+                  .
+                </span>
+                <span>{option.name}</span>
+              </button>
+            </li>
+          ))}
+        {!options.some((option) => option[accessKey] === query) && (
+          <li className="multi-select-list__item">
             <button
-              className="multi-select-list__button"
+              className="multi-select-list__button multi-select-list__button--create"
               type="button"
-              onClick={(e) => selectValue(e, option)}
+              onClick={createNewValue}
             >
               <span>
-                {index + 1}
-                .
+                <Icon icon="plus" />
               </span>
-              <span>{option.name}</span>
+              <span>
+                Create as &rdquo;
+                {query}
+                &rdquo;
+              </span>
             </button>
           </li>
-        ))}
-        <li className="multi-select-list__item">
-          <button
-            className="multi-select-list__button multi-select-list__button--create"
-            type="button"
-            onClick={addValue}
-          >
-            <span>
-              <Icon icon="plus" />
-            </span>
-            <span>
-              Create as &rdquo;
-              {query}
-              &rdquo;
-            </span>
-          </button>
-        </li>
+        )}
       </ul>
     </div>
   );
