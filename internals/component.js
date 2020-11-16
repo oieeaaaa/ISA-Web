@@ -12,10 +12,7 @@ const jsContent = (fileName) => `const ${toPascalCase(fileName)} = () => (
 export default ${toPascalCase(fileName)};
 `;
 
-const scssContent = (fileName) => `.${fileName} {
-  font-size: rem(24);
-  line-height: rem(34);
-}
+const scssContent = (fileName) => `.${fileName} {}
 `;
 
 const scssImport = (fileName) => `
