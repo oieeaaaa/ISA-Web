@@ -5,4 +5,9 @@ export default {
   error: {
     casual: 'An error occured!',
   },
+  validation: {
+    required: 'Required.',
+    min: 'Too short.',
+    max: 'Too long.',
+  },
 };
