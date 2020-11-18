@@ -6,11 +6,12 @@ import {
 } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
+import safety from 'js/utils/safety';
 import joinClassName from 'js/utils/joinClassName';
 
 const InputSelect = ({
   id,
-  options,
+  options = [],
   onSearch,
   accessKey = 'name',
   ...etc
@@ -44,7 +45,7 @@ const InputSelect = ({
   };
 
   const selectValue = (selectedValue) => {
-    helpers.setValue(selectedValue, false);
+    helpers.setValue(selectedValue);
     setIsDropdownOpen(false);
   };
 
@@ -65,7 +66,7 @@ const InputSelect = ({
         onFocus={handleDropdownOpen}
         onChange={handleSearch}
         onBlur={field.onBlur}
-        value={field.value[accessKey]}
+        value={safety(field, 'value', {})[accessKey]}
         autoComplete="off"
       />
       {isDropdownOpen && (
@@ -73,7 +74,7 @@ const InputSelect = ({
           {options.map((option, index) => (
             <li className="input-select__item" key={option[accessKey]}>
               <button
-                className={joinClassName('input-select__button', option[accessKey] === field.value[accessKey] && 'input-select__button--active')}
+                className={joinClassName('input-select__button', option[accessKey] === safety(field, 'value', {})[accessKey] && 'input-select__button--active')}
                 type="button"
                 onClick={() => selectValue({ [accessKey]: option[accessKey] })}
               >
@@ -90,12 +91,12 @@ const InputSelect = ({
               <button
                 className="input-select__button"
                 type="button"
-                onClick={() => createValue({ [accessKey]: field.value[accessKey] })}
+                onClick={() => createValue({ [accessKey]: safety(field, 'value', {})[accessKey] })}
               >
                 <span className="input-select__button-text">
                   Adding
                   {' '}
-                  {`"${field.value[accessKey]}"`}
+                  {`"${safety(field, 'value', {})[accessKey]}"`}
                 </span>
               </button>
             </li>

@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
+import safety from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
 const MultiSelect = ({
@@ -138,7 +139,7 @@ const MultiSelect = ({
         role="button"
       >
         <div ref={multiSelectValues} className="multi-select-values">
-          {field.value.map((value) => (
+          {safety(field, 'value', []).map((value) => (
             <button
               key={value[accessKey]}
               className="multi-select__value"
@@ -164,7 +165,7 @@ const MultiSelect = ({
       </div>
       <ul className="multi-select-list">
         {options
-          .filter((option) => !field.value
+          .filter((option) => !safety(field, 'value', [])
             .some((value) => value[accessKey] === option[accessKey]))
           .map((option, index) => (
             <li key={option[accessKey]} className="multi-select-list__item">
