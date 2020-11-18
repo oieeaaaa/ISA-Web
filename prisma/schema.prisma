@@ -13,80 +13,75 @@ generator client {
 // Inventory
 // ===========================================================================
 model Inventory {
-  // default
-  id String @id
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-
-  // references
   referenceDate DateTime @default(now())
-  referenceNumber String?
-
-  // item
   dateReceived  DateTime @default(now())
+  quantity Int @default(0)
+  referenceNumber String?
   partsNumber String?
   size String?
   particular String?
   description String?
-  quantity Int @default(0)
-  applications Application[]
-  brand Brand?
-
-  // item price
-  unitCost Float @default(0)
-  amount Float @default(0)
   srp Float?
-  uom UOM
-  codes Code[]
-
-  // supplier
-  supplier Supplier
-
-  // other
   remarks String?
   receivedBy String?
   checkedBy String?
   codedBy String?
+
+  // uom
+  uom uom @relation(fields: [uomID], references: [id])
+  uomID String
+
+  // brand
+  brand Brand @relation(fields: [brandID], references: [id])
+  brandID String
+
+  // supplier
+  supplier Supplier @relation(fields: [supplierID], references: [id])
+  supplierID String
+
+  // applications
+  applications Application[]
+
+  // codes
+  codes Code[]
 }
 
 // ===========================================================================
 // Supplier
 // ===========================================================================
 model Supplier {
-  id String @id
+  id String @id @default(uuid())
   name String
-  inventory Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventory Inventory[]
 }
 
 // ===========================================================================
-// Add-ons
+// Helpers
 // ===========================================================================
 model Application {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String @unique
-  inventory Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventory Inventory[]
 }
 
 model Brand {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String @unique
-  inventory Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventory Inventory[]
 }
 
-model UOM {
-  id Int @id @default(autoincrement())
+model uom {
+  id String @id @default(uuid())
   name String @unique
-  inventory Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventory Inventory[]
 }
 
 model Code {
   id Int @id @default(autoincrement())
   name String @unique
   value Float @default(0)
-  inventory Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventory Inventory[]
 }
