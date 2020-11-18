@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { v4 } from 'uuid';
 import api from 'js/utils/api';
 
 const prisma = new PrismaClient();
@@ -28,15 +27,10 @@ export default api({
   },
   post: async (req, res) => {
     try {
-      const newItem = await prisma.inventory.create({
-        data: {
-          id: v4(),
-          ...req.body,
-        },
-      });
-
+      const newItem = await prisma.inventory.create({ data: req.body });
       res.success(newItem);
     } catch (error) {
+      console.error(error);
       res.error(error);
     }
   },
