@@ -9,4 +9,11 @@
     font-size: rem(16);
     color: var(--primary-accent-3);
   }
+
+  &__error {
+    @include font('Bold');
+
+    margin-top: rem(10);
+    color: var(--danger);
+  }
 }
