@@ -1,4 +1,4 @@
-import responses from 'js/shapes/responses';
+import responses from './responses';
 import isJson from './isJson';
 
 /**

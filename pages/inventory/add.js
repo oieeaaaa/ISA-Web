@@ -1,19 +1,18 @@
 import { Formik } from 'formik';
 import fetcher from 'js/utils/fetcher';
-import { addPayload, initialValues } from 'js/shapes/inventoryPayload';
+import { addPayload, initialValues } from 'js/shapes/inventory';
+
+// components
 import Layout from 'components/layout/layout';
 import InventoryForm from 'components/inventory-form/inventory-form';
 
 const InventoryAdd = ({ helpers }) => {
   const handleSubmit = async (values) => {
     try {
-      console.log(addPayload(values));
-      const res = await fetcher('/inventory', {
+      await fetcher('/inventory', {
         method: 'POST',
         body: JSON.stringify(addPayload(values)),
       });
-
-      console.log({ res, values });
     } catch (error) {
       console.error(error);
     }

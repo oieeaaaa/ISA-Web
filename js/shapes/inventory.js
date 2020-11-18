@@ -1,7 +1,7 @@
 import {
   connectOrCreateMultiple,
   connectOrCreateSingle,
-} from 'js/shapes/connectOrCreate';
+} from 'js/utils/connectOrCreate';
 
 export const initialValues = {
   dateReceived: new Date(),
