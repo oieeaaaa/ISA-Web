@@ -6,7 +6,7 @@ const Select = ({
   id,
   name,
   options = [],
-  accessKey = 'name',
+  accessKey = 'id',
   displayKey = 'name',
   ...etc
 }) => {

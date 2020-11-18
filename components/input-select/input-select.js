@@ -48,6 +48,8 @@ const InputSelect = ({
     setIsDropdownOpen(false);
   };
 
+  const createValue = (newValue) => selectValue({ ...newValue, isNew: true });
+
   useEffect(() => {
     window.addEventListener('click', closeDropdownListener);
 
@@ -88,7 +90,7 @@ const InputSelect = ({
               <button
                 className="input-select__button"
                 type="button"
-                onClick={() => selectValue(field.value[accessKey])}
+                onClick={() => createValue({ [accessKey]: field.value[accessKey] })}
               >
                 <span className="input-select__button-text">
                   Adding

@@ -1,4 +1,5 @@
 import { PureComponent } from 'react';
+import { useField } from 'formik';
 import DatePicker from 'react-datepicker';
 import Icon from 'components/icon/icon';
 
@@ -15,12 +16,23 @@ class DatePickerInput extends PureComponent {
   }
 }
 
-const CustomerDatePicker = ({ ...etc }) => (
-  <DatePicker
-    className="date-picker"
-    customInput={<DatePickerInput />}
-    {...etc}
-  />
-);
+const CustomerDatePicker = ({ name, ...etc }) => {
+  const [field, , helpers] = useField(name);
+
+  const handleChange = (date) => {
+    helpers.setValue({ [name]: date });
+  };
+
+  return (
+    <DatePicker
+      className="date-picker"
+      customInput={<DatePickerInput />}
+      value={field.value}
+      selected={field.value}
+      onChange={handleChange}
+      {...etc}
+    />
+  );
+};
 
 export default CustomerDatePicker;

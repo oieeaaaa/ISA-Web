@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import FormTitle from 'components/form-title/form-title';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -16,11 +15,6 @@ const InventoryForm = ({
   formikProps,
   onSubmit,
 }) => {
-  const [form, setForm] = useState({
-    dateReceived: new Date(),
-    referenceDateReceived: new Date(),
-  });
-
   const {
     uoms,
     brands,
@@ -28,13 +22,6 @@ const InventoryForm = ({
     applications,
     codes,
   } = helpers;
-
-  const handleDatePickerChange = (name, date) => {
-    setForm({
-      ...form,
-      [name]: date,
-    });
-  };
 
   const handleSubmit = () => {
     onSubmit(formikProps.values);
@@ -62,8 +49,6 @@ const InventoryForm = ({
           name="dateReceived"
           label="Date Received"
           component={DatePicker}
-          selected={form.dateReceived}
-          onChange={(date) => handleDatePickerChange('dateReceived', date)}
         />
         <FormSection title="References">
           <InputGroup
@@ -75,8 +60,6 @@ const InventoryForm = ({
             name="referenceDate"
             label="Date Received"
             component={DatePicker}
-            selected={form.referenceDate}
-            onChange={(date) => handleDatePickerChange('referenceDateReceived', date)}
           />
         </FormSection>
         <FormSection title="Details">
@@ -98,28 +81,28 @@ const InventoryForm = ({
           <InputGroup
             name="quantity"
             label="Quantity"
-            component={Input}
             type="number"
+            component={Input}
           />
           <InputGroup
             name="applications"
             label="Applications"
-            component={MultiSelectWithFetch}
             initialOptions={applications}
             serverRoute="/helpers/application"
+            component={MultiSelectWithFetch}
           />
           <InputGroup
             name="brand"
             label="Brand"
-            component={InputSelectWithFetch}
             initialOptions={brands}
             serverRoute="/helpers/brand"
+            component={InputSelectWithFetch}
           />
           <InputGroup
             name="supplier"
             label="Supplier"
-            component={Select}
             options={suppliers}
+            component={Select}
           />
           <InputGroup
             name="description"
@@ -131,9 +114,9 @@ const InventoryForm = ({
           <InputGroup
             name="codes"
             label="Code"
-            component={MultiSelectWithFetch}
             initialOptions={codes}
             serverRoute="/helpers/code"
+            component={MultiSelectWithFetch}
           />
           <div className="inventory-add__pricing-info">
             <MiniCard title="Unit Cost" content="₱1870" />
@@ -142,13 +125,14 @@ const InventoryForm = ({
           <InputGroup
             name="uom"
             label="UOM"
-            component={InputSelectWithFetch}
             initialOptions={uoms}
             serverRoute="/helpers/uom"
+            component={InputSelectWithFetch}
           />
           <InputGroup
             name="srp"
             label="SRP"
+            type="number"
             component={Input}
           />
         </FormSection>
