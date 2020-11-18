@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import fetcher from 'js/utils/fetcher';
 import { addPayload, initialValues } from 'js/shapes/inventory';
+import validationSchema from 'js/validations/inventory';
 
 // components
 import Layout from 'components/layout/layout';
@@ -18,17 +19,14 @@ const InventoryAdd = ({ helpers }) => {
     }
   };
 
-  // TODO: Validation
   return (
     <Layout>
-      <Formik initialValues={initialValues}>
-        {(formikProps) => (
-          <InventoryForm
-            helpers={helpers}
-            formikProps={formikProps}
-            onSubmit={handleSubmit}
-          />
-        )}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        <InventoryForm helpers={helpers} />
       </Formik>
     </Layout>
   );

@@ -19,12 +19,12 @@ model Inventory {
   referenceDate DateTime @default(now())
   dateReceived  DateTime @default(now())
   quantity Int @default(0)
-  referenceNumber String?
-  partsNumber String?
-  size String?
-  particular String?
-  description String?
+  referenceNumber String
+  partsNumber String
+  particular String
+  size String
   srp Float?
+  description String?
   remarks String?
   receivedBy String?
   checkedBy String?
@@ -80,7 +80,7 @@ model uom {
 }
 
 model Code {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String @unique
   value Float @default(0)
   inventory Inventory[]
