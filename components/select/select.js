@@ -1,5 +1,6 @@
 /* eslint jsx-a11y/control-has-associated-label: off */
 import { useField } from 'formik';
+import safety from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
 const Select = ({
@@ -25,7 +26,7 @@ const Select = ({
         className="select"
         onChange={onSelect}
         onBlur={field.onBlur}
-        value={field.value[accessKey]}
+        value={safety(field, 'value', {})[accessKey]}
         {...etc}
       >
         <option value="" disabled />
