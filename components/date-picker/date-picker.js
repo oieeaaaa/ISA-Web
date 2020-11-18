@@ -20,7 +20,7 @@ const CustomerDatePicker = ({ name, ...etc }) => {
   const [field, , helpers] = useField(name);
 
   const handleChange = (date) => {
-    helpers.setValue({ [name]: date });
+    helpers.setValue(date);
   };
 
   return (
