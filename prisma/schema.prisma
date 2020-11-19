@@ -23,6 +23,7 @@ model Inventory {
   partsNumber String
   particular String
   size String
+  codes String
   srp Float?
   description String?
   remarks String?
@@ -44,9 +45,6 @@ model Inventory {
 
   // applications
   applications Application[]
-
-  // codes
-  codes Code[]
 }
 
 // ===========================================================================

@@ -20,7 +20,6 @@ const InventoryForm = ({ helpers }) => {
     brands,
     suppliers,
     applications,
-    codes,
   } = helpers;
 
   return (
@@ -112,10 +111,8 @@ const InventoryForm = ({ helpers }) => {
           <FormSection title="Pricing">
             <InputGroup
               name="codes"
-              label="Code"
-              initialOptions={codes}
-              serverRoute="/helpers/code"
-              component={MultiSelectWithFetch}
+              label="Codes"
+              component={Input}
             />
             <div className="inventory-add__pricing-info">
               <MiniCard title="Unit Cost" content="₱1870" />

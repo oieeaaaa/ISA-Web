@@ -21,7 +21,7 @@ export const initialValues = {
   description: '',
 
   // pricing
-  codes: [],
+  codes: '',
   uom: { name: '' },
   srp: 0,
 
@@ -34,7 +34,6 @@ export const initialValues = {
 
 export const addPayload = ({
   applications,
-  codes,
   uom,
   brand,
   supplier,
@@ -44,9 +43,6 @@ export const addPayload = ({
   applications: connectOrCreateMultiple(applications),
   brand: connectOrCreateSingle(brand),
   uom: connectOrCreateSingle(uom),
-  codes: {
-    connect: codes,
-  },
   supplier: {
     connect: {
       id: supplier.id,

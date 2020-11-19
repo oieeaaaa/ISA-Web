@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import { Formik } from 'formik';
 import fetcher from 'js/utils/fetcher';
 import { addPayload, initialValues } from 'js/shapes/inventory';
@@ -8,13 +9,17 @@ import Layout from 'components/layout/layout';
 import InventoryForm from 'components/inventory-form/inventory-form';
 
 const InventoryAdd = ({ helpers }) => {
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, actions) => {
     try {
       await fetcher('/inventory', {
         method: 'POST',
         body: JSON.stringify(addPayload(values)),
       });
+
+      actions.resetForm();
+      Router.push('/inventory');
     } catch (error) {
+      // TODO: Display notification so that the user can see
       console.error(error);
     }
   };
@@ -37,7 +42,6 @@ export async function getStaticProps() {
   const brands = await fetcher('/helpers/brand');
   const suppliers = await fetcher('/helpers/supplier');
   const applications = await fetcher('/helpers/application');
-  const codes = await fetcher('/helpers/code');
 
   return {
     props: {
@@ -46,7 +50,6 @@ export async function getStaticProps() {
         uoms: uoms.data,
         suppliers: suppliers.data,
         applications: applications.data,
-        codes: codes.data,
       },
     },
   };

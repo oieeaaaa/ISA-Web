@@ -21,7 +21,7 @@ export default Yup.object().shape({
   description: Yup.string().min(50, message.min),
 
   // pricing
-  codes: Yup.array().required(message.required),
+  codes: Yup.string().required(message.required),
   uom: Yup.object().shape({ name: Yup.string().required(message.required) }),
   srp: Yup.number(),
 
