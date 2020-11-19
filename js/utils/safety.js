@@ -5,8 +5,8 @@
  * Sample usage:
     safety({ profile: { image: 'yo' } }, 'profile.image', '');
 */
-const safety = (obj = {}, accessKey, defaultValue = null) => {
-  const keys = accessKey.split('.');
+const safety = (obj = {}, mainKey, defaultValue = null) => {
+  const keys = mainKey.split('.');
   let currentValue = null;
 
   // iterate to obj

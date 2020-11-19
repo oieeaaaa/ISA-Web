@@ -13,7 +13,7 @@ const InputSelect = ({
   id,
   options = [],
   onSearch,
-  accessKey = 'name',
+  mainKey = 'name',
   ...etc
 }) => {
   // refs
@@ -37,7 +37,7 @@ const InputSelect = ({
       onSearch(e.target.value);
     }
 
-    helpers.setValue({ [accessKey]: e.target.value });
+    helpers.setValue({ [mainKey]: e.target.value });
   };
 
   const handleDropdownOpen = () => {
@@ -66,23 +66,23 @@ const InputSelect = ({
         onFocus={handleDropdownOpen}
         onChange={handleSearch}
         onBlur={field.onBlur}
-        value={safety(field, 'value', {})[accessKey]}
+        value={safety(field, 'value', {})[mainKey]}
         autoComplete="off"
       />
       {isDropdownOpen && (
         <ul className="input-select__list">
           {options.map((option, index) => (
-            <li className="input-select__item" key={option[accessKey]}>
+            <li className="input-select__item" key={option[mainKey]}>
               <button
-                className={joinClassName('input-select__button', option[accessKey] === safety(field, 'value', {})[accessKey] && 'input-select__button--active')}
+                className={joinClassName('input-select__button', option[mainKey] === safety(field, 'value', {})[mainKey] && 'input-select__button--active')}
                 type="button"
-                onClick={() => selectValue({ [accessKey]: option[accessKey] })}
+                onClick={() => selectValue({ [mainKey]: option[mainKey] })}
               >
                 <span className="input-select__button-index">
                   {index + 1}
                   .
                 </span>
-                <span>{option[accessKey]}</span>
+                <span>{option[mainKey]}</span>
               </button>
             </li>
           ))}
@@ -91,12 +91,12 @@ const InputSelect = ({
               <button
                 className="input-select__button"
                 type="button"
-                onClick={() => createValue({ [accessKey]: safety(field, 'value', {})[accessKey] })}
+                onClick={() => createValue({ [mainKey]: safety(field, 'value', {})[mainKey] })}
               >
                 <span className="input-select__button-text">
                   Adding
                   {' '}
-                  {`"${safety(field, 'value', {})[accessKey]}"`}
+                  {`"${safety(field, 'value', {})[mainKey]}"`}
                 </span>
               </button>
             </li>

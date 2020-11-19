@@ -7,14 +7,14 @@ const Select = ({
   id,
   name,
   options = [],
-  accessKey = 'id',
+  mainKey = 'id',
   displayKey = 'name',
   ...etc
 }) => {
   const [field, , helpers] = useField(name);
 
   const onSelect = (e) => {
-    const selectedItem = options.find((option) => option[accessKey] === e.target.value);
+    const selectedItem = options.find((option) => option[mainKey] === e.target.value);
 
     helpers.setValue(selectedItem);
   };
@@ -26,12 +26,12 @@ const Select = ({
         className="select"
         onChange={onSelect}
         onBlur={field.onBlur}
-        value={safety(field, 'value', {})[accessKey]}
+        value={safety(field, 'value', {})[mainKey]}
         {...etc}
       >
         <option value="" disabled />
         {options.map((option) => (
-          <option key={option[accessKey]} value={option[accessKey]}>
+          <option key={option[mainKey]} value={option[mainKey]}>
             {option[displayKey]}
           </option>
         ))}

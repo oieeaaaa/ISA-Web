@@ -17,7 +17,7 @@ import Icon from 'components/icon/icon';
 
 const MultiSelect = ({
   name,
-  accessKey = 'name',
+  mainKey = 'name',
   options = [],
   onSearch,
   updateOptions,
@@ -82,7 +82,7 @@ const MultiSelect = ({
   };
 
   const removeValue = (key) => {
-    helpers.setValue(field.value.filter((value) => value[accessKey] !== key));
+    helpers.setValue(field.value.filter((value) => value[mainKey] !== key));
   };
 
   const createNewValue = () => {
@@ -90,7 +90,7 @@ const MultiSelect = ({
 
     if (!query || isInValue) return;
 
-    const isInOptions = options.some((option) => option[accessKey] === query);
+    const isInOptions = options.some((option) => option[mainKey] === query);
 
     let value = {
       name: query,
@@ -141,10 +141,10 @@ const MultiSelect = ({
         <div ref={multiSelectValues} className="multi-select-values">
           {safety(field, 'value', []).map((value) => (
             <button
-              key={value[accessKey]}
+              key={value[mainKey]}
               className="multi-select__value"
               type="button"
-              onClick={() => removeValue(value[accessKey])}
+              onClick={() => removeValue(value[mainKey])}
             >
               {value.name}
             </button>
@@ -166,9 +166,9 @@ const MultiSelect = ({
       <ul className="multi-select-list">
         {options
           .filter((option) => !safety(field, 'value', [])
-            .some((value) => value[accessKey] === option[accessKey]))
+            .some((value) => value[mainKey] === option[mainKey]))
           .map((option, index) => (
-            <li key={option[accessKey]} className="multi-select-list__item">
+            <li key={option[mainKey]} className="multi-select-list__item">
               <button
                 className="multi-select-list__button"
                 type="button"
@@ -182,7 +182,7 @@ const MultiSelect = ({
               </button>
             </li>
           ))}
-        {!options.some((option) => option[accessKey] === query) && (
+        {!options.some((option) => option[mainKey] === query) && (
           <li className="multi-select-list__item">
             <button
               className="multi-select-list__button multi-select-list__button--create"
