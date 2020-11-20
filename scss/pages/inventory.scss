@@ -1,0 +1,12 @@
+.inventory {
+  &-filters {
+    .input-group:not(.input-group--sortBy) {
+      margin-top: rem(20);
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
