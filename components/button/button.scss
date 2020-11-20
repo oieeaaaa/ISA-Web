@@ -8,6 +8,14 @@
   border-radius: rem(10);
   font-size: rem(16);
 
+  &--with-icon {
+    @include flex-center;
+
+    .icon {
+      margin-right: rem(10);
+    }
+  }
+
   &--default {
     background-color: var(--white);
     color: var(--primary);
@@ -16,5 +24,10 @@
   &--primary {
     background-color: var(--primary);
     color: var(--white);
+
+    &-v1 {
+      background-color: var(--primary-accent-1);
+      color: var(--primary);
+    }
   }
 }
