@@ -5,8 +5,8 @@ import {
   useRef,
 } from 'react';
 import Link from 'next/link';
-import { Formik, useFormikContext } from 'formik';
-import throttle from 'lodash.throttle';
+import { Formik, useFormikContext, useField } from 'formik';
+import debounce from 'lodash.debounce';
 import { defaultLimits, defaultConfigs } from 'js/shapes/table';
 import safety, { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
@@ -61,29 +61,64 @@ const Table = ({
   // custom hooks
   const { values } = useFormikContext();
 
+  // custom fields
+  const [pageField,, pageHelpers] = useField('page');
+  const [directionField,, directionHelpers] = useField('direction');
+
   // callbacks
-  const windowResizeListener = useCallback(throttle(() => {
+  const windowResizeListener = useCallback(debounce(() => {
     const { current: advancedSearchEl } = advancedSearch;
     const { current: advancedSearchContentEl } = advancedSearchContent;
 
-    if (!isAdvancedSearchOpen || !advancedSearchEl || !advancedSearchContentEl) return;
+    // making sure that all required values exists
+    const isGoodToResize = !isAdvancedSearchOpen || !advancedSearchEl || !advancedSearchContentEl;
+
+    if (isGoodToResize) return;
 
     advancedSearchEl.style.maxHeight = `${advancedSearchContentEl.offsetHeight}px`;
-  }, 300));
+  }, 300), [values]);
 
+  const onChangeListener = useCallback(debounce(() => onChange(values), 300));
+
+  /**
+   * toggleAdvancedSearch.
+   */
   const toggleAdvancedSearch = () => {
     const { current: advancedSearchEl } = advancedSearch;
     const { current: advancedSearchContentEl } = advancedSearchContent;
 
-    const advancedSearchState = !isAdvancedSearchOpen;
+    const newAdvancedSearchState = !isAdvancedSearchOpen;
 
-    setIsAdvancedSearchOpen(advancedSearchState);
+    setIsAdvancedSearchOpen(newAdvancedSearchState);
 
-    if (advancedSearchState) {
+    // update height base on the content height of advance search
+    if (newAdvancedSearchState) {
       advancedSearchEl.style.maxHeight = `${advancedSearchContentEl.offsetHeight}px`;
     } else {
       advancedSearchEl.style.maxHeight = 0;
     }
+  };
+
+  /**
+   * movePage.
+   * isAdd true is moving 👉 way
+   * isAdd false is moving 👈 way
+   *
+   * Updates the values.page
+   */
+  const movePage = (isAdd) => (e) => {
+    e.preventDefault();
+
+    // update page but with the min value set to 1
+    pageHelpers.setValue(isAdd ? pageField.value + 1 : (pageField.value - 1) || 1);
+  };
+
+  /**
+   * flipDirection.
+   * Set values.direction value to either asc or desc
+   */
+  const flipDirection = () => {
+    directionHelpers.setValue(directionField.value === 'asc' ? 'desc' : 'asc');
   };
 
   useEffect(() => {
@@ -92,10 +127,11 @@ const Table = ({
     return () => window.removeEventListener('resize', windowResizeListener);
   }, []);
 
+  // trigger onChange prop if values changed
   useEffect(() => {
     if (!onChange) return;
 
-    onChange(values);
+    onChangeListener();
   }, [values]);
 
   return (
@@ -128,15 +164,17 @@ const Table = ({
             <p className="table-advanced-search__text">Advanced Search</p>
             <div className="table-advanced-search__sort">
               <InputGroup
-                name="sort"
+                name="sortBy"
                 label="Sort by"
                 options={sortOptions}
                 component={Select}
+                mainKey="key"
               />
               <Button
-                className="table-advanced-search__sort-button"
+                className={`table-advanced-search__sort-button ${values.direction === 'asc' ? 'table-advanced-search__sort-button--asc' : ''}`}
                 variant="primary-v1"
                 icon="arrow-up"
+                onClick={flipDirection}
               />
             </div>
             {renderFilter && renderFilter()}
@@ -177,10 +215,18 @@ const Table = ({
             />
           </div>
           <div className="table-footer-pagination">
-            <button className="table-footer-pagination__left" type="button">
+            <button
+              className="table-footer-pagination__left"
+              type="button"
+              onClick={movePage(false)}
+            >
               <Icon icon="chevron-down" />
             </button>
-            <button className="table-footer-pagination__right" type="button">
+            <button
+              className="table-footer-pagination__right"
+              type="button"
+              onClick={movePage(true)}
+            >
               <Icon icon="chevron-down" />
             </button>
           </div>
