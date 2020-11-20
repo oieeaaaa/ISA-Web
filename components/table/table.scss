@@ -95,10 +95,15 @@
 
         .icon {
           margin: 0;
+          transition: transform 0.25s ease;
+        }
+
+        &--asc .icon {
+          transform: rotateX(180deg);
         }
       }
 
-      .input-group--sort {
+      .input-group {
         margin: 0;
         margin-right: rem(10);
         width: 100%;
@@ -116,6 +121,7 @@
     display: inline-block;
     table-layout: fixed;
     max-width: 100%;
+    min-height: rem(220);
     white-space: nowrap;
     overflow-x: scroll;
     margin-top: rem(30);
