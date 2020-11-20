@@ -6,22 +6,32 @@ const prisma = new PrismaClient();
 export default api({
   get: async (req, res) => {
     try {
-      const { page = 1, limit = 5 } = req.query;
+      const {
+        page = 1,
+        limit = 5,
+        search,
+      } = req.query;
 
       const allItems = await prisma.inventory.findMany({
         skip: (page - 1) * limit,
+        // TODO: Update this to full-text search
+        where: {
+          particular: {
+            contains: search,
+          },
+        },
         take: limit,
         include: {
-          supplier: true,
-          applications: true,
           brand: true,
+          supplier: true,
           uom: true,
-          codes: true,
+          applications: true,
         },
       });
 
       res.success(allItems);
     } catch (error) {
+      console.log(error);
       res.error(error);
     }
   },
