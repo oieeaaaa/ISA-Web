@@ -1,3 +1,5 @@
+import isJson from 'js/utils/isJson';
+
 /*
  * Safety
  * It will make you feel safe.
@@ -20,6 +22,16 @@ const safety = (obj = {}, mainKey, defaultValue = null) => {
   }
 
   return currentValue;
+};
+
+export const safeType = {
+  string: (val) => val || '',
+  number: (val) => val || 0,
+  boolean: (val) => val || false,
+  object: (val) => val || {},
+  array: (val) => val || [],
+  function: (val) => val || (() => {}),
+  json: (val) => (isJson(val) ? JSON.parse(val) : val),
 };
 
 export default safety;

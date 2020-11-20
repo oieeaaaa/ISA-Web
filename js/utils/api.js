@@ -1,5 +1,5 @@
 import responses from './responses';
-import isJson from './isJson';
+import { safeType } from './safety';
 
 /**
  * api.
@@ -25,10 +25,8 @@ const api = (methods) => async (req, res) => {
     req.query = Object.keys(req.query).reduce((values, currentKey) => {
       const currentValue = values[currentKey];
 
-      // parsing part.
-      if (isJson(currentValue)) {
-        values[currentKey] = JSON.parse(currentValue);
-      }
+      // safe parsing ☕️ (you can relax)
+      values[currentKey] = safeType.json(currentValue);
 
       return values;
     }, req.query);
