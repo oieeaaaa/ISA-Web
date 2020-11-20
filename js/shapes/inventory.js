@@ -3,6 +3,47 @@ import {
   connectOrCreateSingle,
 } from 'js/utils/connectOrCreate';
 
+export const tableHeaders = [{
+  label: 'Reference No.',
+  accessKey: 'referenceNumber',
+}, {
+  label: 'Particular',
+  accessKey: 'particular',
+}, {
+  label: 'Codes',
+  accessKey: 'codes',
+}, {
+  label: 'Brand',
+  accessKey: 'brand.name',
+}, {
+  label: 'Supplier',
+  accessKey: 'supplier.name',
+}, {
+  label: 'Applications',
+  accessKey: 'applications',
+  customCell: ({ value }) => {
+    const applicationNames = value.map((val) => val.name).join(', ');
+
+    return <p>{applicationNames}</p>;
+  },
+}];
+
+export const tableFilters = {
+  owner: {},
+  brand: {},
+};
+
+export const tableSortOptions = [
+  {
+    key: 'referenceNumber',
+    name: 'Reference No.',
+  },
+  {
+    key: 'particular',
+    name: 'Particular',
+  },
+];
+
 export const initialValues = {
   dateReceived: new Date(),
 
@@ -53,4 +94,7 @@ export const addPayload = ({
 export default {
   initialValues,
   addPayload,
+  tableHeaders,
+  tableSortOptions,
+  tableFilters,
 };

@@ -14,8 +14,8 @@ export const defaultLimits = [
 ];
 
 export const defaultConfigs = ({
-  sort: '',
-  sortDirection: 'asc', // asc | desc
+  sortBy: {},
+  direction: 'desc', // asc | desc
   search: '',
   limit: defaultLimits[0],
   page: 1,
