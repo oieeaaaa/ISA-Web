@@ -1,13 +1,13 @@
 export default {
   success: {
-    casual: 'Nice!',
+    casual: 'Nice!'
   },
   error: {
-    casual: 'An error occured!',
+    casual: 'An error occured!'
   },
   validation: {
     required: 'Required.',
     min: 'Too short.',
-    max: 'Too long.',
-  },
+    max: 'Too long.'
+  }
 };

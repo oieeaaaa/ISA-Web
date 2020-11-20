@@ -15,12 +15,7 @@ import MiniCard from 'components/mini-card/mini-card';
 const InventoryForm = ({ helpers }) => {
   const { errors } = useFormikContext();
 
-  const {
-    uoms,
-    brands,
-    suppliers,
-    applications,
-  } = helpers;
+  const { uoms, brands, suppliers, applications } = helpers;
 
   return (
     <Form>
@@ -31,9 +26,7 @@ const InventoryForm = ({ helpers }) => {
           </div>
           <div className="inventory-add-actions">
             <div className="grid">
-              <Button>
-                Cancel
-              </Button>
+              <Button>Cancel</Button>
               <Button variant="primary" type="submit">
                 Add Item
               </Button>
@@ -69,11 +62,7 @@ const InventoryForm = ({ helpers }) => {
               label="Parts Number"
               component={Input}
             />
-            <InputGroup
-              name="size"
-              label="Size"
-              component={Input}
-            />
+            <InputGroup name="size" label="Size" component={Input} />
             <InputGroup
               name="quantity"
               label="Quantity"
@@ -109,11 +98,7 @@ const InventoryForm = ({ helpers }) => {
             />
           </FormSection>
           <FormSection title="Pricing">
-            <InputGroup
-              name="codes"
-              label="Codes"
-              component={Input}
-            />
+            <InputGroup name="codes" label="Codes" component={Input} />
             <div className="inventory-add__pricing-info">
               <MiniCard title="Unit Cost" content="₱1870" />
               <MiniCard title="Amount" content="₱1870" />
@@ -134,26 +119,14 @@ const InventoryForm = ({ helpers }) => {
             />
           </FormSection>
           <FormSection title="Other Info">
-            <InputGroup
-              name="remarks"
-              label="Remarks"
-              component={TextArea}
-            />
+            <InputGroup name="remarks" label="Remarks" component={TextArea} />
             <InputGroup
               name="receivedBy"
               label="Received by"
               component={Input}
             />
-            <InputGroup
-              name="checkedBy"
-              label="Checked by"
-              component={Input}
-            />
-            <InputGroup
-              name="codedBy"
-              label="Coded by"
-              component={Input}
-            />
+            <InputGroup name="checkedBy" label="Checked by" component={Input} />
+            <InputGroup name="codedBy" label="Coded by" component={Input} />
           </FormSection>
         </div>
       </div>

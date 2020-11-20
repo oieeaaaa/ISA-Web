@@ -17,9 +17,10 @@
   // output: search="amazinggg"&limit=5&page=2
  ```
  */
-const toParam = (param = {}) => Object
-  .entries(param) // split key/value and store it to array
-  .filter(([, value]) => !!value) // omit falsy values
-  .map(([key, value]) => `${key}=${value}`).join('&'); // actual param
+const toParam = (param = {}) =>
+  Object.entries(param) // split key/value and store it to array
+    .filter(([value]) => !!value) // omit falsy values
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&'); // actual param
 
 export default toParam;

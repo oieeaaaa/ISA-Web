@@ -20,28 +20,31 @@ export default api({
       const allItems = await prisma.inventory.findMany({
         skip: (page - 1) * limit,
         orderBy: {
-          [sortBy]: direction,
+          [sortBy]: direction
         },
         where: {
           AND: toFilterQuery(filters),
-          OR: toFullTextSearchQuery([
-            'particular',
-            'referenceNumber',
-            'partsNumber',
-            'description',
-            'remarks',
-            'receivedBy',
-            'checkedBy',
-            'codedBy',
-          ], search),
+          OR: toFullTextSearchQuery(
+            [
+              'particular',
+              'referenceNumber',
+              'partsNumber',
+              'description',
+              'remarks',
+              'receivedBy',
+              'checkedBy',
+              'codedBy'
+            ],
+            search
+          )
         },
         take: limit,
         include: {
           brand: true,
           supplier: true,
           uom: true,
-          applications: true,
-        },
+          applications: true
+        }
       });
 
       res.success(allItems);
@@ -53,12 +56,12 @@ export default api({
   post: async (req, res) => {
     try {
       const newItem = await prisma.inventory.create({
-        data: req.body,
+        data: req.body
       });
       res.success(newItem);
     } catch (error) {
       console.error(error);
       res.error(error);
     }
-  },
+  }
 });

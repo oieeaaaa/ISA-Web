@@ -24,10 +24,11 @@
   ]
  ```
  */
-const toFullTextSearchQuery = (keys, searchVal) => keys.map((key) => ({
-  [key]: {
-    contains: searchVal,
-  },
-}));
+const toFullTextSearchQuery = (keys, searchVal) =>
+  keys.map((key) => ({
+    [key]: {
+      contains: searchVal
+    }
+  }));
 
 export default toFullTextSearchQuery;

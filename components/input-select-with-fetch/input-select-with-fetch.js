@@ -12,13 +12,7 @@ const InputSelectWithFetch = ({ serverRoute, initialOptions, ...etc }) => {
     setOptions(result.data);
   }, 400);
 
-  return (
-    <InputSelect
-      onSearch={handleSearch}
-      options={options}
-      {...etc}
-    />
-  );
+  return <InputSelect onSearch={handleSearch} options={options} {...etc} />;
 };
 
 export default InputSelectWithFetch;

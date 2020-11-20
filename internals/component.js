@@ -1,9 +1,10 @@
 const fs = require('fs');
 
-const toPascalCase = (fileName) => fileName
-  .split('-')
-  .map((name) => name[0].toUpperCase() + name.substr(1))
-  .join('');
+const toPascalCase = (fileName) =>
+  fileName
+    .split('-')
+    .map((name) => name[0].toUpperCase() + name.substr(1))
+    .join('');
 
 const jsContent = (fileName) => `const ${toPascalCase(fileName)} = () => (
   <div className="${fileName}">New component!</div>
@@ -31,10 +32,14 @@ const component = () => {
 
   fs.mkdirSync(componentDirectory);
 
-  fs.appendFile(`${componentPath}.scss`, scssContent(componentFileName), (err) => {
-    if (err) throw err;
-    console.log(`💅 SCSS: Created ${componentFileName}.scss file.`);
-  });
+  fs.appendFile(
+    `${componentPath}.scss`,
+    scssContent(componentFileName),
+    (err) => {
+      if (err) throw err;
+      console.log(`💅 SCSS: Created ${componentFileName}.scss file.`);
+    }
+  );
 
   fs.appendFile('scss/main.scss', scssImport(componentFileName), (err) => {
     if (err) throw err;

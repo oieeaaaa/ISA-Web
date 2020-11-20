@@ -21,10 +21,11 @@
   // ]
  ```
  */
-const toFilterQuery = (filters = {}) => Object.entries(filters).map(([key, value]) => ({
-  [key]: {
-    equals: value,
-  },
-}));
+const toFilterQuery = (filters = {}) =>
+  Object.entries(filters).map(([key, value]) => ({
+    [key]: {
+      equals: value
+    }
+  }));
 
 export default toFilterQuery;

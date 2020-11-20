@@ -12,7 +12,8 @@ const safety = (obj = {}, mainKey, defaultValue = null) => {
   let currentValue = null;
 
   // iterate to obj
-  for (const key of keys) { // eslint-disable-line
+  for (const key of keys) {
+    // eslint-disable-line
     currentValue = !currentValue ? obj[key] : currentValue[key];
 
     // do not proceed if the property doesn't have a value
@@ -31,7 +32,7 @@ export const safeType = {
   object: (val) => val || {},
   array: (val) => val || [],
   function: (val) => val || (() => {}),
-  json: (val) => (isJson(val) ? JSON.parse(val) : val),
+  json: (val) => (isJson(val) ? JSON.parse(val) : val)
 };
 
 export default safety;

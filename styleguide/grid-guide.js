@@ -9,15 +9,15 @@ const gridList = [
     cols: 10,
     gutter: 0,
     margin: 0,
-    size: 375,
+    size: 375
   },
   {
     name: 'desktop',
     cols: 20,
     gutter: 0,
     margin: 0,
-    size: 768,
-  },
+    size: 768
+  }
 ];
 
 function getCurrentGrid(list) {
@@ -62,7 +62,8 @@ const GridGuide = () => {
     return () => window.removeEventListener('keypress', toggleGrid);
   });
 
-  const genCols = cols => Array.from({length: cols}).map((_, i) => <span key={i} />); // eslint-disable-line
+  const genCols = (cols) =>
+    Array.from({ length: cols }).map((_, i) => <span key={i} />); // eslint-disable-line
 
   return (
     <div className="grid-guide">

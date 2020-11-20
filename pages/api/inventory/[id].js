@@ -8,15 +8,15 @@ export default api({
     try {
       const item = await prisma.inventory.findOne({
         where: {
-          id: req.query.id,
+          id: req.query.id
         },
         include: {
           supplier: true,
           applications: true,
           brand: true,
           uom: true,
-          codes: true,
-        },
+          codes: true
+        }
       });
 
       res.success(item);
@@ -28,9 +28,9 @@ export default api({
     try {
       const updatedItem = await prisma.inventory.update({
         where: {
-          id: req.query.id,
+          id: req.query.id
         },
-        data: req.body,
+        data: req.body
       });
 
       res.success(updatedItem);
@@ -42,8 +42,8 @@ export default api({
     try {
       const deletedItem = await prisma.inventory.delete({
         where: {
-          id: req.query.id,
-        },
+          id: req.query.id
+        }
       });
 
       res.success(deletedItem);
@@ -51,5 +51,5 @@ export default api({
       console.log(error);
       res.error(error);
     }
-  },
+  }
 });

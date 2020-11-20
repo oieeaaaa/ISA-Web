@@ -1,47 +1,54 @@
 import {
   connectOrCreateMultiple,
-  connectOrCreateSingle,
+  connectOrCreateSingle
 } from 'js/utils/connectOrCreate';
 
-export const tableHeaders = [{
-  label: 'Reference No.',
-  accessKey: 'referenceNumber',
-}, {
-  label: 'Particular',
-  accessKey: 'particular',
-}, {
-  label: 'Codes',
-  accessKey: 'codes',
-}, {
-  label: 'Brand',
-  accessKey: 'brand.name',
-}, {
-  label: 'Supplier',
-  accessKey: 'supplier.name',
-}, {
-  label: 'Applications',
-  accessKey: 'applications',
-  customCell: ({ value }) => {
-    const applicationNames = value.map((val) => val.name).join(', ');
-
-    return <p>{applicationNames}</p>;
+export const tableHeaders = [
+  {
+    label: 'Reference No.',
+    accessKey: 'referenceNumber'
   },
-}];
+  {
+    label: 'Particular',
+    accessKey: 'particular'
+  },
+  {
+    label: 'Codes',
+    accessKey: 'codes'
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
+  },
+  {
+    label: 'Supplier',
+    accessKey: 'supplier.name'
+  },
+  {
+    label: 'Applications',
+    accessKey: 'applications',
+    customCell: ({ value }) => { // eslint-disable-line
+      const applicationNames = value.map((val) => val.name).join(', ');
+
+      return <p>{applicationNames}</p>;
+    }
+  }
+];
 
 export const tableFilters = {
   owner: {},
-  brand: {},
+  brand: {}
 };
 
 export const tableSortOptions = [
   {
     key: 'referenceNumber',
-    name: 'Reference No.',
+    name: 'Reference No.'
   },
   {
     key: 'particular',
-    name: 'Particular',
-  },
+    name: 'Particular'
+  }
 ];
 
 export const initialValues = {
@@ -57,20 +64,27 @@ export const initialValues = {
   size: '',
   quantity: 0,
   applications: [],
-  brand: { name: '' },
-  supplier: { id: '', name: '' },
+  brand: {
+    name: ''
+  },
+  supplier: {
+    id: '',
+    name: ''
+  },
   description: '',
 
   // pricing
   codes: '',
-  uom: { name: '' },
+  uom: {
+    name: ''
+  },
   srp: 0,
 
   // other info
   remarks: '',
   receivedBy: '',
   checkedBy: '',
-  codedBy: '',
+  codedBy: ''
 };
 
 export const addPayload = ({
@@ -86,9 +100,9 @@ export const addPayload = ({
   uom: connectOrCreateSingle(uom),
   supplier: {
     connect: {
-      id: supplier.id,
-    },
-  },
+      id: supplier.id
+    }
+  }
 });
 
 export default {
@@ -96,5 +110,5 @@ export default {
   addPayload,
   tableHeaders,
   tableSortOptions,
-  tableFilters,
+  tableFilters
 };

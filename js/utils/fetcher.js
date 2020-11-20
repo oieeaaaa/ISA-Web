@@ -13,9 +13,9 @@ const fetcher = async (route, options = {}) => {
     const rawResult = await fetch(`${NEXT_PUBLIC_API_URL}/api${route}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      ...options,
+      ...options
     });
 
     const result = await rawResult.json();

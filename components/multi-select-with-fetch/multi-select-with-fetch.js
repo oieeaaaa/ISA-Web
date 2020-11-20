@@ -12,13 +12,7 @@ const MultiSelectWithFetch = ({ serverRoute, initialOptions = [], ...etc }) => {
     setOptions(result.data);
   }, 400);
 
-  return (
-    <MultiSelect
-      onSearch={handleSearch}
-      options={options}
-      {...etc}
-    />
-  );
+  return <MultiSelect onSearch={handleSearch} options={options} {...etc} />;
 };
 
 export default MultiSelectWithFetch;

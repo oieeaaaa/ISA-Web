@@ -13,7 +13,7 @@ const InventoryAdd = ({ helpers }) => {
     try {
       await fetcher('/inventory', {
         method: 'POST',
-        body: JSON.stringify(addPayload(values)),
+        body: JSON.stringify(addPayload(values))
       });
 
       actions.resetForm();
@@ -29,8 +29,7 @@ const InventoryAdd = ({ helpers }) => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
+        onSubmit={handleSubmit}>
         <InventoryForm helpers={helpers} />
       </Formik>
     </Layout>
@@ -49,9 +48,9 @@ export async function getStaticProps() {
         brands: brands.data,
         uoms: uoms.data,
         suppliers: suppliers.data,
-        applications: applications.data,
-      },
-    },
+        applications: applications.data
+      }
+    }
   };
 }
 

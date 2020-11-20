@@ -19,6 +19,5 @@
         "ignore": ["after-comment"]
       }
     ],
-    "font-family-no-missing-generic-family-keyword": "off"
   }
 }

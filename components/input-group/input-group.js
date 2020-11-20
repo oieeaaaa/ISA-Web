@@ -1,12 +1,6 @@
 import { useFormikContext } from 'formik';
 
-const InputGroup = ({
-  name,
-  label,
-  component: Component,
-  error,
-  ...etc
-}) => {
+const InputGroup = ({ name, label, component: Component, error, ...etc }) => {
   const { errors } = useFormikContext();
 
   return (

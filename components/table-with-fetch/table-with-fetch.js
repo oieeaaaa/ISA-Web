@@ -26,7 +26,7 @@ const TableWithFetch = ({
         page,
         limit: limit.value,
         sortBy: sortBy.key,
-        ...parameterizer(configs),
+        ...parameterizer(configs)
       });
 
       const url = `/${serverRoute}?${param}`;

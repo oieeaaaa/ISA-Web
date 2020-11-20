@@ -4,12 +4,7 @@
   jsx-a11y/interactive-supports-focus: off
 */
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
 import safety from 'js/utils/safety';
@@ -20,7 +15,6 @@ const MultiSelect = ({
   mainKey = 'name',
   options = [],
   onSearch,
-  updateOptions,
   ...etc
 }) => {
   // states
@@ -32,14 +26,20 @@ const MultiSelect = ({
   const input = useRef();
 
   // callbacks
-  const closeDropdownListener = useCallback(throttle((e) => {
-    if (e.target !== multiSelectValues.current) {
-      setIsOpen(false);
-    }
-  }, 300), []);
+  const closeDropdownListener = useCallback(
+    throttle((e) => {
+      if (e.target !== multiSelectValues.current) {
+        setIsOpen(false);
+      }
+    }, 300),
+    []
+  );
 
   // custom hooks
-  const [field, , helpers] = useField({ name, multiple: true });
+  const [field, , helpers] = useField({
+    name,
+    multiple: true
+  });
 
   const handleOpen = () => {
     input.current.focus();
@@ -93,20 +93,17 @@ const MultiSelect = ({
     const isInOptions = options.some((option) => option[mainKey] === query);
 
     let value = {
-      name: query,
+      name: query
     };
 
     if (!isInOptions) {
       value = {
         ...value,
-        isNew: true,
+        isNew: true
       };
     }
 
-    helpers.setValue(([
-      ...field.value,
-      value,
-    ]));
+    helpers.setValue([...field.value, value]);
 
     updateQuery('');
   };
@@ -136,16 +133,14 @@ const MultiSelect = ({
         onClick={handleToggler}
         className="multi-select-group"
         type="button"
-        role="button"
-      >
+        role="button">
         <div ref={multiSelectValues} className="multi-select-values">
           {safety(field, 'value', []).map((value) => (
             <button
               key={value[mainKey]}
               className="multi-select__value"
               type="button"
-              onClick={() => removeValue(value[mainKey])}
-            >
+              onClick={() => removeValue(value[mainKey])}>
               {value.name}
             </button>
           ))}
@@ -165,19 +160,19 @@ const MultiSelect = ({
       </div>
       <ul className="multi-select-list">
         {options
-          .filter((option) => !safety(field, 'value', [])
-            .some((value) => value[mainKey] === option[mainKey]))
+          .filter(
+            (option) =>
+              !safety(field, 'value', []).some(
+                (value) => value[mainKey] === option[mainKey]
+              )
+          )
           .map((option, index) => (
             <li key={option[mainKey]} className="multi-select-list__item">
               <button
                 className="multi-select-list__button"
                 type="button"
-                onClick={(e) => selectValue(e, option)}
-              >
-                <span>
-                  {index + 1}
-                  .
-                </span>
+                onClick={(e) => selectValue(e, option)}>
+                <span>{index + 1}.</span>
                 <span>{option.name}</span>
               </button>
             </li>
@@ -187,8 +182,7 @@ const MultiSelect = ({
             <button
               className="multi-select-list__button multi-select-list__button--create"
               type="button"
-              onClick={createNewValue}
-            >
+              onClick={createNewValue}>
               <span>
                 <Icon icon="plus" />
               </span>

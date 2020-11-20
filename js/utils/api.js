@@ -41,7 +41,9 @@ const api = (methods) => async (req, res) => {
     }
   }
 
-  throw new Error('Invalid method name: Try using 👉 get, post, put, or delete.');
+  throw new Error(
+    'Invalid method name: Try using 👉 get, post, put, or delete.'
+  );
 };
 
 export default api;

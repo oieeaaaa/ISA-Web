@@ -14,7 +14,7 @@ const Select = ({
 
   const onSelect = (e) => {
     const selectedItem = options.find(
-      (option) => option[mainKey] === safeType.json(e.target.value),
+      (option) => option[mainKey] === safeType.json(e.target.value)
     );
 
     helpers.setValue(safeType.object(selectedItem));
@@ -27,8 +27,7 @@ const Select = ({
         onChange={onSelect}
         onBlur={field.onBlur}
         value={safety(field, 'value', {})[mainKey]}
-        {...etc}
-      >
+        {...etc}>
         <option value={undefined}>&nbsp;</option>
         {options.map((option) => (
           <option key={option[mainKey]} value={option[mainKey]}>

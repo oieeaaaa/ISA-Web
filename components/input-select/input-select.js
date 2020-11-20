@@ -1,9 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
 import safety from 'js/utils/safety';
@@ -23,21 +18,29 @@ const InputSelect = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // callbacks
-  const closeDropdownListener = useCallback(throttle((e) => {
-    if (e.target !== input.current) {
-      setIsDropdownOpen(false);
-    }
-  }, 300), []);
+  const closeDropdownListener = useCallback(
+    throttle((e) => {
+      if (e.target !== input.current) {
+        setIsDropdownOpen(false);
+      }
+    }, 300),
+    []
+  );
 
   // custom hooks
-  const [field, , helpers] = useField({ type: 'text', ...etc });
+  const [field, , helpers] = useField({
+    type: 'text',
+    ...etc
+  });
 
   const handleSearch = (e) => {
     if (onSearch) {
       onSearch(e.target.value);
     }
 
-    helpers.setValue({ [mainKey]: e.target.value });
+    helpers.setValue({
+      [mainKey]: e.target.value
+    });
   };
 
   const handleDropdownOpen = () => {
@@ -49,7 +52,11 @@ const InputSelect = ({
     setIsDropdownOpen(false);
   };
 
-  const createValue = (newValue) => selectValue({ ...newValue, isNew: true });
+  const createValue = (newValue) =>
+    selectValue({
+      ...newValue,
+      isNew: true
+    });
 
   useEffect(() => {
     window.addEventListener('click', closeDropdownListener);
@@ -74,29 +81,34 @@ const InputSelect = ({
           {options.map((option, index) => (
             <li className="input-select__item" key={option[mainKey]}>
               <button
-                className={joinClassName('input-select__button', option[mainKey] === safety(field, 'value', {})[mainKey] && 'input-select__button--active')}
+                className={joinClassName(
+                  'input-select__button',
+                  option[mainKey] === safety(field, 'value', {})[mainKey] &&
+                    'input-select__button--active'
+                )}
                 type="button"
-                onClick={() => selectValue({ [mainKey]: option[mainKey] })}
-              >
-                <span className="input-select__button-index">
-                  {index + 1}
-                  .
-                </span>
+                onClick={() =>
+                  selectValue({
+                    [mainKey]: option[mainKey]
+                  })
+                }>
+                <span className="input-select__button-index">{index + 1}.</span>
                 <span>{option[mainKey]}</span>
               </button>
             </li>
           ))}
-          {(options && !options.length) && (
+          {options && !options.length && (
             <li className="input-select__item">
               <button
                 className="input-select__button"
                 type="button"
-                onClick={() => createValue({ [mainKey]: safety(field, 'value', {})[mainKey] })}
-              >
+                onClick={() =>
+                  createValue({
+                    [mainKey]: safety(field, 'value', {})[mainKey]
+                  })
+                }>
                 <span className="input-select__button-text">
-                  Adding
-                  {' '}
-                  {`"${safety(field, 'value', {})[mainKey]}"`}
+                  Adding {`"${safety(field, 'value', {})[mainKey]}"`}
                 </span>
               </button>
             </li>

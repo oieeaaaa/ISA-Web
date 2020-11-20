@@ -9,15 +9,15 @@ export default (table = '', otherProps = {}) => async (req, res) => {
     const items = await prisma[table].findMany({
       select: {
         name: true,
-        ...otherProps,
+        ...otherProps
       },
       where: {
         name: {
-          contains: search,
-        },
+          contains: search
+        }
       },
       skip: (page - 1) * limit,
-      take: limit,
+      take: limit
     });
 
     res.success(items);

@@ -1,9 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
@@ -23,13 +18,13 @@ const TableWrapper = ({
   headers = [],
   data = [],
   sortOptions = [],
-  onChange,
+  onChange
 }) => (
-  <Formik initialValues={{
-    ...defaultConfigs,
-    ...safeType.object(filters),
-  }}
-  >
+  <Formik
+    initialValues={{
+      ...defaultConfigs,
+      ...safeType.object(filters)
+    }}>
     <Table
       title={title}
       icon={icon}
@@ -49,7 +44,7 @@ const Table = ({
   headers = [],
   data = [],
   sortOptions = [],
-  onChange,
+  onChange
 }) => {
   // ref
   const advancedSearch = useRef();
@@ -62,21 +57,25 @@ const Table = ({
   const { values } = useFormikContext();
 
   // custom fields
-  const [pageField,, pageHelpers] = useField('page');
-  const [directionField,, directionHelpers] = useField('direction');
+  const [pageField, , pageHelpers] = useField('page');
+  const [directionField, , directionHelpers] = useField('direction');
 
   // callbacks
-  const windowResizeListener = useCallback(debounce(() => {
-    const { current: advancedSearchEl } = advancedSearch;
-    const { current: advancedSearchContentEl } = advancedSearchContent;
+  const windowResizeListener = useCallback(
+    debounce(() => {
+      const { current: advancedSearchEl } = advancedSearch;
+      const { current: advancedSearchContentEl } = advancedSearchContent;
 
-    // making sure that all required values exists
-    const isGoodToResize = !isAdvancedSearchOpen || !advancedSearchEl || !advancedSearchContentEl;
+      // making sure that all required values exists
+      const isGoodToResize =
+        !isAdvancedSearchOpen || !advancedSearchEl || !advancedSearchContentEl;
 
-    if (isGoodToResize) return;
+      if (isGoodToResize) return;
 
-    advancedSearchEl.style.maxHeight = `${advancedSearchContentEl.offsetHeight}px`;
-  }, 300), [values]);
+      advancedSearchEl.style.maxHeight = `${advancedSearchContentEl.offsetHeight}px`;
+    }, 300),
+    [values]
+  );
 
   const onChangeListener = useCallback(debounce(() => onChange(values), 300));
 
@@ -110,7 +109,9 @@ const Table = ({
     e.preventDefault();
 
     // update page but with the min value set to 1
-    pageHelpers.setValue(isAdd ? pageField.value + 1 : (pageField.value - 1) || 1);
+    pageHelpers.setValue(
+      isAdd ? pageField.value + 1 : pageField.value - 1 || 1
+    );
   };
 
   /**
@@ -135,22 +136,21 @@ const Table = ({
   }, [values]);
 
   return (
-    <div className={`table ${isAdvancedSearchOpen ? 'table--advanced-search' : ''}`}>
+    <div
+      className={`table ${
+        isAdvancedSearchOpen ? 'table--advanced-search' : ''
+      }`}>
       <div className="grid">
         <div className="table-header">
           <Icon icon={icon} />
           <h2 className="table-header__title">{title}</h2>
         </div>
         <div className="table-filter">
-          <Input
-            name="search"
-            placeholder="Search item..."
-          />
+          <Input name="search" placeholder="Search item..." />
           <button
             className="table-filter__advanced"
             type="button"
-            onClick={toggleAdvancedSearch}
-          >
+            onClick={toggleAdvancedSearch}>
             Advanced
             <Icon icon="chevron-down" />
           </button>
@@ -158,9 +158,10 @@ const Table = ({
         <div
           className="table-advanced-search"
           ref={advancedSearch}
-          aria-hidden={isAdvancedSearchOpen}
-        >
-          <div className="table-advanced-search__content" ref={advancedSearchContent}>
+          aria-hidden={isAdvancedSearchOpen}>
+          <div
+            className="table-advanced-search__content"
+            ref={advancedSearchContent}>
             <p className="table-advanced-search__text">Advanced Search</p>
             <div className="table-advanced-search__sort">
               <InputGroup
@@ -171,7 +172,11 @@ const Table = ({
                 mainKey="key"
               />
               <Button
-                className={`table-advanced-search__sort-button ${values.direction === 'asc' ? 'table-advanced-search__sort-button--asc' : ''}`}
+                className={`table-advanced-search__sort-button ${
+                  values.direction === 'asc'
+                    ? 'table-advanced-search__sort-button--asc'
+                    : ''
+                }`}
                 variant="primary-v1"
                 icon="arrow-up"
                 onClick={flipDirection}
@@ -218,15 +223,13 @@ const Table = ({
             <button
               className="table-footer-pagination__left"
               type="button"
-              onClick={movePage(false)}
-            >
+              onClick={movePage(false)}>
               <Icon icon="chevron-down" />
             </button>
             <button
               className="table-footer-pagination__right"
               type="button"
-              onClick={movePage(true)}
-            >
+              onClick={movePage(true)}>
               <Icon icon="chevron-down" />
             </button>
           </div>

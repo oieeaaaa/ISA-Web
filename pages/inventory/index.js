@@ -2,7 +2,7 @@ import fetcher from 'js/utils/fetcher';
 import {
   tableHeaders,
   tableFilters,
-  tableSortOptions,
+  tableSortOptions
 } from 'js/shapes/inventory';
 import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
@@ -12,7 +12,7 @@ import Select from 'components/select/select';
 const Inventory = ({ data, helpers }) => {
   const parameterizer = (params) => ({
     brand: params.brand.id,
-    owner: params.owner.id,
+    owner: params.owner.id
   });
 
   return (
@@ -52,14 +52,14 @@ export async function getStaticProps() {
   const { data } = await fetcher('/inventory');
   const brands = await fetcher('/helpers/brand');
 
-  return ({
+  return {
     props: {
       data,
       helpers: {
-        brands: brands.data,
-      },
-    },
-  });
+        brands: brands.data
+      }
+    }
+  };
 }
 
 export default Inventory;
