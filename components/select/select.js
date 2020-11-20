@@ -1,10 +1,9 @@
 /* eslint jsx-a11y/control-has-associated-label: off */
 import { useField } from 'formik';
-import safety from 'js/utils/safety';
+import safety, { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
 const Select = ({
-  id,
   name,
   options = [],
   mainKey = 'id',
@@ -14,22 +13,23 @@ const Select = ({
   const [field, , helpers] = useField(name);
 
   const onSelect = (e) => {
-    const selectedItem = options.find((option) => option[mainKey] === e.target.value);
+    const selectedItem = options.find(
+      (option) => option[mainKey] === safeType.json(e.target.value),
+    );
 
-    helpers.setValue(selectedItem);
+    helpers.setValue(safeType.object(selectedItem));
   };
 
   return (
     <div className="select-container">
       <select
-        id={id}
         className="select"
         onChange={onSelect}
         onBlur={field.onBlur}
         value={safety(field, 'value', {})[mainKey]}
         {...etc}
       >
-        <option value="" disabled />
+        <option value={undefined}>&nbsp;</option>
         {options.map((option) => (
           <option key={option[mainKey]} value={option[mainKey]}>
             {option[displayKey]}

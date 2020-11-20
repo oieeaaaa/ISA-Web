@@ -7,10 +7,12 @@
 
     .icon {
       position: absolute;
-      top: $dropdown-icon-y-position;
+      top: 50%;
       right: rem(10);
-      user-select: none;
+      transform: translateY(-50%);
+      color: var(--primary);
       pointer-events: none;
+      user-select: none;
     }
   }
 }
