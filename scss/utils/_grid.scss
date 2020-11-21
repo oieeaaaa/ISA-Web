@@ -20,7 +20,7 @@ $grid-guides: (
 	desktop: (
 		size: $desktop,
 		cols: 20,
-		gutter: 0,
+		gutter: 40,
 	),
 );
 
@@ -34,7 +34,7 @@ $default-guide: map-get($grid-guides, "mobile");
 
 // setup the grid 'at the specified screen'.
 @mixin at-screen($screen) {
-	@media screen and (min-width: map-get(get-guide($screen), "size")) {
+	@media screen and (min-width: rem(map-get(get-guide($screen), "size"))) {
 		@content;
 	}
 }
@@ -63,15 +63,15 @@ $default-guide: map-get($grid-guides, "mobile");
 @mixin gen-cols($screen) {
 	grid-template-columns: repeat(map-get(get-guide($screen), "cols"), 1fr);
 
-	@if (map-get(get-guide($screen), "gutter") > 0px) {
-		padding: 0 map-get(get-guide($screen), "gutter");
+	@if (map-get(get-guide($screen), "gutter") > 0) {
+		padding: 0 rem(map-get(get-guide($screen), "gutter"));
 	}
 }
 
-.grid {
+@mixin grid {
 	display: grid;
 	grid-template-columns: repeat(map-get($default-guide, "cols"), 1fr);
-	max-width: map-get(get-guide("desktop"), "size");
+	max-width: rem($max-width);
 	margin: 0 auto;
 
 	@include tablet-p {
@@ -84,6 +84,9 @@ $default-guide: map-get($grid-guides, "mobile");
 
 	@include desktop {
 		@include gen-cols("desktop");
-		padding: 0;
 	}
+}
+
+.grid {
+  @include grid;
 }

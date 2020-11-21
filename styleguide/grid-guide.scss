@@ -8,7 +8,7 @@
   pointer-events: none;
   user-select: none;
   z-index: 9999;
-  max-width: $max-width;
+  max-width: rem($max-width);
   transform: translateX(-50%);
 
   & > span {
