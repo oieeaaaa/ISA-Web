@@ -227,32 +227,25 @@
 
       text-align: left;
       font-size: rem(16);
-      min-width: rem(150);
       color: var(--primary-accent-3);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: rem(20);
+      padding-bottom: rem(20);
 
       @include desktop {
+        padding-right: rem(40);
+        padding-bottom: rem(25);
         font-size: rem(18);
-      }
-
-      // table spacing
-      &::after {
-        content: '';
-        display: block;
-        height: rem(20);
-        user-select: none;
-        pointer-events: none;
-
-        @include desktop {
-          height: rem(25);
-        }
       }
     }
 
-    tr:last-of-type td::after {
-      display: none;
+    tr {
+      & > td:last-of-type,
+      & > th:last-of-type {
+        padding-right: 0;
+      }
     }
   }
 
