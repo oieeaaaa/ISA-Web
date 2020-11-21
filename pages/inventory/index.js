@@ -23,7 +23,8 @@ const Inventory = ({ data, helpers }) => {
         title="Inventory"
         icon="archive"
         headers={tableHeaders}
-        data={data}
+        data={data.items}
+        totalItems={data.totalItems}
         filters={tableFilters}
         sortOptions={tableSortOptions}
         renderFilter={() => (
