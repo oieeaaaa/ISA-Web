@@ -15,7 +15,7 @@ const gridList = [
     name: 'desktop',
     cols: 20,
     gutter: 0,
-    margin: 0,
+    margin: 40,
     size: 768
   }
 ];
