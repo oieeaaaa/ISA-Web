@@ -9,6 +9,17 @@
   background-color: var(--primary-accent-4);
   color: var(--dark);
   min-height: rem(40);
+
+  &::-webkit-input-placeholder {
+    color: var(--primary-accent-3);
+  }
+
+  @include desktop {
+    @include padding-x(20);
+
+    font-size: rem(18);
+    min-height: rem(50);
+  }
 }
 
 @mixin hide-appearance {
