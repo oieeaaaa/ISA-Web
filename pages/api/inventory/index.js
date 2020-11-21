@@ -17,7 +17,7 @@ export default api({
         ...filters
       } = req.query;
 
-      const allItems = await prisma.inventory.findMany({
+      const items = await prisma.inventory.findMany({
         skip: (page - 1) * limit,
         orderBy: {
           [sortBy]: direction
@@ -47,7 +47,12 @@ export default api({
         }
       });
 
-      res.success(allItems);
+      const totalItems = await prisma.inventory.count();
+
+      res.success({
+        items,
+        totalItems
+      });
     } catch (error) {
       console.log(error);
       res.error(error);
