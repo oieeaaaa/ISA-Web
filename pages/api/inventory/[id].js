@@ -14,8 +14,7 @@ export default api({
           supplier: true,
           applications: true,
           brand: true,
-          uom: true,
-          codes: true
+          uom: true
         }
       });
 
