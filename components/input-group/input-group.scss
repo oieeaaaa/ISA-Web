@@ -8,6 +8,10 @@
     display: block;
     font-size: rem(16);
     color: var(--primary-accent-3);
+
+    @include desktop {
+      font-size: rem(18);
+    }
   }
 
   &__error {
