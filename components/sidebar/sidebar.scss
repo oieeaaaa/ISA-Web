@@ -1,4 +1,8 @@
 .sidebar {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   left: 0;
@@ -9,6 +13,13 @@
   transform: translateX(-100%);
   transition: transform 0.25s ease;
 
+  @include desktop {
+    padding: 0;
+    position: static;
+    transform: translateX(0%);
+    background: none;
+  }
+
   &--open {
     transform: translateX(0);
   }
@@ -16,9 +27,13 @@
   &__close {
     @include margin-y(24);
 
-    grid-column: 9 / -2;
+    margin-left: auto;
     background: none;
     padding: 0;
+
+    @include desktop {
+      display: none;
+    }
 
     .icon {
       margin: 0;
@@ -27,8 +42,11 @@
   }
 
   &-nav {
-    grid-column: 2 / -2;
     margin-top: rem(40);
+
+    @include desktop {
+      margin: 0;
+    }
 
     &__item {
       display: flex;
@@ -47,6 +65,10 @@
       color: var(--white);
       font-size: rem(18);
       text-decoration: none;
+
+      @include desktop {
+        color: var(--primary-accent-3);
+      }
 
       .icon {
         margin-right: rem(15);
