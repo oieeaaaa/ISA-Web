@@ -1,10 +1,10 @@
 const Footer = () => (
-  <div className="footer">
+  <footer className="footer">
     <span aria-label="logo" role="img">
       📦{' '}
     </span>
     ASK
-  </div>
+  </footer>
 );
 
 export default Footer;

@@ -53,53 +53,51 @@ const Header = () => {
   }, []);
 
   return (
-    <div className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
-      <div className="grid">
-        <div
-          className={cssClassModifier(
-            'header-dropdown',
-            ['open'],
-            [isDropdownOpen]
-          )}>
-          <button
-            className="header-dropdown__toggler"
-            type="button"
-            onClick={toggleDropdown}>
-            <figure className="header-avatar">
-              <img src="" alt="" />
-            </figure>
-            <p className="header-greeting">
-              Yo, Cris
-              <span aria-label="Wave" role="img">
-                {' '}
-                👋
-              </span>
-            </p>
-            <Icon icon="chevron-down" />
-          </button>
-          <ul className="header-dropdown-list">
-            <li className="header-dropdown__item">
-              <Link href="/">
-                <a className="header-dropdown__link">Profile</a>
-              </Link>
-            </li>
-            <li className="header-dropdown__item">
-              <Link href="/">
-                <a className="header-dropdown__link header-dropdown__link--logout">
-                  Logout
-                </a>
-              </Link>
-            </li>
-          </ul>
-        </div>
+    <header className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
+      <div
+        className={cssClassModifier(
+          'header-dropdown',
+          ['open'],
+          [isDropdownOpen]
+        )}>
         <button
-          className="header-menu"
+          className="header-dropdown__toggler"
           type="button"
-          onClick={handlers.openSidebar}>
-          <Icon icon="menu" />
+          onClick={toggleDropdown}>
+          <figure className="header-avatar">
+            <img src="" alt="" />
+          </figure>
+          <p className="header-greeting">
+            Yo, Cris
+            <span aria-label="Wave" role="img">
+              {' '}
+              👋
+            </span>
+          </p>
+          <Icon icon="chevron-down" />
         </button>
+        <ul className="header-dropdown-list">
+          <li className="header-dropdown__item">
+            <Link href="/">
+              <a className="header-dropdown__link">Profile</a>
+            </Link>
+          </li>
+          <li className="header-dropdown__item">
+            <Link href="/">
+              <a className="header-dropdown__link header-dropdown__link--logout">
+                Logout
+              </a>
+            </Link>
+          </li>
+        </ul>
       </div>
-    </div>
+      <button
+        className="header-menu"
+        type="button"
+        onClick={handlers.openSidebar}>
+        <Icon icon="menu" />
+      </button>
+    </header>
   );
 };
 
