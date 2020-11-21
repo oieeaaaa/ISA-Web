@@ -87,7 +87,7 @@ export const initialValues = {
   codedBy: ''
 };
 
-export const addPayload = ({
+export const submitPayload = ({
   applications,
   uom,
   brand,
@@ -107,7 +107,7 @@ export const addPayload = ({
 
 export default {
   initialValues,
-  addPayload,
+  submitPayload,
   tableHeaders,
   tableSortOptions,
   tableFilters

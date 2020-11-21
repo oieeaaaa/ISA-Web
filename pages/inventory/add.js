@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import { Formik } from 'formik';
 import fetcher from 'js/utils/fetcher';
-import { addPayload, initialValues } from 'js/shapes/inventory';
+import { submitPayload, initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
 
 // components
@@ -13,7 +13,7 @@ const InventoryAdd = ({ helpers }) => {
     try {
       await fetcher('/inventory', {
         method: 'POST',
-        body: JSON.stringify(addPayload(values))
+        body: JSON.stringify(submitPayload(values))
       });
 
       actions.resetForm();
