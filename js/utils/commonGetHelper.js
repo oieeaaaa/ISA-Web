@@ -8,6 +8,7 @@ export default (table = '', otherProps = {}) => async (req, res) => {
 
     const items = await prisma[table].findMany({
       select: {
+        id: true,
         name: true,
         ...otherProps
       },
