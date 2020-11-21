@@ -1,10 +1,20 @@
 .table {
   $this: &;
 
+  @include container;
   @include padding-y(30);
 
+  display: flex;
+  flex-direction: column;
   background-color: var(--white);
   border: $bp2--mobile;
+
+  @include desktop {
+    @include padding-y(50);
+    @include padding-x(60);
+
+    border-radius: rem(30);
+  }
 
   &--advanced-search {
     #{$this}-filter__advanced {
@@ -17,14 +27,22 @@
     }
   }
 
-  .grid > * {
-    grid-column: 2 / -2;
+  &-header {
+    @include desktop {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 
-  &-header {
+  &-heading {
     margin-bottom: rem(30);
     display: flex;
     align-items: center;
+
+    @include desktop {
+      margin-bottom: 0;
+    }
 
     &__title {
       @include font('Bold');
@@ -32,6 +50,10 @@
       margin-left: rem(20);
       font-size: rem(18);
       color: var(--primary-accent-3);
+
+      @include desktop {
+        font-size: rem(24);
+      }
     }
 
     .icon svg {
@@ -49,7 +71,12 @@
     .input {
       width: 172 / 300 * 100%;
       background-color: var(--primary-accent-1);
-      color: var(--primary-accent-3);
+      color: var(--dark);
+
+      @include desktop {
+        margin-right: rem(20);
+        width: rem(418);
+      }
     }
 
     &__advanced {
@@ -60,9 +87,17 @@
       font-size: rem(16);
       color: var(--primary-accent-2);
 
+      @include desktop {
+        font-size: rem(18);
+      }
+
       .icon {
         margin-left: rem(5);
         transition: transform 0.25s ease;
+
+        @include desktop {
+          margin-left: rem(10);
+        }
       }
     }
   }
@@ -72,8 +107,20 @@
     transition: max-height 0.25s ease;
     overflow: hidden;
 
+    &__heading {
+      @include desktop {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
     &__content {
       padding-top: rem(20);
+
+      @include desktop {
+        padding-top: rem(30);
+      }
     }
 
     &__text {
@@ -82,6 +129,11 @@
       margin-bottom: rem(20);
       font-size: rem(16);
       color: var(--primary-accent-3);
+
+      @include desktop {
+        margin-bottom: 0;
+        font-size: rem(18);
+      }
     }
 
     &__sort {
@@ -89,9 +141,18 @@
       align-items: flex-end;
       margin-bottom: rem(30);
 
+      @include desktop {
+        margin-bottom: 0;
+      }
+
       &-button {
         width: rem(40);
         height: rem(40);
+
+        @include desktop {
+          width: rem(50);
+          height: rem(50);
+        }
 
         .icon {
           margin: 0;
@@ -107,6 +168,24 @@
         margin: 0;
         margin-right: rem(10);
         width: 100%;
+
+        @include desktop {
+          display: flex;
+          align-items: center;
+        }
+
+        &__label {
+          @include desktop {
+            margin-bottom: 0;
+            margin-right: rem(25);
+          }
+        }
+
+        .select-container {
+          @include desktop {
+            min-width: rem(220);
+          }
+        }
       }
     }
 
@@ -126,6 +205,11 @@
     overflow-x: scroll;
     margin-top: rem(30);
     margin-bottom: rem(40);
+
+    @include desktop {
+      margin-top: rem(40);
+      margin-bottom: rem(65);
+    }
 
     &::-webkit-scrollbar {
       height: rem(2);
@@ -149,6 +233,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
 
+      @include desktop {
+        font-size: rem(18);
+      }
+
       // table spacing
       &::after {
         content: '';
@@ -156,6 +244,10 @@
         height: rem(20);
         user-select: none;
         pointer-events: none;
+
+        @include desktop {
+          height: rem(25);
+        }
       }
     }
 
@@ -172,7 +264,21 @@
 
   &__body {
     tr {
+      $table-row: &;
+
       margin-top: rem(20);
+
+      @include state(hover) {
+        cursor: pointer;
+
+        td {
+          color: var(--primary);
+        }
+      }
+    }
+
+    td {
+      transition: color 0.25s ease;
     }
   }
 
@@ -193,7 +299,7 @@
         color: var(--dark);
       }
 
-      .select-container {
+      .select-container { // stylelint-disable
         .select {
           @include padding-y(0);
           @include padding-x(10);
@@ -211,10 +317,50 @@
     }
 
     &-pagination {
+      @include desktop {
+        display: flex;
+      }
+
+      &__numbers {
+        display: none;
+
+        @include desktop {
+          @include margin-x(10);
+          @include flex-center;
+        }
+      }
+
+      &__number {
+        @include flex-center;
+        @include circle(30);
+        @include font('Bold');
+
+        padding: 0;
+        font-size: rem(16);
+        color: var(--primary-accent-2);
+        transition: 0.25s ease;
+        transition-property: color, background-color;
+
+        @include state(hover) {
+          color: var(--white);
+          background-color: var(--primary-accent-2);
+          cursor: pointer;
+        }
+
+        &--active {
+          color: var(--white);
+          background-color: var(--primary-accent-2);
+        }
+      }
+
       &__left {
         margin-right: rem(10);
         transform: rotate(90deg);
         color: var(--primary);
+
+        @include desktop {
+          margin-right: 0;
+        }
       }
 
       &__right {
@@ -225,10 +371,14 @@
   }
 
   &__add {
-    grid-column: 6 / -2;
+    margin-left: auto;
     margin-top: rem(30);
     min-width: rem(130);
-    justify-self: end;
+    display: inline-block;
     text-decoration: none;
+
+    @include desktop {
+      margin-top: rem(40);
+    }
   }
 }

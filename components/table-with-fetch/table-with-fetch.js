@@ -32,7 +32,7 @@ const TableWithFetch = ({
       const url = `/${serverRoute}?${param}`;
       const result = await fetcher(url);
 
-      setTableData(result.data);
+      setTableData(result.data.items);
     } catch (error) {
       console.error(error.message);
     }

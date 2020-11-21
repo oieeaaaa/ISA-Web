@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
 import { defaultLimits, defaultConfigs } from 'js/shapes/table';
+import cssClassModifier from 'js/utils/cssClassModifier';
 import safety, { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 import Input from 'components/input/input';
@@ -11,30 +12,9 @@ import InputGroup from 'components/input-group/input-group';
 import Select from 'components/select/select';
 import Button from 'components/button/button';
 
-const TableWrapper = ({
-  title,
-  icon,
-  renderFilter,
-  filters,
-  headers = [],
-  data = [],
-  sortOptions = [],
-  onChange
-}) => (
-  <Formik
-    initialValues={{
-      ...defaultConfigs,
-      ...safeType.object(filters)
-    }}>
-    <Table
-      title={title}
-      icon={icon}
-      renderFilter={renderFilter}
-      headers={headers}
-      data={data}
-      sortOptions={sortOptions}
-      onChange={onChange}
-    />
+const TableWrapper = ({ filters, ...tableProps }) => (
+  <Formik initialValues={{ ...defaultConfigs, ...safeType.object(filters) }}>
+    <Table {...tableProps} />
   </Formik>
 );
 
@@ -46,6 +26,7 @@ const Table = ({
   headers = [],
   data = [],
   sortOptions = [],
+  totalItems,
   onChange
 }) => {
   // ref
@@ -56,7 +37,7 @@ const Table = ({
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
   // custom hooks
-  const { values } = useFormikContext();
+  const { values, ...formikProps } = useFormikContext();
   const router = useRouter();
 
   // custom fields
@@ -103,18 +84,14 @@ const Table = ({
 
   /**
    * movePage.
-   * isAdd true is moving 👉 way
-   * isAdd false is moving 👈 way
    *
    * Updates the values.page
    */
-  const movePage = (isAdd) => (e) => {
+  const movePage = (pageNumber) => (e) => {
     e.preventDefault();
 
     // update page but with the min value set to 1
-    pageHelpers.setValue(
-      isAdd ? pageField.value + 1 : pageField.value - 1 || 1
-    );
+    pageHelpers.setValue(pageNumber || 1);
   };
 
   /**
@@ -142,7 +119,7 @@ const Table = ({
 
   // trigger onChange prop if values changed
   useEffect(() => {
-    if (!onChange) return;
+    if (!onChange || !formikProps.dirty) return;
 
     onChangeListener();
   }, [values]);
@@ -152,10 +129,10 @@ const Table = ({
       className={`table ${
         isAdvancedSearchOpen ? 'table--advanced-search' : ''
       }`}>
-      <div className="grid">
-        <div className="table-header">
+      <div className="table-header">
+        <div className="table-heading">
           <Icon icon={icon} />
-          <h2 className="table-header__title">{title}</h2>
+          <h2 className="table-heading__title">{title}</h2>
         </div>
         <div className="table-filter">
           <Input name="search" placeholder="Search item..." />
@@ -167,13 +144,15 @@ const Table = ({
             <Icon icon="chevron-down" />
           </button>
         </div>
+      </div>
+      <div
+        className="table-advanced-search"
+        ref={advancedSearch}
+        aria-hidden={isAdvancedSearchOpen}>
         <div
-          className="table-advanced-search"
-          ref={advancedSearch}
-          aria-hidden={isAdvancedSearchOpen}>
-          <div
-            className="table-advanced-search__content"
-            ref={advancedSearchContent}>
+          className="table-advanced-search__content"
+          ref={advancedSearchContent}>
+          <div className="table-advanced-search__heading">
             <p className="table-advanced-search__text">Advanced Search</p>
             <div className="table-advanced-search__sort">
               <InputGroup
@@ -194,66 +173,84 @@ const Table = ({
                 onClick={flipDirection}
               />
             </div>
-            {renderFilter && renderFilter()}
           </div>
+          {renderFilter && renderFilter()}
         </div>
-        <table className="table-container">
-          <thead className="table__head">
-            <tr>
-              {headers.map((header) => (
-                <th key={header.accessKey}>{header.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="table__body">
-            {data.map((item) => (
-              <tr onClick={visitItem(item.id)} key={item.id}>
-                {headers.map(({ accessKey, customCell: Cell }) => {
-                  const value = safety(item, accessKey, null);
-
-                  return (
-                    <td key={accessKey}>
-                      {Cell ? <Cell key={accessKey} value={value} /> : value}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="table-footer">
-          <div className="table-footer-limit">
-            <span className="table-footer-limit__text">Limit to</span>
-            <Select
-              id="limit"
-              name="limit"
-              options={defaultLimits}
-              mainKey="value"
-            />
-          </div>
-          <div className="table-footer-pagination">
-            <button
-              className="table-footer-pagination__left"
-              type="button"
-              onClick={movePage(false)}>
-              <Icon icon="chevron-down" />
-            </button>
-            <button
-              className="table-footer-pagination__right"
-              type="button"
-              onClick={movePage(true)}>
-              <Icon icon="chevron-down" />
-            </button>
-          </div>
-        </div>
-        <Link href="/inventory/add">
-          <a className="table__add">
-            <Button variant="primary-v1" icon="plus">
-              Add Item
-            </Button>
-          </a>
-        </Link>
       </div>
+      <table className="table-container">
+        <thead className="table__head">
+          <tr>
+            {headers.map((header) => (
+              <th key={header.accessKey}>{header.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="table__body">
+          {data.map((item) => (
+            <tr onClick={visitItem(item.id)} key={item.id}>
+              {headers.map(({ accessKey, customCell: Cell }) => {
+                const value = safety(item, accessKey, null);
+
+                return (
+                  <td key={accessKey}>
+                    {Cell ? <Cell key={accessKey} value={value} /> : value}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="table-footer">
+        <div className="table-footer-limit">
+          <span className="table-footer-limit__text">Limit to</span>
+          <Select
+            id="limit"
+            name="limit"
+            options={defaultLimits}
+            mainKey="value"
+          />
+        </div>
+        <div className="table-footer-pagination">
+          <button
+            className="table-footer-pagination__left"
+            type="button"
+            onClick={movePage(values.page - 1)}>
+            <Icon icon="chevron-down" />
+          </button>
+          <ul className="table-footer-pagination__numbers">
+            {Array.from({ length: values.limit.value / totalItems }).map(
+              (_, index) => (
+                <li key={index}>
+                  <Button
+                    className={cssClassModifier(
+                      'table-footer-pagination__number',
+                      ['active'],
+                      [values.page === index + 1]
+                    )}
+                    onClick={movePage(index + 1)}>
+                    {' '}
+                    {index + 1}
+                  </Button>
+                </li>
+              )
+            )}
+          </ul>
+          <button
+            className="table-footer-pagination__right"
+            type="button"
+            onClick={movePage(values.page + 1)}>
+            <Icon icon="chevron-down" />
+          </button>
+        </div>
+      </div>
+      <Link href="/inventory/add">
+        <a className="table__add">
+          <Button variant="primary-v1" icon="plus">
+            Add Item
+          </Button>
+        </a>
+      </Link>
     </div>
   );
 };
