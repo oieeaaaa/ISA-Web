@@ -27,9 +27,10 @@ const CustomerDatePicker = ({ name, ...etc }) => {
     <DatePicker
       className="date-picker"
       customInput={<DatePickerInput />}
-      value={field.value}
-      selected={field.value}
+      value={new Date(field.value)}
+      selected={new Date(field.value)}
       onChange={handleChange}
+      dateFormat="MMMM d, yyyy"
       {...etc}
     />
   );
