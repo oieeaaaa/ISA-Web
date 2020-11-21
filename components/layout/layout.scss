@@ -1,4 +1,21 @@
 .layout {
-  font-size: rem(24);
-  line-height: rem(34);
+  @include desktop {
+    @include grid;
+
+    .header {
+      grid-column: 1 / -1;
+    }
+
+    .sidebar {
+      grid-column: 1 / 5;
+    }
+
+    .main-content {
+      grid-column: 6 / -1;
+    }
+
+    .footer {
+      grid-column: 1 / -1;
+    }
+  }
 }
