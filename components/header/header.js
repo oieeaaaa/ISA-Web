@@ -2,11 +2,15 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import throttle from 'lodash.throttle';
 import debounce from 'lodash.debounce';
+import useLayoutContext from 'js/contexts/layout';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import Icon from 'components/icon/icon';
 
 // TODO: Menu, Accessbility, Desktop
 const Header = () => {
+  // contexts
+  const { handlers } = useLayoutContext();
+
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -52,9 +56,11 @@ const Header = () => {
     <div className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
       <div className="grid">
         <div
-          className={`header-dropdown ${
-            isDropdownOpen ? 'header-dropdown--open' : ''
-          }`}>
+          className={cssClassModifier(
+            'header-dropdown',
+            ['open'],
+            [isDropdownOpen]
+          )}>
           <button
             className="header-dropdown__toggler"
             type="button"
@@ -86,7 +92,10 @@ const Header = () => {
             </li>
           </ul>
         </div>
-        <button className="header-menu" type="button">
+        <button
+          className="header-menu"
+          type="button"
+          onClick={handlers.openSidebar}>
           <Icon icon="menu" />
         </button>
       </div>

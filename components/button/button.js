@@ -1,4 +1,4 @@
-import joinClassName from 'js/utils/joinClassName';
+import cssClassModifier from 'js/utils/cssClassModifier';
 import Icon from 'components/icon/icon';
 
 /**
@@ -16,10 +16,11 @@ const Button = ({
   ...etc
 }) => (
   <button
-    className={joinClassName(
-      `button button--${variant} ${icon ? 'button--with-icon' : ''}`,
-      className
-    )}
+    className={`${cssClassModifier(
+      'button',
+      [variant, 'with-icon'],
+      [variant, icon]
+    )} ${className ? className : ''}`}
     type="button"
     {...etc}>
     {icon && <Icon icon={icon} />}
