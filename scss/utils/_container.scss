@@ -1,0 +1,18 @@
+@mixin container {
+  // See _grid.scss
+  $mobile-guide: get-guide('mobile');
+  $desktop-guide: get-guide('desktop');
+
+  // calculated x distance
+  $mobile-x-space: 38 / (map-get($mobile-guide, 'size') - map-get($mobile-guide, 'gutter')) * 100%;
+  $desktop-x-space: 60 / (map-get($desktop-guide, 'size') - map-get($desktop-guide, 'gutter')) * 100%;
+
+  // left & right padding
+  padding-left: $mobile-x-space;
+  padding-right: $mobile-x-space;
+
+  @include desktop {
+    padding-left: $desktop-x-space;
+    padding-right: $desktop-x-space;
+  }
+}

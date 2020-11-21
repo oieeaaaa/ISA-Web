@@ -1,0 +1,20 @@
+// $states: hover | focus | active | visited
+// $parent: specific parent
+@mixin state($states, $parent: '') {
+  @include desktop {
+    @each $state in $states {
+      @if ($parent != '') {
+        #{$parent}:#{$state} & {
+          @content;
+        }
+      }
+
+      @else {
+        &:#{$state} {
+          @content;
+        }
+      }
+    }
+  }
+}
+
