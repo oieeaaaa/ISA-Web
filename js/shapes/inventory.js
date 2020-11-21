@@ -2,8 +2,19 @@ import {
   connectOrCreateMultiple,
   connectOrCreateSingle
 } from 'js/utils/connectOrCreate';
+import dateFormat from 'js/utils/dateFormat';
 
 export const tableHeaders = [
+  {
+    label: 'Date Received',
+    accessKey: 'dateReceived',
+    customCell: ({ value }) => <p>{dateFormat(value)}</p> // eslint-disable-line
+  },
+  {
+    label: 'Reference Date',
+    accessKey: 'referenceDate',
+    customCell: ({ value }) => <p>{dateFormat(value)}</p> // eslint-disable-line
+  },
   {
     label: 'Reference No.',
     accessKey: 'referenceNumber'
@@ -13,16 +24,12 @@ export const tableHeaders = [
     accessKey: 'particular'
   },
   {
-    label: 'Codes',
-    accessKey: 'codes'
+    label: 'Parts No.',
+    accessKey: 'partsNumber'
   },
   {
-    label: 'Brand',
-    accessKey: 'brand.name'
-  },
-  {
-    label: 'Supplier',
-    accessKey: 'supplier.name'
+    label: 'Description',
+    accessKey: 'description'
   },
   {
     label: 'Applications',
@@ -32,22 +39,128 @@ export const tableHeaders = [
 
       return <p>{applicationNames}</p>;
     }
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size'
+  },
+  {
+    label: 'Supplier',
+    accessKey: 'supplier.name'
+  },
+  {
+    label: 'Codes',
+    accessKey: 'codes'
+  },
+  {
+    label: 'Unit of Measurement',
+    accessKey: 'uom.name'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'unitCost' // support this later
+  },
+  {
+    label: 'Quantity',
+    accessKey: 'quantity'
+  },
+  {
+    label: 'Amount',
+    accessKey: 'amount' // support this later
+  },
+  {
+    label: 'Suggested Retail Price',
+    accessKey: 'srp'
+  },
+  {
+    label: 'Remarks',
+    accessKey: 'remarks'
+  },
+  {
+    label: 'Received by',
+    accessKey: 'receivedBy'
+  },
+  {
+    label: 'Checked by',
+    accessKey: 'checkedBy'
+  },
+  {
+    label: 'Coded by',
+    accessKey: 'codedBy'
   }
 ];
 
 export const tableFilters = {
-  owner: {},
-  brand: {}
+  dateReceived: new Date(),
+  referenceDate: new Date(),
+  brand: {},
+  supplier: {}
 };
 
 export const tableSortOptions = [
   {
-    key: 'referenceNumber',
-    name: 'Reference No.'
+    name: 'Date Received',
+    key: 'dateReceived'
   },
   {
-    key: 'particular',
-    name: 'Particular'
+    name: 'Reference Date',
+    key: 'referenceDate'
+  },
+  {
+    name: 'Reference No.',
+    key: 'referenceNumber'
+  },
+  {
+    name: 'Particular',
+    key: 'particular'
+  },
+  {
+    name: 'Parts No.',
+    key: 'partsNumber'
+  },
+  {
+    name: 'Description',
+    key: 'description'
+  },
+  {
+    name: 'Size',
+    key: 'size'
+  },
+  {
+    name: 'Codes',
+    key: 'codes'
+  },
+  {
+    name: 'Unit of Measurement',
+    key: 'uom.name'
+  },
+  {
+    name: 'Quantity',
+    key: 'quantity'
+  },
+  {
+    name: 'Suggested Retail Price',
+    key: 'srp'
+  },
+  {
+    name: 'Remarks',
+    key: 'remarks'
+  },
+  {
+    name: 'Received by',
+    key: 'receivedBy'
+  },
+  {
+    name: 'Checked by',
+    key: 'checkedBy'
+  },
+  {
+    name: 'Coded by',
+    key: 'codedBy'
   }
 ];
 

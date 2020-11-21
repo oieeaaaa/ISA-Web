@@ -1,3 +1,4 @@
+import omit from 'lodash.omit';
 import fetcher from 'js/utils/fetcher';
 import {
   tableHeaders,
@@ -8,11 +9,14 @@ import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
 import InputGroup from 'components/input-group/input-group';
 import Select from 'components/select/select';
+import DatePicker from 'components/date-picker/date-picker';
 
 const Inventory = ({ data, helpers }) => {
   const parameterizer = (params) => ({
-    brand: params.brand.id,
-    owner: params.owner.id
+    // TODO: Fix date time
+    ...omit(params, ['brand', 'supplier']),
+    'brand.id': params.brand.id,
+    'supplier.id': params.supplier.id
   });
 
   return (
@@ -30,16 +34,27 @@ const Inventory = ({ data, helpers }) => {
         renderFilter={() => (
           <div className="inventory-filters">
             <InputGroup
-              name="owner"
-              label="Owner"
-              component={Select}
-              options={[]}
+              name="dateReceived"
+              label="Date Received"
+              component={DatePicker}
+            />
+            <InputGroup
+              name="referenceDate"
+              label="Reference Date"
+              component={DatePicker}
             />
             <InputGroup
               name="brand"
               label="Brand"
               component={Select}
               options={helpers.brands}
+              mainKey="name"
+            />
+            <InputGroup
+              name="supplier"
+              label="Supplier"
+              component={Select}
+              options={helpers.suppliers}
               mainKey="name"
             />
           </div>
@@ -52,12 +67,14 @@ const Inventory = ({ data, helpers }) => {
 export async function getStaticProps() {
   const { data } = await fetcher('/inventory');
   const brands = await fetcher('/helpers/brand');
+  const suppliers = await fetcher('/helpers/supplier');
 
   return {
     props: {
       data,
       helpers: {
-        brands: brands.data
+        brands: brands.data,
+        suppliers: suppliers.data
       }
     }
   };

@@ -1,7 +1,37 @@
 .inventory {
   &-filters {
-    .input-group:not(.input-group--sortBy) {
+    @include desktop {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-areas: 'dateReceived referenceDate' 'brand supplier';
+      grid-column-gap: rem(60);
+      grid-row-gap: rem(20);
+    }
+
+    @include desktop {
+      .input-group--dateReceived {
+        grid-area: dateReceived;
+      }
+
+      .input-group--referenceDate {
+        grid-area: referenceDate;
+      }
+
+      .input-group--brand {
+        grid-area: brand;
+      }
+
+      .input-group--supplier {
+        grid-area: supplier;
+      }
+    }
+
+    .input-group {
       margin-top: rem(20);
+
+      @include desktop {
+        margin: 0;
+      }
     }
 
     > *:last-child {
