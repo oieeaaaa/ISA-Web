@@ -19,7 +19,7 @@
  */
 const toParam = (param = {}) =>
   Object.entries(param) // split key/value and store it to array
-    .filter(([value]) => !!value) // omit falsy values
+    .filter(([, value]) => !!value) // omit falsy values
     .map(([key, value]) => `${key}=${value}`)
     .join('&'); // actual param
 
