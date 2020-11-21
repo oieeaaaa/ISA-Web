@@ -87,11 +87,10 @@ const Table = ({
    *
    * Updates the values.page
    */
-  const movePage = (pageNumber) => (e) => {
-    e.preventDefault();
+  const movePage = (pageNumber) => {
+    if (pageNumber <= 0) return;
 
-    // update page but with the min value set to 1
-    pageHelpers.setValue(pageNumber || 1);
+    pageHelpers.setValue(pageNumber);
   };
 
   /**
@@ -215,31 +214,29 @@ const Table = ({
           <button
             className="table-footer-pagination__left"
             type="button"
-            onClick={movePage(values.page - 1)}>
+            onClick={() => movePage(pageField.value - 1)}>
             <Icon icon="chevron-down" />
           </button>
           <ul className="table-footer-pagination__numbers">
-            {Array.from({ length: values.limit.value / totalItems }).map(
-              (_, index) => (
-                <li key={index}>
-                  <Button
-                    className={cssClassModifier(
-                      'table-footer-pagination__number',
-                      ['active'],
-                      [values.page === index + 1]
-                    )}
-                    onClick={movePage(index + 1)}>
-                    {' '}
-                    {index + 1}
-                  </Button>
-                </li>
-              )
-            )}
+            {Array.from({ length: 3 }).map((_, index) => (
+              <li key={index}>
+                <Button
+                  className={cssClassModifier(
+                    'table-footer-pagination__number',
+                    ['active'],
+                    [index === 0]
+                  )}
+                  onClick={() => movePage(pageField.value + index)}>
+                  {' '}
+                  {(pageField.value || 1) + index}
+                </Button>
+              </li>
+            ))}
           </ul>
           <button
             className="table-footer-pagination__right"
             type="button"
-            onClick={movePage(values.page + 1)}>
+            onClick={() => movePage(pageField.value + 1)}>
             <Icon icon="chevron-down" />
           </button>
         </div>

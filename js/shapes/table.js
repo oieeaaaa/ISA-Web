@@ -18,7 +18,7 @@ export const defaultConfigs = {
   direction: 'desc', // asc | desc
   search: '',
   limit: defaultLimits[0],
-  page: 1
+  page: 0
 };
 
 export default defaultConfigs;

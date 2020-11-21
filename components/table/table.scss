@@ -353,6 +353,10 @@
         }
       }
 
+      &__numbers > li:not(:first-of-type) {
+        margin-left: rem(10);
+      }
+
       &__left {
         margin-right: rem(10);
         transform: rotate(90deg);
