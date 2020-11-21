@@ -8,11 +8,21 @@
   border-radius: rem(10);
   font-size: rem(16);
 
+  @include desktop {
+    @include padding-y(13);
+
+    font-size: rem(18);
+  }
+
   &--with-icon {
     @include flex-center;
 
     .icon {
       margin-right: rem(10);
+
+      @include desktop {
+        margin-right: rem(20);
+      }
     }
   }
 
