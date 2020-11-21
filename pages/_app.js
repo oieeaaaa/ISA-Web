@@ -2,7 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'scss/main.scss';
 
 const App = ({ Component, pageProps }) => (
-  <div>
+  <div className="app">
     <Component {...pageProps} />
   </div>
 );
