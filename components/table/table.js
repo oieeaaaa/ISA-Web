@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
@@ -37,6 +38,7 @@ const TableWrapper = ({
   </Formik>
 );
 
+// TODO: Enable config persistency using url
 const Table = ({
   title,
   icon,
@@ -55,6 +57,7 @@ const Table = ({
 
   // custom hooks
   const { values } = useFormikContext();
+  const router = useRouter();
 
   // custom fields
   const [pageField, , pageHelpers] = useField('page');
@@ -120,6 +123,15 @@ const Table = ({
    */
   const flipDirection = () => {
     directionHelpers.setValue(directionField.value === 'asc' ? 'desc' : 'asc');
+  };
+
+  const visitItem = (id) => (e) => {
+    e.preventDefault();
+
+    const { pathname, push } = router;
+
+    // visit the item's page
+    push(`${pathname}/${id}`);
   };
 
   useEffect(() => {
@@ -195,7 +207,7 @@ const Table = ({
           </thead>
           <tbody className="table__body">
             {data.map((item) => (
-              <tr key={item.id}>
+              <tr onClick={visitItem(item.id)} key={item.id}>
                 {headers.map(({ accessKey, customCell: Cell }) => {
                   const value = safety(item, accessKey, null);
 

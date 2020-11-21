@@ -127,6 +127,16 @@
     margin-top: rem(30);
     margin-bottom: rem(40);
 
+    &::-webkit-scrollbar {
+      height: rem(2);
+      width: rem(2);
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal {
+      background: var(--primary);
+      border-radius: rem(10);
+    }
+
     th,
     td {
       @include font('Bold');
