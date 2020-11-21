@@ -1,8 +1,18 @@
 .header {
   $header: &;
 
-  margin-top: rem(20);
-  margin-bottom: rem(50);
+  @include padding-y(20);
+
+  margin-bottom: rem(30);
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: $z-header;
+
+  &--scrolled {
+    background-color: var(--primary-accent-1);
+    border-bottom: rem(2) solid var(--primary-accent-2);
+  }
 
   &-dropdown {
     $dropdown: &;

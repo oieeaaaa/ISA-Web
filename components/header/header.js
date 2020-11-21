@@ -1,15 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
-import throttle from 'lodash.throttle';
 import Link from 'next/link';
+import throttle from 'lodash.throttle';
+import debounce from 'lodash.debounce';
+import cssClassModifier from 'js/utils/cssClassModifier';
 import Icon from 'components/icon/icon';
 
 // TODO: Menu, Accessbility, Desktop
 const Header = () => {
+  // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // callbacks
   const hideDropdown = useCallback(
-    throttle(() => {
+    debounce(() => {
       setIsDropdownOpen(false);
-    }, 300)
+    }, 100),
+    []
+  );
+
+  const scrollListener = useCallback(
+    throttle(() => {
+      const triggerOffset = 50;
+
+      if (window.scrollY >= triggerOffset) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    }, 250),
+    []
   );
 
   const toggleDropdown = (e) => {
@@ -20,12 +40,16 @@ const Header = () => {
 
   useEffect(() => {
     window.addEventListener('click', hideDropdown);
+    window.addEventListener('scroll', scrollListener);
 
-    return () => window.removeEventListener('click', hideDropdown);
+    return () => {
+      window.removeEventListener('click', hideDropdown);
+      window.removeEventListener('scroll', scrollListener);
+    };
   }, []);
 
   return (
-    <div className="header">
+    <div className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
       <div className="grid">
         <div
           className={`header-dropdown ${
