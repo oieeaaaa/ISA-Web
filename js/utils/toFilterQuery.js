@@ -1,3 +1,5 @@
+import set from 'lodash.set';
+
 /**
  * toFilterQuery.
  *
@@ -22,10 +24,10 @@
  ```
  */
 const toFilterQuery = (filters = {}) =>
-  Object.entries(filters).map(([key, value]) => ({
-    [key]: {
+  Object.entries(filters).map(([key, value]) =>
+    set({}, key, {
       equals: value
-    }
-  }));
+    })
+  );
 
 export default toFilterQuery;
