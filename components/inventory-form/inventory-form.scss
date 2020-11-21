@@ -1,1 +1,77 @@
-.inventory-form {}
+.inventory-form {
+  &-container {
+    > * {
+      grid-column: 2 / -2;
+    }
+  }
+
+  &-actions {
+    @include padding-y(10);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary-accent-1);
+    border-top: rem(2) solid var(--primary-accent-2);
+    z-index: $z-form-actions;
+
+    .grid > .button:first-child {
+      grid-column: 2 / 5;
+    }
+
+    .grid > .button:last-child {
+      grid-column: -2 / -6;
+    }
+  }
+
+  .input-group--dateReceived {
+    margin-bottom: 0;
+  }
+
+  .input-group--codes .input {
+    text-transform: uppercase;
+  }
+
+  .form-section--details {
+    display: grid;
+    grid-template-columns: ratio(150, 300) 1fr ratio(113, 300);
+
+    .input-group {
+      grid-column: 1 / -1;
+
+      &--size {
+        grid-column: 1 / 2;
+      }
+
+      &--quantity {
+        grid-column: 3 / 4;
+      }
+    }
+  }
+
+  .form-section--pricing {
+    display: grid;
+    grid-template-columns: ratio(112, 300) 1fr ratio(150, 300);
+
+    .input-group {
+      grid-column: 1 / -1;
+
+      &--uom {
+        grid-column: 1 / 2;
+      }
+
+      &--srp {
+        grid-column: 3 / 4;
+      }
+    }
+  }
+
+  &__pricing-info {
+    grid-column: 1 / -1;
+    margin-bottom: rem(20);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: ratio(20, 300);
+  }
+}

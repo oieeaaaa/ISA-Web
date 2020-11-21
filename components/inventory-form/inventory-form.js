@@ -1,5 +1,6 @@
 import { Form, useFormikContext } from 'formik';
 import safety from 'js/utils/safety';
+import goTo from 'js/utils/goTo';
 import FormTitle from 'components/form-title/form-title';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -12,28 +13,31 @@ import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
 import MiniCard from 'components/mini-card/mini-card';
 
-const InventoryForm = ({ helpers }) => {
+const InventoryForm = ({ mode = 'add', helpers }) => {
   const { errors } = useFormikContext();
 
   const { uoms, brands, suppliers, applications } = helpers;
 
   return (
     <Form>
-      <div className="inventory-add">
-        <div className="inventory-add-top">
-          <div className="inventory-add-container grid">
-            <FormTitle icon="archive" title="Add Item" />
+      <div className="inventory-form">
+        <div className="inventory-form-top">
+          <div className="inventory-form-container grid">
+            <FormTitle
+              icon="archive"
+              title={mode === 'edit' ? 'Update Item' : 'Add Item'}
+            />
           </div>
-          <div className="inventory-add-actions">
+          <div className="inventory-form-actions">
             <div className="grid">
-              <Button>Cancel</Button>
+              <Button onClick={() => goTo('/inventory')}>Cancel</Button>
               <Button variant="primary" type="submit">
-                Add Item
+                {mode === 'edit' ? 'Update Item' : 'Add Item'}
               </Button>
             </div>
           </div>
         </div>
-        <div className="inventory-add-container grid">
+        <div className="inventory-form-container grid">
           <InputGroup
             name="dateReceived"
             label="Date Received"
@@ -99,7 +103,7 @@ const InventoryForm = ({ helpers }) => {
           </FormSection>
           <FormSection title="Pricing">
             <InputGroup name="codes" label="Codes" component={Input} />
-            <div className="inventory-add__pricing-info">
+            <div className="inventory-form__pricing-info">
               <MiniCard title="Unit Cost" content="₱1870" />
               <MiniCard title="Amount" content="₱1870" />
             </div>
