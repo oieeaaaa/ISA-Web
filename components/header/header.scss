@@ -1,23 +1,36 @@
 .header {
   $header: &;
 
+  @include container;
   @include padding-y(20);
 
   margin-bottom: rem(30);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
   left: 0;
   z-index: $z-header;
 
+  @include desktop {
+    @include padding-y(30);
+
+    justify-content: center;
+  }
+
   &--scrolled {
     background-color: var(--primary-accent-1);
     border-bottom: rem(2) solid var(--primary-accent-2);
+
+    @include desktop {
+      border-bottom: unset;
+    }
   }
 
   &-dropdown {
     $dropdown: &;
 
-    grid-column: 2 / 8;
     position: relative;
 
     &--open {
@@ -43,6 +56,13 @@
 
       display: flex;
       align-items: center;
+
+      @include desktop {
+        .icon svg {
+          width: rem(30);
+          height: rem(30);
+        }
+      }
     }
 
     &-list {
@@ -89,6 +109,10 @@
     @include circle(40);
 
     background-color: var(--dark);
+
+    @include desktop {
+      @include circle(50);
+    }
   }
 
   &-greeting {
@@ -96,12 +120,20 @@
     @include font('Bold');
 
     font-size: rem(16);
+
+    @include desktop {
+      @include margin-x(15);
+
+      font-size: rem(18);
+    }
   }
 
   &-menu {
     @include button-reset;
 
-    grid-column: -3 / -2;
+    @include desktop {
+      display: none;
+    }
 
     .icon {
       svg {
