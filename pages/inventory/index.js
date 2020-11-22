@@ -1,5 +1,5 @@
-import omit from 'lodash.omit';
 import fetcher from 'js/utils/fetcher';
+import toStringifyDate from 'js/utils/toStringifyDate';
 import {
   tableHeaders,
   tableFilters,
@@ -12,11 +12,11 @@ import Select from 'components/select/select';
 import DatePicker from 'components/date-picker/date-picker';
 
 const Inventory = ({ data, helpers }) => {
-  const parameterizer = (params) => ({
-    // TODO: Fix date time
-    ...omit(params, ['brand', 'supplier']),
-    'brand.id': params.brand.id,
-    'supplier.id': params.supplier.id
+  const parameterizer = ({ brand, dateReceived, referenceDate, supplier }) => ({
+    'brand.id': brand.id,
+    'supplier.id': supplier.id,
+    dateReceived: toStringifyDate(dateReceived),
+    referenceDate: toStringifyDate(referenceDate)
   });
 
   return (
