@@ -32,7 +32,8 @@ export const safeType = {
   object: (val) => val || {},
   array: (val) => val || [],
   function: (val) => val || (() => {}),
-  json: (val) => (isJson(val) ? JSON.parse(val) : val)
+  json: (val) => (isJson(val) ? JSON.parse(val) : val),
+  date: (val) => (val ? new Date(val) : null)
 };
 
 export default safety;

@@ -1,6 +1,7 @@
 import { PureComponent } from 'react';
 import { useField } from 'formik';
 import DatePicker from 'react-datepicker';
+import { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
 class DatePickerInput extends PureComponent {
@@ -27,8 +28,8 @@ const CustomerDatePicker = ({ name, ...etc }) => {
     <DatePicker
       className="date-picker"
       customInput={<DatePickerInput />}
-      value={new Date(field.value)}
-      selected={new Date(field.value)}
+      value={safeType.date(field.value)}
+      selected={safeType.date(field.value)}
       onChange={handleChange}
       dateFormat="MMMM d, yyyy"
       {...etc}
