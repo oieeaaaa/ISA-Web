@@ -218,7 +218,12 @@ const Table = ({
             <Icon icon="chevron-down" />
           </button>
           <ul className="table-footer-pagination__numbers">
-            {Array.from({ length: 3 }).map((_, index) => (
+            {Array.from({
+              length:
+                values.limit.value / totalItems >= 3
+                  ? 3
+                  : values.limit.value / totalItems
+            }).map((_, index) => (
               <li key={index}>
                 <Button
                   className={cssClassModifier(
