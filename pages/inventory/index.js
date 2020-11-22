@@ -9,14 +9,14 @@ import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
 import InputGroup from 'components/input-group/input-group';
 import Select from 'components/select/select';
-import DatePicker from 'components/date-picker/date-picker';
+import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const Inventory = ({ data, helpers }) => {
   const parameterizer = ({ brand, dateReceived, referenceDate, supplier }) => ({
     'brand.id': brand.id,
     'supplier.id': supplier.id,
-    dateReceived: toStringifyDate(dateReceived),
-    referenceDate: toStringifyDate(referenceDate)
+    dateReceived_range: toStringifyDate(dateReceived),
+    referenceDate_range: toStringifyDate(referenceDate)
   });
 
   return (
@@ -36,12 +36,12 @@ const Inventory = ({ data, helpers }) => {
             <InputGroup
               name="dateReceived"
               label="Date Received"
-              component={DatePicker}
+              component={DateRangePicker}
             />
             <InputGroup
               name="referenceDate"
               label="Reference Date"
-              component={DatePicker}
+              component={DateRangePicker}
             />
             <InputGroup
               name="brand"
