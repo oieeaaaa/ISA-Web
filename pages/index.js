@@ -1,10 +1,7 @@
 import Head from 'next/head';
-import { PrismaClient } from '@prisma/client';
 import GridGuide from 'styleguide/grid-guide';
 
-const Home = (props) => {
-  console.log(props);
-
+const Home = () => {
   return (
     <div className="container">
       <Head>
@@ -16,16 +13,5 @@ const Home = (props) => {
     </div>
   );
 };
-
-export async function getStaticProps() {
-  const prisma = new PrismaClient();
-  const inventory = await prisma.inventory.findMany();
-
-  return {
-    props: {
-      inventory
-    } // will be passed to the page component as props
-  };
-}
 
 export default Home;
