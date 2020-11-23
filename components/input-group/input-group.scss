@@ -1,6 +1,10 @@
 .input-group {
   margin-bottom: rem(20);
 
+  @include desktop {
+    margin-bottom: rem(30);
+  }
+
   &__label {
     @include font('Bold');
 
@@ -10,6 +14,7 @@
     color: var(--primary-accent-3);
 
     @include desktop {
+      margin-bottom: rem(20);
       font-size: rem(18);
     }
   }

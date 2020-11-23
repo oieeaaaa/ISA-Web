@@ -12,6 +12,9 @@
     @include padding-y(13);
 
     font-size: rem(18);
+    cursor: pointer;
+    transition: 0.25s ease;
+    transition-property: background-color, color;
   }
 
   &--with-icon {

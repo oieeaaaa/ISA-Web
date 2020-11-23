@@ -13,7 +13,7 @@
     border-radius: rem(10);
     border: $bp2--mobile;
     background-color: var(--white);
-    z-index: $z-dropdown;
+    z-index: $z-dropdown--mobile;
   }
 
   &__button {
@@ -31,6 +31,10 @@
     text-align: left;
     font-size: rem(16);
     border-radius: rem(10);
+
+    @include desktop {
+      font-size: rem(18);
+    }
 
     &--active {
       color: var(--white);

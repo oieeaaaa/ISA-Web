@@ -3,4 +3,8 @@
 
   min-height: rem(120);
   resize: vertical;
+
+  @include desktop {
+    min-height: rem(130);
+  }
 }

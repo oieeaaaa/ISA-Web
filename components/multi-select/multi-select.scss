@@ -19,10 +19,13 @@
 
   &-group {
     @include input;
-    @include padding-y(0);
-    @include padding-x(0);
 
+    padding: 0;
     position: relative;
+
+    @include desktop {
+      padding: 0;
+    }
   }
 
   &__toggler {
@@ -57,6 +60,14 @@
     border: $bp--mobile;
     border-radius: rem(10);
     background-color: var(--primary-accent-2);
+
+    @include desktop {
+      @include margin-y(5);
+
+      font-size: rem(18);
+      min-height: rem(34);
+      cursor: pointer;
+    }
   }
 
   &__input {
@@ -80,7 +91,7 @@
     border-radius: rem(10);
     border: $bp2--mobile;
     background-color: var(--white);
-    z-index: $z-dropdown;
+    z-index: $z-dropdown--mobile;
 
     &__button {
       @include button-reset;
@@ -97,6 +108,10 @@
       text-align: left;
       font-size: rem(16);
       border-radius: rem(10);
+
+      @include desktop {
+        font-size: rem(18);
+      }
 
       &--active {
         color: var(--white);
