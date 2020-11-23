@@ -59,6 +59,8 @@
       align-items: center;
 
       @include desktop {
+        cursor: pointer;
+
         .icon svg {
           width: rem(30);
           height: rem(30);
@@ -77,6 +79,12 @@
       border: $bp2--mobile;
       background-color: var(--white);
       z-index: $z-dropdown--mobile;
+
+      @include desktop {
+        top: rem(60);
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
 
     //&__item {}
@@ -93,6 +101,16 @@
       color: var(--dark);
       text-decoration: none;
       border-radius: rem(10);
+
+      @include desktop {
+        font-size: rem(18);
+      }
+
+      @include state(hover) {
+        color: var(--white);
+        background-color: var(--primary-accent-2);
+        border-color: var(--primary);
+      }
 
       &--logout {
         color: var(--primary-accent-2);
