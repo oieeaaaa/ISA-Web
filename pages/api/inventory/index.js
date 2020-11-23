@@ -12,7 +12,7 @@ export default api({
         page = 1,
         limit = 5,
         search,
-        sortBy = 'createdAt',
+        sortBy = 'particular',
         direction = 'desc',
         ...filters
       } = req.query;
