@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import { Formik } from 'formik';
 import omit from 'lodash.omit';
+import messages from 'js/messages';
+import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import { submitPayload, initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
@@ -11,10 +13,11 @@ import InventoryForm from 'components/inventory-form/inventory-form';
 
 const InventoryItem = ({ item, helpers }) => {
   const router = useRouter();
+  const { notification } = useAppContext();
 
   const handleSubmit = async (values) => {
     try {
-      const updatedItem = await fetcher(`/inventory/${router.query.id}`, {
+      await fetcher(`/inventory/${router.query.id}`, {
         method: 'PUT',
         body: JSON.stringify(
           omit(submitPayload(values), [
@@ -26,10 +29,16 @@ const InventoryItem = ({ item, helpers }) => {
         )
       });
 
-      console.log(updatedItem);
+      router.push('/inventory');
+      notification.open({
+        variant: 'success',
+        message: messages.success.update
+      });
     } catch (error) {
-      // TODO: Display notification so that the user can see
-      console.error(error.message);
+      notification.open({
+        variant: 'danger',
+        message: messages.error.update
+      });
     }
   };
 
@@ -48,11 +57,10 @@ const InventoryItem = ({ item, helpers }) => {
   );
 };
 
-// TODO: Make it relative to the current item's values
 export async function getServerSideProps({ params }) {
   const item = await fetcher(`/inventory/${params.id}`);
 
-  // helpers
+  // TODO: Make helpers relative to the current item's values
   const uoms = await fetcher('/helpers/uom');
   const brands = await fetcher('/helpers/brand');
   const suppliers = await fetcher('/helpers/supplier');

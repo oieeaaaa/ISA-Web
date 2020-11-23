@@ -1,5 +1,7 @@
 import Router from 'next/router';
 import { Formik } from 'formik';
+import messages from 'js/messages';
+import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import { submitPayload, initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
@@ -9,6 +11,8 @@ import Layout from 'components/layout/layout';
 import InventoryForm from 'components/inventory-form/inventory-form';
 
 const InventoryAdd = ({ helpers }) => {
+  const { notification } = useAppContext();
+
   const handleSubmit = async (values, actions) => {
     try {
       await fetcher('/inventory', {
@@ -18,9 +22,15 @@ const InventoryAdd = ({ helpers }) => {
 
       actions.resetForm();
       Router.push('/inventory');
+      notification.open({
+        variant: 'success',
+        message: messages.success.add
+      });
     } catch (error) {
-      // TODO: Display notification so that the user can see
-      console.error(error);
+      notification.open({
+        variant: 'danger',
+        message: messages.error.add
+      });
     }
   };
 
