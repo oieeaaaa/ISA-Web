@@ -2,7 +2,7 @@
  * breakpoint.
  */
 const breakpoint = () => {
-  if (window.innerWidth >= 375) {
+  if (window.innerWidth <= 375) {
     return 'mobile';
   }
 
@@ -10,7 +10,7 @@ const breakpoint = () => {
 
   // ADD YOUR BREAKPOINTS HERE
 
-  if (window.innerWidth >= 1280) {
+  if (window.innerWidth <= 1280) {
     return 'desktop';
   }
 
