@@ -1,6 +1,10 @@
 .form-section {
   margin-top: rem(30);
 
+  @include desktop {
+    margin-top: rem(40);
+  }
+
   & > *:last-child {
     margin-bottom: 0;
   }
