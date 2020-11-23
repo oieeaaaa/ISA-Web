@@ -11,12 +11,13 @@
   position: sticky;
   top: 0;
   left: 0;
-  z-index: $z-header;
+  z-index: $z-header--mobile;
 
   @include desktop {
-    @include padding-y(30);
+    @include padding-y(20);
 
     justify-content: center;
+    z-index: $z-header--desktop;
   }
 
   &--scrolled {
@@ -75,7 +76,7 @@
       border-radius: rem(10);
       border: $bp2--mobile;
       background-color: var(--white);
-      z-index: $z-dropdown;
+      z-index: $z-dropdown--mobile;
     }
 
     //&__item {}
