@@ -118,7 +118,7 @@ const Table = ({
 
   // trigger onChange prop if values changed
   useEffect(() => {
-    if (!onChange || !formikProps.dirty) return;
+    if (!onChange) return;
 
     onChangeListener();
   }, [values]);

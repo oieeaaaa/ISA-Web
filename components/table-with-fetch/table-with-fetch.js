@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import omitBy from 'lodash.omitby';
 import fetcher from 'js/utils/fetcher';
 import toParam from 'js/utils/toParam';
 import Table from 'components/table/table';
@@ -21,12 +22,17 @@ const TableWithFetch = ({
   }) => {
     try {
       const param = toParam({
-        direction,
         search,
-        page,
-        limit: limit.value,
-        sortBy: sortBy.key,
-        ...parameterizer(configs)
+        ...omitBy(
+          {
+            direction,
+            page,
+            limit: limit.value,
+            sortBy: sortBy.key,
+            ...parameterizer(configs)
+          },
+          (val) => !val
+        ) // omit falsy values
       });
 
       const url = `/${serverRoute}?${param}`;
