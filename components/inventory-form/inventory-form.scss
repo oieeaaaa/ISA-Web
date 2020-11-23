@@ -1,68 +1,249 @@
 .inventory-form {
+  $this: &;
+
   &-container {
-    > * {
-      grid-column: 2 / -2;
+    @include container;
+
+    @include desktop {
+      padding: 0;
+    }
+  }
+
+  &-top {
+    @include desktop {
+      margin-bottom: rem(30);
+      padding-bottom: rem(10);
+      position: sticky;
+      top: rem(90);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #{$this}--scrolled & {
+      @include desktop {
+        background-color: var(--primary-accent-1);
+        z-index: $z-form-actions--desktop;
+      }
+    }
+
+    .form-title {
+      margin-bottom: rem(30);
+
+      @include desktop {
+        margin-bottom: 0;
+      }
     }
   }
 
   &-actions {
+    @include container;
     @include padding-y(10);
 
+    display: flex;
+    justify-content: space-between;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     background-color: var(--primary-accent-1);
     border-top: rem(2) solid var(--primary-accent-2);
-    z-index: $z-form-actions;
+    z-index: $z-form-actions--mobile;
 
-    .grid > .button:first-child {
-      grid-column: 2 / 5;
+    @include desktop {
+      padding: 0;
+      display: inline-block;
+      width: auto;
+      position: static;
+      border-top: unset;
+      background-color: unset;
     }
 
-    .grid > .button:last-child {
-      grid-column: -2 / -6;
+    & > button:last-of-type {
+      @include desktop {
+        margin-left: rem(30);
+      }
     }
   }
 
   .input-group--dateReceived {
     margin-bottom: 0;
+
+    @include desktop {
+      width: rem(240);
+    }
   }
 
   .input-group--codes .input {
     text-transform: uppercase;
   }
 
+  .form-section--references {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-columns: rem(180) rem(240);
+        grid-column-gap: rem(60);
+      }
+    }
+
+    .input-group {
+      @include desktop {
+        margin-bottom: 0;
+      }
+    }
+  }
+
   .form-section--details {
-    display: grid;
-    grid-template-columns: ratio(150, 300) 1fr ratio(113, 300);
+    .form-section__content {
+      display: grid;
+      grid-template-columns: ratio(150, 300) 1fr ratio(113, 300);
+
+      @include desktop {
+        grid-template-columns: unset;
+        grid-template-areas: 'particular partsNumber size quantity' 'applications brand brand supplier' 'description description . .';
+        grid-column-gap: rem(60);
+      }
+    }
 
     .input-group {
       grid-column: 1 / -1;
 
+      &--particular {
+        @include desktop {
+          width: rem(300);
+          grid-area: particular;
+        }
+      }
+
+      &--partsNumber {
+        @include desktop {
+          width: rem(180);
+          grid-area: partsNumber;
+        }
+      }
+
       &--size {
         grid-column: 1 / 2;
+
+        @include desktop {
+          width: rem(120);
+          grid-area: size;
+        }
       }
 
       &--quantity {
         grid-column: 3 / 4;
+
+        @include desktop {
+          width: rem(120);
+          grid-area: quantity;
+        }
+      }
+
+      &--applications {
+        @include desktop {
+          grid-area: applications;
+        }
+      }
+
+      &--brand {
+        @include desktop {
+          grid-area: brand;
+        }
+      }
+
+      &--supplier {
+        @include desktop {
+          grid-area: supplier;
+        }
+      }
+
+      &--description {
+        @include desktop {
+          margin-bottom: 0;
+          grid-area: description;
+        }
       }
     }
   }
 
   .form-section--pricing {
-    display: grid;
-    grid-template-columns: ratio(112, 300) 1fr ratio(150, 300);
+    .form-section__content {
+      display: grid;
+      grid-template-columns: ratio(112, 300) 1fr ratio(150, 300);
+
+      @include desktop {
+        grid-template-columns: rem(180) 1fr rem(180);
+        grid-column-gap: rem(60);
+      }
+    }
 
     .input-group {
       grid-column: 1 / -1;
 
+      @include desktop {
+        grid-column: unset;
+      }
+
       &--uom {
         grid-column: 1 / 2;
+
+        @include desktop {
+          grid-column: unset;
+        }
       }
 
       &--srp {
         grid-column: 3 / 4;
+
+        @include desktop {
+          grid-column: unset;
+        }
+      }
+    }
+  }
+
+  .form-section--other-info {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-areas: 'remarks receivedBy' 'remarks checkedBy' 'remarks codedBy';
+        grid-column-gap: rem(60);
+      }
+    }
+
+    .input-group {
+      &--remarks {
+        @include desktop {
+          grid-area: remarks;
+          margin-bottom: 0;
+        }
+
+        .text-area {
+          @include desktop {
+            height: calc(100% - 38px);
+          }
+        }
+      }
+
+      &--receivedBy {
+        @include desktop {
+          grid-area: receivedBy;
+        }
+      }
+
+      &--checkedBy {
+        @include desktop {
+          grid-area: checkedBy;
+        }
+      }
+
+      &--codedBy {
+        @include desktop {
+          grid-area: codedBy;
+          margin-bottom: 0;
+        }
       }
     }
   }
@@ -73,5 +254,9 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-column-gap: ratio(20, 300);
+
+    @include desktop {
+      grid-column: unset;
+    }
   }
 }

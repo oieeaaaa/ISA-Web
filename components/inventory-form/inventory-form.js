@@ -1,4 +1,8 @@
+import { useState, useCallback, useEffect } from 'react';
+import throttle from 'lodash.throttle';
 import { Form, useFormikContext } from 'formik';
+import cssClassModifer from 'js/utils/cssClassModifier';
+import breakpoint from 'js/utils/breakpoint';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
 import FormTitle from 'components/form-title/form-title';
@@ -14,30 +18,53 @@ import TextArea from 'components/text-area/text-area';
 import MiniCard from 'components/mini-card/mini-card';
 
 const InventoryForm = ({ mode = 'add', helpers }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const scrollListener = useCallback(
+    throttle(() => {
+      if (breakpoint() !== 'desktop') return;
+
+      if (window.scrollY >= 90) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    }, 100)
+  );
+
   const { errors } = useFormikContext();
 
   const { uoms, brands, suppliers, applications } = helpers;
 
+  useEffect(() => {
+    window.addEventListener('scroll', scrollListener);
+
+    return () => window.removeEventListener('scroll', scrollListener);
+  }, []);
+
   return (
     <Form>
-      <div className="inventory-form">
+      <div
+        className={cssClassModifer(
+          'inventory-form',
+          ['scrolled'],
+          [isScrolled]
+        )}>
         <div className="inventory-form-top">
-          <div className="inventory-form-container grid">
+          <div className="inventory-form-container">
             <FormTitle
               icon="archive"
               title={mode === 'edit' ? 'Update Item' : 'Add Item'}
             />
           </div>
           <div className="inventory-form-actions">
-            <div className="grid">
-              <Button onClick={() => goTo('/inventory')}>Cancel</Button>
-              <Button variant="primary" type="submit">
-                {mode === 'edit' ? 'Update Item' : 'Add Item'}
-              </Button>
-            </div>
+            <Button onClick={() => goTo('/inventory')}>Cancel</Button>
+            <Button variant="primary" type="submit">
+              {mode === 'edit' ? 'Update Item' : 'Add Item'}
+            </Button>
           </div>
         </div>
-        <div className="inventory-form-container grid">
+        <div className="inventory-form-container">
           <InputGroup
             name="dateReceived"
             label="Date Received"
