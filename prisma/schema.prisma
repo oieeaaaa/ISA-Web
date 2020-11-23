@@ -14,8 +14,6 @@ generator client {
 // ===========================================================================
 model Inventory {
   id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
   referenceDate DateTime @default(now())
   dateReceived  DateTime @default(now())
   quantity Int @default(0)
@@ -52,8 +50,27 @@ model Inventory {
 // ===========================================================================
 model Supplier {
   id String @id @default(uuid())
-  name String
+  vendor String
+  entry DateTime @default(now())
+  initials String
+  terms Int
+  owner String?
+  tin String?
+  representative String?
+  address String?
+
+  // brands
+  brands Brand[]
+
+  // inventory
   inventory Inventory[]
+
+  // phoneNumbers
+  companyPhoneNumbers CompanyPhoneNumber[]
+  representativePhoneNumbers RepresentativePhoneNumber[]
+
+  // emails
+  emails Email[]
 }
 
 // ===========================================================================
@@ -69,6 +86,7 @@ model Brand {
   id String @id @default(uuid())
   name String @unique
   inventory Inventory[]
+  supplier Supplier?
 }
 
 model uom {
@@ -81,4 +99,22 @@ model Code {
   id String @id @default(uuid())
   name String @unique
   value Float @default(0)
+}
+
+model CompanyPhoneNumber {
+  id String @id @default(uuid())
+  phoneNumber String @unique
+  suppliers Supplier[]
+}
+
+model RepresentativePhoneNumber {
+  id String @id @default(uuid())
+  phoneNumber String @unique
+  suppliers Supplier[]
+}
+
+model Email {
+  id String @id @default(uuid())
+  email String @unique
+  suppliers Supplier[]
 }
