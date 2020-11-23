@@ -22,7 +22,7 @@ export default Yup.object().shape({
   supplier: Yup.object().shape({
     id: Yup.string().required(message.required)
   }),
-  description: Yup.string().min(50, message.min),
+  description: Yup.string().min(10, message.min),
 
   // pricing
   codes: Yup.string().required(message.required),
@@ -32,8 +32,8 @@ export default Yup.object().shape({
   srp: Yup.number(),
 
   // other info
-  remarks: Yup.string().min(50, message.min),
-  receivedBy: Yup.string().min(10, message.min).max(150, message.max),
-  checkedBy: Yup.string().min(10, message.min).max(150, message.max),
-  codedBy: Yup.string().min(10, message.min).max(150, message.max)
+  remarks: Yup.string().min(10, message.min),
+  receivedBy: Yup.string(),
+  checkedBy: Yup.string(),
+  codedBy: Yup.string()
 });
