@@ -123,7 +123,7 @@
         font-size: rem(18);
       }
 
-      &--active {
+      @include state((hover, focus)) {
         color: var(--white);
         background-color: var(--primary-accent-2);
         border-color: var(--primary);

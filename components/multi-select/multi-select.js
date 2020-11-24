@@ -73,9 +73,10 @@ const MultiSelect = ({
     updateQuery(e.target.value);
   };
 
+  // TODO: Fix auto-submit form on enter
   const handleKeyPress = (e) => {
     // add item on enter
-    if (e.type === 'keypress' && e.key !== 'Enter') return;
+    if (e.type === 'keypress' && !e.ctrlKey && e.key !== 'Enter') return;
 
     createNewValue();
     setQuery('');
