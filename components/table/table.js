@@ -37,7 +37,7 @@ const Table = ({
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
   // custom hooks
-  const { values, ...formikProps } = useFormikContext();
+  const { values } = useFormikContext();
   const router = useRouter();
 
   // custom fields
@@ -246,7 +246,7 @@ const Table = ({
           </button>
         </div>
       </div>
-      <Link href="/inventory/add">
+      <Link href={`${router.pathname}/add`}>
         <a className="table__add">
           <Button variant="primary-v1" icon="plus">
             Add Item
