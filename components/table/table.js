@@ -12,6 +12,7 @@ import InputGroup from 'components/input-group/input-group';
 import Select from 'components/select/select';
 import Button from 'components/button/button';
 
+// TODO: Table Date Picker is being cut-off
 const TableWrapper = ({ filters, ...tableProps }) => (
   <Formik initialValues={{ ...defaultConfigs, ...safeType.object(filters) }}>
     <Table {...tableProps} />
