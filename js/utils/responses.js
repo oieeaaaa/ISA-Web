@@ -6,6 +6,10 @@ export const response = (res, status) => (
 ) => {
   const isSuccess = status === 200;
 
+  if (!isSuccess) {
+    console.log(data.message); // TODO: Remove this later
+  }
+
   return res.status(status).send({
     data,
     message: isSuccess
