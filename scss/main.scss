@@ -20,8 +20,9 @@
 @import './utils/state';
 
 // pages
-@import './pages/inventory.scss';
-@import './pages/inventory-add.scss';
+@import './pages/inventory';
+@import './pages/inventory-add';
+@import './pages/supplier';
 
 // styleguide
 @import 'styleguide/grid-guide';
@@ -50,6 +51,7 @@
 @import 'components/table-with-fetch/table-with-fetch';
 @import 'components/sidebar/sidebar';
 @import 'components/date-range-picker/date-range-picker';
-
-
 @import 'components/notification/notification';
+@import 'components/supplier-form/supplier-form';
+@import 'components/form-actions/form-actions';
+
