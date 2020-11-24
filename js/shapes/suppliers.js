@@ -47,7 +47,7 @@ export const tableHeaders = [
     accessKey: 'representativePhoneNumbers',
     customCell: ({ value }) => { // eslint-disable-line
       const representativePhoneNumbers = value
-        .map((val) => val.name)
+        .map((val) => val.phoneNumber)
         .join(', ');
 
       return <p>{representativePhoneNumbers}</p>;
@@ -57,7 +57,9 @@ export const tableHeaders = [
     label: 'Company Phone Numbers',
     accessKey: 'companyPhoneNumbers',
     customCell: ({ value }) => { // eslint-disable-line
-      const companyPhoneNumbers = value.map((val) => val.name).join(', ');
+      const companyPhoneNumbers = value
+        .map((val) => val.phoneNumber)
+        .join(', ');
 
       return <p>{companyPhoneNumbers}</p>;
     }
@@ -66,7 +68,7 @@ export const tableHeaders = [
     label: 'Emails',
     accessKey: 'emails',
     customCell: ({ value }) => { // eslint-disable-line
-      const emails = value.map((val) => val.name).join(', ');
+      const emails = value.map((val) => val.email).join(', ');
 
       return <p>{emails}</p>;
     }
@@ -155,11 +157,15 @@ export const submitPayload = ({
 }) => ({
   ...payload,
   brands: connectOrCreateMultiple(brands),
-  companyPhoneNumbers: connectOrCreateMultiple(companyPhoneNumbers),
-  representativePhoneNumbers: connectOrCreateMultiple(
-    representativePhoneNumbers
+  companyPhoneNumbers: connectOrCreateMultiple(
+    companyPhoneNumbers,
+    'phoneNumber'
   ),
-  emails: connectOrCreateMultiple(emails)
+  representativePhoneNumbers: connectOrCreateMultiple(
+    representativePhoneNumbers,
+    'phoneNumber'
+  ),
+  emails: connectOrCreateMultiple(emails, 'email')
 });
 
 export default {
