@@ -8,6 +8,7 @@ import MultiSelectWithFetch from 'components/multi-select-with-fetch/multi-selec
 import Button from 'components/button/button';
 import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
+import MultiInput from 'components/multi-input/multi-input';
 
 const SupplierForm = ({ mode = 'add', helpers }) => {
   const { brands } = helpers;
@@ -55,13 +56,20 @@ const SupplierForm = ({ mode = 'add', helpers }) => {
             <InputGroup
               name="representativePhoneNumbers"
               label="Representative Phone Numbers"
-              component={Input}
+              component={MultiInput}
+              mainKey="phoneNumber"
             />
-            <InputGroup name="emails" label="Emails" component={Input} />
+            <InputGroup
+              name="emails"
+              label="Emails"
+              component={MultiInput}
+              mainKey="email"
+            />
             <InputGroup
               name="companyPhoneNumbers"
               label="Company Phone Numbers"
-              component={Input}
+              component={MultiInput}
+              mainKey="phoneNumber"
             />
           </FormSection>
         </div>
