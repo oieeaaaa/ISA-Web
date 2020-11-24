@@ -1,0 +1,59 @@
+.multi-input {
+  position: relative;
+
+  // &__list {}
+
+  &__item {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__list > &__item:not(:first-of-type) {
+    margin-top: rem(10);
+
+    @include desktop {
+      margin-top: rem(20);
+    }
+  }
+
+  &__input {
+    @include input;
+  }
+
+  &__close {
+    position: absolute;
+    top: 50%;
+    right: rem(5);
+    width: rem(30);
+    height: rem(30);
+    transform: translateY(-50%);
+    background: none;
+    padding: 0;
+
+    .icon {
+      margin: 0;
+      color: var(--danger);
+    }
+  }
+
+  &__add {
+    @include circle(30);
+
+    position: absolute;
+    bottom: rem(-15);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-accent-2);
+    padding: 0;
+
+    .icon {
+      margin: 0;
+    }
+
+    .icon svg {
+      width: rem(14);
+      height: rem(14);
+      color: var(--white);
+    }
+  }
+}
