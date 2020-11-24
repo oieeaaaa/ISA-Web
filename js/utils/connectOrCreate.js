@@ -1,8 +1,15 @@
+import isObjectEmpty from './isObjectEmpty';
+
 export const connectOrCreateMultiple = (list, uniqueKey = 'name') => {
   const newList = {};
 
-  const forConnection = list.filter((item) => !item.isNew);
-  const forCreation = list.filter((item) => item.isNew);
+  const forConnection = list
+    .filter((item) => item[uniqueKey])
+    .filter((item) => !item.isNew);
+
+  const forCreation = list
+    .filter((item) => item[uniqueKey])
+    .filter((item) => item.isNew);
 
   if (forConnection.length) {
     newList.connect = forConnection.map((item) => ({
@@ -13,6 +20,8 @@ export const connectOrCreateMultiple = (list, uniqueKey = 'name') => {
   if (forCreation.length) {
     newList.create = forCreation.map(({ isNew, ...item }) => item); // eslint-disable-line
   }
+
+  if (isObjectEmpty(newList)) return [];
 
   return newList;
 };
