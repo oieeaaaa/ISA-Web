@@ -1,0 +1,39 @@
+.supplier {
+  &-filters {
+    @include desktop {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      grid-column-gap: rem(60);
+    }
+
+    .input-group {
+      @include desktop {
+        margin-bottom: rem(0);
+      }
+    }
+
+    .input-group--entry {
+      @include desktop {
+        grid-column: 1 / 1;
+        grid-row: 1 / -1;
+      }
+    }
+
+    .input-group--brand {
+      @include desktop {
+        grid-column: 2 / 2;
+        grid-row: 1 / 1;
+      }
+    }
+
+    .input-group--terms {
+      @include desktop {
+        grid-column: 2 / 2;
+        grid-row: 2 / 2;
+        width: rem(150);
+      }
+    }
+  }
+}
