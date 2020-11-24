@@ -4,7 +4,7 @@ import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import { submitPayload, initialValues } from 'js/shapes/suppliers';
-import validationSchema from 'js/validations/inventory';
+import validationSchema from 'js/validations/supplier';
 
 // components
 import Layout from 'components/layout/layout';
@@ -15,13 +15,13 @@ const SupplierAdd = ({ helpers }) => {
 
   const handleSubmit = async (values, actions) => {
     try {
-      await fetcher('/inventory', {
+      await fetcher('/supplier', {
         method: 'POST',
         body: JSON.stringify(submitPayload(values))
       });
 
       actions.resetForm();
-      Router.push('/inventory');
+      Router.push('/supplier');
       notification.open({
         variant: 'success',
         message: messages.success.add

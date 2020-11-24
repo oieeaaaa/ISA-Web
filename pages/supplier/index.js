@@ -15,7 +15,7 @@ import DateRangePicker from 'components/date-range-picker/date-range-picker';
 const Supplier = ({ data, helpers }) => {
   const parameterizer = ({ brand, entry, ...etc }) => ({
     ...etc,
-    'brands.id': brand.id, // TODO: Fix this laterl, double-check it
+    'brands.some.id': brand.id,
     entry_range: toStringifyDate(entry)
   });
 
