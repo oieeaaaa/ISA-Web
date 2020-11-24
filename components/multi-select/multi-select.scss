@@ -22,9 +22,11 @@
 
     padding: 0;
     position: relative;
+    min-height: unset;
 
     @include desktop {
       padding: 0;
+      min-height: unset;
     }
   }
 
@@ -37,6 +39,10 @@
     right: rem(10);
     pointer-events: none;
     user-select: none;
+
+    @include desktop {
+      margin-top: $dropdown-icon-y-position--desktop;
+    }
   }
 
   &-values {
@@ -44,6 +50,10 @@
 
     display: flex;
     flex-wrap: wrap;
+
+    @include desktop {
+      min-height: rem(50);
+    }
   }
 
   &__value {
