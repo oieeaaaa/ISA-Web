@@ -11,6 +11,18 @@ const Sidebar = () => {
 
   // custom hooks
   const router = useRouter();
+  const routes = [
+    {
+      name: 'Inventory',
+      location: '/inventory',
+      icon: 'archive'
+    },
+    {
+      name: 'Suppliers',
+      location: '/supplier',
+      icon: 'list'
+    }
+  ];
 
   return (
     <aside className={cssClassModifier('sidebar', ['open'], [isSidebarOpen])}>
@@ -20,27 +32,22 @@ const Sidebar = () => {
         onClick={handlers.closeSidebar}
       />
       <ul className="sidebar-nav">
-        <li
-          className={cssClassModifier(
-            'sidebar-nav__item',
-            ['active'],
-            [router.pathname === '/inventory']
-          )}>
-          <Link href="/inventory">
-            <a className="sidebar-nav__link">
-              <Icon icon="archive" />
-              Inventory
-            </a>
-          </Link>
-        </li>
-        <li className="sidebar-nav__item">
-          <Link href="/suppliers">
-            <a className="sidebar-nav__link">
-              <Icon icon="list" />
-              Suppliers
-            </a>
-          </Link>
-        </li>
+        {routes.map((route) => (
+          <li
+            key={route.location}
+            className={cssClassModifier(
+              'sidebar-nav__item',
+              ['active'],
+              [router.pathname.includes(route.location)]
+            )}>
+            <Link href={route.location}>
+              <a className="sidebar-nav__link">
+                <Icon icon={route.icon} />
+                {route.name}
+              </a>
+            </Link>
+          </li>
+        ))}
       </ul>
     </aside>
   );
