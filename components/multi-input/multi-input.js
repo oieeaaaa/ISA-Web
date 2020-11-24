@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useField } from 'formik';
 import set from 'lodash.set';
 import { safeType } from 'js/utils/safety';
@@ -10,10 +11,7 @@ const MultiInput = ({ name, mainKey, ...etc }) => {
   });
 
   const addField = () => {
-    const newValue = field.value.length
-      ? field.value.concat({})
-      : field.value.concat([{}, {}]);
-
+    const newValue = field.value.concat({ [mainKey]: null, isNew: true });
     helpers.setValue(newValue);
   };
 
@@ -31,10 +29,16 @@ const MultiInput = ({ name, mainKey, ...etc }) => {
     helpers.setValue(field.value);
   };
 
+  useEffect(() => {
+    if (field.value.length) return;
+
+    helpers.setValue([{ [mainKey]: null, isNew: true }]);
+  }, [field.value]);
+
   return (
     <div className="multi-input">
       <ul className="multi-input__list">
-        {(field.value.length ? field.value : [{}]).map((value, index) => (
+        {field.value.map((value, index) => (
           <li key={index} className="multi-input__item">
             <input
               className="multi-input__input"
