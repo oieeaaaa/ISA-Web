@@ -1,0 +1,102 @@
+.supplier-form {
+  &-container {
+    @include container;
+
+    @include desktop {
+      padding: 0;
+    }
+  }
+
+  .form-section--details {
+    .form-section__content {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-column-gap: rem(37); // TODO: Store this in a variable
+      grid-row-gap: rem(20);
+
+      @include desktop {
+        grid-template-columns: unset;
+        grid-template-areas: 'vendor entry entry' 'address initials terms' 'address tin tin';
+        grid-column-gap: rem(60);
+        grid-row-gap: rem(30);
+      }
+
+      & > * {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .input-group {
+      margin-bottom: 0;
+    }
+
+    .input-group--vendor {
+      @include desktop {
+        grid-area: vendor;
+        min-width: rem(420);
+      }
+    }
+
+    .input-group--entry {
+      @include desktop {
+        grid-area: entry;
+      }
+    }
+
+    .input-group--address {
+      @include desktop {
+        grid-area: address;
+      }
+
+      .text-area {
+        @include desktop {
+          height: calc(100% - 38px);
+        }
+      }
+    }
+
+    .input-group--initials {
+      grid-column: 1 / 1;
+      min-width: rem(150);
+
+      @include desktop {
+        grid-area: initials;
+        width: rem(180);
+      }
+    }
+
+    .input-group--terms {
+      grid-column: 2 / 2;
+
+      @include desktop {
+        grid-area: terms;
+      }
+    }
+
+    .input-group--tin {
+      @include desktop {
+        grid-area: tin;
+      }
+    }
+  }
+
+  .form-section--company {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-column-gap: rem(60);
+      }
+    }
+  }
+
+  .form-section--contact {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-column-gap: rem(60);
+      }
+    }
+  }
+}
