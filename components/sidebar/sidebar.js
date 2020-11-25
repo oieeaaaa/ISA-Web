@@ -21,6 +21,11 @@ const Sidebar = () => {
       name: 'Suppliers',
       location: '/supplier',
       icon: 'list'
+    },
+    {
+      name: 'Sales Report',
+      location: '/sales-report',
+      icon: 'activity'
     }
   ];
 
