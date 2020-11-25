@@ -103,6 +103,16 @@
     background-color: var(--white);
     z-index: $z-dropdown--mobile;
 
+    &__text {
+      padding: rem(10);
+      color: var(--dark);
+      font-size: rem(16);
+
+      @include desktop {
+        font-size: rem(18);
+      }
+    }
+
     &__button {
       @include button-reset;
       @include font('Bold');

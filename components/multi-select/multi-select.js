@@ -7,6 +7,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useField } from 'formik';
 import throttle from 'lodash.throttle';
+import cssClassModifier from 'js/utils/cssClassModifier';
 import safety from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
@@ -15,6 +16,7 @@ const MultiSelect = ({
   mainKey = 'name',
   options = [],
   onSearch,
+  noCreate,
   ...etc
 }) => {
   // states
@@ -78,7 +80,11 @@ const MultiSelect = ({
     // add item on enter
     if (e.type === 'keypress' && !e.ctrlKey && e.key !== 'Enter') return;
 
-    createNewValue();
+    // only allow create if noCreate is false
+    if (!noCreate) {
+      createNewValue();
+    }
+
     setQuery('');
   };
 
@@ -122,6 +128,17 @@ const MultiSelect = ({
     input.current.focus();
   };
 
+  const isOptionNew = !options.some((option) => option[mainKey] === query);
+
+  const availableOptions = options.filter(
+    (option) =>
+      !safety(field, 'value', []).some(
+        (value) => value[mainKey] === option[mainKey]
+      )
+  );
+
+  const isEmpty = !availableOptions.length;
+
   useEffect(() => {
     window.addEventListener('click', closeDropdownListener);
 
@@ -160,25 +177,18 @@ const MultiSelect = ({
         <Icon className="multi-select__toggler" icon="chevron-down" />
       </div>
       <ul className="multi-select-list">
-        {options
-          .filter(
-            (option) =>
-              !safety(field, 'value', []).some(
-                (value) => value[mainKey] === option[mainKey]
-              )
-          )
-          .map((option, index) => (
-            <li key={option[mainKey]} className="multi-select-list__item">
-              <button
-                className="multi-select-list__button"
-                type="button"
-                onClick={(e) => selectValue(e, option)}>
-                <span>{index + 1}.</span>
-                <span>{option.name}</span>
-              </button>
-            </li>
-          ))}
-        {!options.some((option) => option[mainKey] === query) && (
+        {availableOptions.map((option, index) => (
+          <li key={option[mainKey]} className="multi-select-list__item">
+            <button
+              className="multi-select-list__button"
+              type="button"
+              onClick={(e) => selectValue(e, option)}>
+              <span>{index + 1}.</span>
+              <span>{option.name}</span>
+            </button>
+          </li>
+        ))}
+        {!noCreate && isOptionNew && (
           <li className="multi-select-list__item">
             <button
               className="multi-select-list__button multi-select-list__button--create"
@@ -193,6 +203,16 @@ const MultiSelect = ({
                 &rdquo;
               </span>
             </button>
+          </li>
+        )}
+        {isEmpty && (
+          <li
+            className={cssClassModifier(
+              'multi-select-list__item',
+              ['empty'],
+              [true]
+            )}>
+            <p className="multi-select-list__text">There is nothing here.</p>
           </li>
         )}
       </ul>
