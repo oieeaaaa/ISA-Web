@@ -21,8 +21,8 @@
 
 // pages
 @import './pages/inventory';
-@import './pages/inventory-add';
 @import './pages/supplier';
+@import './pages/sales-report';
 
 // styleguide
 @import 'styleguide/grid-guide';
@@ -54,6 +54,5 @@
 @import 'components/notification/notification';
 @import 'components/supplier-form/supplier-form';
 @import 'components/form-actions/form-actions';
-
-
 @import 'components/multi-input/multi-input';
+
