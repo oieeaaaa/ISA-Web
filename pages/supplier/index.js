@@ -38,19 +38,21 @@ const Supplier = ({ data, helpers }) => {
               label="Entry"
               component={DateRangePicker}
             />
-            <InputGroup
-              name="brand"
-              label="Brand"
-              component={Select}
-              options={helpers.brands}
-              mainKey="name"
-            />
-            <InputGroup
-              name="terms"
-              label="Terms"
-              component={Input}
-              type="number"
-            />
+            <div className="supplier-filters__group">
+              <InputGroup
+                name="brand"
+                label="Brand"
+                component={Select}
+                options={helpers.brands}
+                mainKey="name"
+              />
+              <InputGroup
+                name="terms"
+                label="Terms"
+                component={Input}
+                type="number"
+              />
+            </div>
           </div>
         )}
       />
