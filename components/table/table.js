@@ -78,8 +78,14 @@ const Table = ({
     // update height base on the content height of advance search
     if (newAdvancedSearchState) {
       advancedSearchEl.style.maxHeight = `${advancedSearchContentEl.offsetHeight}px`;
+
+      // wait for it, then show it!
+      setTimeout(() => {
+        advancedSearchEl.style.overflow = 'unset';
+      }, 300);
     } else {
       advancedSearchEl.style.maxHeight = 0;
+      advancedSearchEl.style.overflow = 'hidden';
     }
   };
 
