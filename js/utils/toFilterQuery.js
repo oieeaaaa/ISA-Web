@@ -7,21 +7,14 @@ import omitBy from 'lodash.omitby'; // eslint-disable-line
  * @param {object} filters
  * Sample usage:
  ```
+  // Common
   toFilterQuery({ name: 'bok', age: 20 });
 
-  // expected output:
-  // [
-  //   {
-          name: {
-            equals: 'bok'
-          },
-  //   },
-  //   {
-          age: {
-            equals: 23
-          },
-  //   },
-  // ]
+  // Multiple
+  toFilterQuery({ 'salesStaff_multiple.id': 'bok', age: 20 });
+
+  // Range
+  toFilterQuery({ name: 'bok', 'dateCreated_range': 20 });
  ```
  */
 const toFilterQuery = (filters = {}) =>
@@ -30,10 +23,40 @@ const toFilterQuery = (filters = {}) =>
       equals: value
     });
 
+    // ADD YOUR CONDITION HERE
+
+    // ADD YOUR CONDITION HERE
+
+    // multiple
+    if (key.includes('_multiple')) {
+      const values = value.split(',');
+
+      // trim '_multiple' -> split keys
+      const keys = key.replace('_multiple', '').split('.');
+
+      // omit last item -> join the keys
+      const newKey = keys.slice(0, keys.length - 1).join('.');
+
+      // get the last key
+      const lastKey = keys.slice(-1)[0];
+
+      return set(
+        {},
+        `${newKey}.some.AND`,
+        values.map((val) => ({
+          // last key should be the identifier for filter
+          [lastKey]: {
+            equals: val
+          }
+        }))
+      );
+    }
+
+    // range
     if (key.includes('_range')) {
       const values = value.split(',');
 
-      newValue = set(
+      return set(
         {},
         key.replace('_range', ''),
         omitBy(
