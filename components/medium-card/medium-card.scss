@@ -1,0 +1,41 @@
+.medium-card {
+  @include padding-y(20);
+  @include padding-x(20);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border: $bp2--mobile;
+  border-radius: rem(15);
+  background-color: var(--white);
+  min-height: rem(150);
+
+  @include desktop {
+    border-radius: rem(30);
+  }
+
+  &__title {
+    @include font('Bold');
+
+    font-size: rem(16);
+    color: var(--dark);
+
+    @include desktop {
+      font-size: rem(18);
+    }
+  }
+
+  &__content {
+    @include font('Bold');
+
+    margin-top: rem(10);
+    font-size: rem(18);
+    color: var(--primary);
+
+    @include desktop {
+      margin-top: rem(20);
+      font-size: rem(22);
+    }
+  }
+}
