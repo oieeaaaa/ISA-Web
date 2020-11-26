@@ -143,39 +143,22 @@ export const tableSortOptions = [
 ];
 
 export const initialValues = {
-  dateReceived: new Date(),
-
-  // reference
-  referenceNumber: '',
-  referenceDate: new Date(),
-
-  // details
-  particular: '',
-  partsNumber: '',
-  size: '',
-  quantity: 0,
-  applications: [],
-  brand: {
-    name: ''
-  },
-  supplier: {
-    id: '',
-    name: ''
-  },
-  description: '',
-
-  // pricing
-  codes: '',
-  uom: {
-    name: ''
-  },
-  srp: 0,
-
-  // other info
-  remarks: '',
-  receivedBy: '',
-  checkedBy: '',
-  codedBy: ''
+  dateCreated: new Date(),
+  name: '',
+  tin: '',
+  siNumber: '',
+  arsNumber: '',
+  drNumber: '',
+  crsNumber: '',
+  address: '',
+  chequeNumber: '',
+  chequeDate: new Date(),
+  discount: 0.0,
+  type: { name: '' },
+  salesStaff: [],
+  paymentType: { name: '' },
+  bank: { name: '' },
+  soldItems: []
 };
 
 export const submitPayload = ({
@@ -196,10 +179,98 @@ export const submitPayload = ({
   }
 });
 
+export const soldItemsHeaders = [
+  {
+    label: 'Quantity',
+    accessKey: 'quantity'
+  },
+  {
+    label: 'Unit of Measurement',
+    accessKey: 'uom.name'
+  },
+  {
+    label: 'Particular',
+    accessKey: 'particular'
+  },
+  {
+    label: 'Parts Number',
+    accessKey: 'partsNumber'
+  },
+  {
+    label: 'Applications',
+    accessKey: 'applications',
+    customCell: ({ value }) => value.map((val) => val.name).join(', ')
+  },
+  {
+    label: 'Description',
+    accessKey: 'description'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size'
+  },
+  {
+    label: 'Codes',
+    accessKey: 'codes'
+  },
+  {
+    label: 'Remarks',
+    accessKey: 'remarks'
+  }
+];
+
+export const soldItemsFilters = {
+  brand: {},
+  supplier: {},
+  applications: []
+};
+
+export const soldItemsSortOptions = [
+  {
+    name: 'Quantity',
+    key: 'quantity'
+  },
+  {
+    name: 'Unit of Measurement',
+    key: 'uom.name'
+  },
+  {
+    name: 'Particular',
+    key: 'particular'
+  },
+  {
+    name: 'Parts Number',
+    key: 'partsNumber'
+  },
+  {
+    name: 'Applications',
+    key: 'applications'
+  },
+  {
+    name: 'Description',
+    key: 'description'
+  },
+  {
+    name: 'Size',
+    key: 'size'
+  },
+  {
+    name: 'Codes',
+    key: 'codes'
+  },
+  {
+    name: 'Remarks',
+    key: 'remarks'
+  }
+];
+
 export default {
   initialValues,
   submitPayload,
   tableHeaders,
   tableSortOptions,
-  tableFilters
+  tableFilters,
+  soldItemsHeaders,
+  soldItemsFilters,
+  soldItemsSortOptions
 };
