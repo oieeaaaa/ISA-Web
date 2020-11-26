@@ -1,3 +1,5 @@
+/* stylelint-disable */
+
 // base
 @import './base/fonts';
 @import './base/reset';
@@ -55,4 +57,5 @@
 @import 'components/supplier-form/supplier-form';
 @import 'components/form-actions/form-actions';
 @import 'components/multi-input/multi-input';
-
+@import 'components/sales-report-form/sales-report-form';
+@import 'components/medium-card/medium-card';
