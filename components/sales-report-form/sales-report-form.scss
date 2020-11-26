@@ -1,0 +1,90 @@
+.sales-report-form {
+  $this: &;
+
+  &-container {
+    @include container;
+
+    @include desktop {
+      padding: 0;
+    }
+  }
+
+  &__pricing-info {
+    @include margin-y(30);
+
+    display: grid;
+    grid-row-gap: rem(25);
+
+    @include desktop {
+      @include margin-y(40);
+
+      display: flex;
+      justify-content: space-between;
+
+      .medium-card {
+        width: rem(240);
+      }
+
+      & > .medium-card:nth-child(2) {
+        width: rem(300);
+      }
+    }
+  }
+
+  @include desktop {
+    &__top {
+      display: flex;
+    }
+
+    &__sold-item-filters {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-column-gap: rem(60);
+      grid-row-gap: rem(30);
+
+      .input-group {
+        margin-bottom: 0;
+      }
+    }
+
+    .input-group--type {
+      margin-right: rem(60);
+    }
+
+    .input-group--type,
+    .input-group--dateCreated {
+      margin-bottom: 0;
+      display: inline-block;
+      width: rem(240);
+    }
+
+    .form-section--details {
+      .form-section__content {
+        display: flex;
+
+        #{$this}__group:first-child {
+          width: rem(360);
+          margin-right: rem(60);
+        }
+
+        #{$this}__group:last-child {
+          width: rem(480);
+        }
+      }
+    }
+
+    .form-section--payment {
+      .form-section__content {
+        display: grid;
+        grid-template-columns: rem(240) rem(300) rem(240);
+        grid-column-gap: rem(60);
+        grid-row-gap: rem(30);
+
+        .input-group {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
