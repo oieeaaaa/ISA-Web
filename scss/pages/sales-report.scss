@@ -1,0 +1,17 @@
+.sales-report {
+  &-filters {
+    @include desktop {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+
+      .input-group--dateCreated {
+        grid-column: 1 / 1;
+      }
+
+      &__group {
+        grid-column: 2 / 2;
+      }
+    }
+  }
+}
