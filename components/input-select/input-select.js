@@ -40,7 +40,8 @@ const InputSelect = ({
     }
 
     helpers.setValue({
-      [mainKey]: e.target.value
+      [mainKey]: e.target.value,
+      isNew: !options.length // It's new
     });
   };
 
