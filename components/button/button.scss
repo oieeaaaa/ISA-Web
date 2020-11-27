@@ -43,4 +43,9 @@
       color: var(--primary);
     }
   }
+
+  &--danger {
+    background-color: var(--danger);
+    color: var(--white);
+  }
 }
