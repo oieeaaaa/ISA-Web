@@ -1,10 +1,9 @@
-/* stylelint-disable */
-
 // base
 @import './base/fonts';
 @import './base/reset';
 @import './base/base';
 @import './base/variables';
+@import './base/animations';
 
 // utils
 @import './utils/aspect-ratio';
@@ -59,3 +58,5 @@
 @import 'components/multi-input/multi-input';
 @import 'components/sales-report-form/sales-report-form';
 @import 'components/medium-card/medium-card';
+@import 'components/modal/modal';
+
