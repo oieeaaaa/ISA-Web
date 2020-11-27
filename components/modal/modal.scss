@@ -1,0 +1,62 @@
+.modal {
+  $this: &;
+
+  @include flex-center;
+  @include container;
+
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  z-index: $z-modal--mobile;
+  background-color: rgba(81, 110, 166, 0.6);
+  backdrop-filter: blur(rem(10));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+
+  &--open {
+    opacity: 1;
+  }
+
+  &-container {
+    background-color: var(--white);
+    border-radius: rem(15);
+    animation: slideUp 0.25s ease;
+
+    #{$this}--open & {
+      animation: slideDown 1s ease;
+    }
+  }
+
+  &-header {
+    padding: rem(20);
+    padding-bottom: rem(15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: $bp5--mobile;
+  }
+
+  &__title {
+    @include font('Bold');
+
+    font-size: rem(18);
+    color: var(--primary);
+  }
+
+  &__close {
+    @include circle(30);
+
+    padding: 0;
+    background-color: var(--primary-accent-1);
+
+    .icon {
+      margin: 0;
+    }
+  }
+
+  &-body {
+    padding: rem(20);
+  }
+}
