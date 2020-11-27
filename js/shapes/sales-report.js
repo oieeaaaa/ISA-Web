@@ -179,9 +179,10 @@ export const submitPayload = ({
   ...payload
 }) => ({
   ...omit(payload, ['modal']),
-  soldItems: soldItems.map(({ id, selectedQuantity }) => ({
+  soldItems: soldItems.map(({ id, quantity, selectedQuantity }) => ({
     id,
-    selectedQuantity
+    selectedQuantity,
+    newItemQuantity: quantity - selectedQuantity
   })),
   type: connectOrCreateSingle(type),
   paymentType: connectOrCreateSingle(paymentType),
@@ -209,7 +210,11 @@ export const soldItemsHeaders = [
   {
     label: 'Applications',
     accessKey: 'applications',
-    customCell: ({ value }) => value.map((val) => val.name).join(', ')
+    customCell: ({ value }) =>
+      safeType
+        .array(value)
+        .map((val) => val.name)
+        .join(', ')
   },
   {
     label: 'Description',
@@ -268,6 +273,12 @@ export const soldItemsSortOptions = [
   }
 ];
 
+export const toSoldItems = (items) =>
+  items.map((item) => ({
+    selectedQuantity: item.quantity,
+    ...omit(item, ['id', 'quantity']).item
+  }));
+
 export default {
   initialValues,
   submitPayload,
@@ -275,5 +286,6 @@ export default {
   tableSortOptions,
   tableFilters,
   soldItemsHeaders,
-  soldItemsSortOptions
+  soldItemsSortOptions,
+  toSoldItems
 };

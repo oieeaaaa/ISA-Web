@@ -1,35 +1,32 @@
 import { useRouter } from 'next/router';
 import { Formik } from 'formik';
-import omit from 'lodash.omit';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
-import { submitPayload, initialValues } from 'js/shapes/inventory';
-import validationSchema from 'js/validations/inventory';
+import {
+  submitPayload,
+  initialValues,
+  toSoldItems
+} from 'js/shapes/sales-report';
+import validationSchema from 'js/validations/sales-report';
 
 // components
 import Layout from 'components/layout/layout';
-import InventoryForm from 'components/inventory-form/inventory-form';
+import SalesReportForm from 'components/sales-report-form/sales-report-form';
 
-const InventoryItem = ({ item, helpers }) => {
-  const router = useRouter();
+const SalesReportItem = ({ item, helpers }) => {
   const { notification } = useAppContext();
+  const router = useRouter();
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, actions) => {
     try {
-      await fetcher(`/inventory/${router.query.id}`, {
+      await fetcher(`/sales-report/${router.query.id}`, {
         method: 'PUT',
-        body: JSON.stringify(
-          omit(submitPayload(values), [
-            'uomID',
-            'supplierID',
-            'brandID',
-            'codeId'
-          ])
-        )
+        body: JSON.stringify(submitPayload(values))
       });
 
-      router.push('/inventory');
+      actions.resetForm();
+      router.push('/sales-report');
       notification.open({
         variant: 'success',
         message: messages.success.update
@@ -37,7 +34,7 @@ const InventoryItem = ({ item, helpers }) => {
     } catch (error) {
       notification.open({
         variant: 'danger',
-        message: messages.error.update
+        message: messages.success.update
       });
     }
   };
@@ -47,36 +44,38 @@ const InventoryItem = ({ item, helpers }) => {
       <Formik
         initialValues={{
           ...initialValues,
-          ...item
+          ...item,
+          soldItems: toSoldItems(item.soldItems)
         }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
-        <InventoryForm mode="edit" helpers={helpers} />
+        validationSchema={validationSchema}>
+        <SalesReportForm
+          mode="edit"
+          helpers={helpers}
+          onSubmit={handleSubmit}
+        />
       </Formik>
     </Layout>
   );
 };
 
 export async function getServerSideProps({ params }) {
-  const item = await fetcher(`/inventory/${params.id}`);
-
-  // TODO: Make helpers relative to the current item's values
-  const uoms = await fetcher('/helpers/uom');
-  const brands = await fetcher('/helpers/brand');
-  const suppliers = await fetcher('/helpers/supplier');
-  const applications = await fetcher('/helpers/application');
+  const item = await fetcher(`/sales-report/${params.id}`);
+  const paymentTypes = await fetcher('/helpers/payment-type');
+  const banks = await fetcher('/helpers/bank');
+  const salesTypes = await fetcher('/helpers/sales-type');
+  const inventory = await fetcher('/helpers/inventory');
 
   return {
     props: {
       item: item.data,
       helpers: {
-        brands: brands.data,
-        uoms: uoms.data,
-        suppliers: suppliers.data,
-        applications: applications.data
+        inventory: inventory.data,
+        paymentTypes: paymentTypes.data,
+        banks: banks.data,
+        salesTypes: salesTypes.data
       }
     }
   };
 }
 
-export default InventoryItem;
+export default SalesReportItem;
