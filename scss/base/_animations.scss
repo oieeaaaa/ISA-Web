@@ -1,0 +1,19 @@
+@keyframes slideDown {
+  from {
+    transform: translateY(-30%);
+  }
+
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0%);
+  }
+
+  to {
+    transform: translateY(-30%);
+  }
+}
