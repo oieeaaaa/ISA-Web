@@ -44,8 +44,8 @@ model Inventory {
   // applications
   applications Application[]
 
-  // salesReports
-  salesReports SalesReport[]
+  // soldItems
+  soldItems SoldItem[]
 }
 
 // ===========================================================================
@@ -109,7 +109,7 @@ model SalesReport {
   bankID String?
 
   // soldItems
-  soldItems Inventory[]
+  soldItems SoldItem[]
 }
 
 // ===========================================================================
@@ -179,5 +179,13 @@ model Bank {
 model SalesType {
   id String @id @default(uuid())
   name String @unique
+  salesReports SalesReport[]
+}
+
+model SoldItem {
+  id String @id @default(uuid())
+  quantity Int
+  item Inventory? @relation(fields: [itemID], references: [id])
+  itemID String?
   salesReports SalesReport[]
 }
