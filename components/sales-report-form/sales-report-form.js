@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import { Form, useFormikContext } from 'formik';
+import useAppContext from 'js/contexts/app';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
+import cssClassModifier from 'js/utils/cssClassModifier';
 import {
   soldItemsHeaders,
   soldItemsFilters,
-  soldItemsSortOptions
+  soldItemsSortOptions,
+  initialValues
 } from 'js/shapes/sales-report';
+import Modal from 'components/modal/modal';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -18,17 +23,31 @@ import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
 import MultiInput from 'components/multi-input/multi-input';
 import MediumCard from 'components/medium-card/medium-card';
-import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
+import Table from 'components/table/table';
 
 // TODO:
 // Integrate the table ✅
 // Setup table's props ✅
-// Add Item Modal
-// Update Item Modal
-// Delete Item Modal
+// Add Item Modal ✅
+// Update Item Modal ✅
+// Delete Item Modal ✅
 // Styles ✅
+// Fix table filters, search, sort, etc...
 const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
-  const { values, errors, isValid, resetForm } = useFormikContext();
+  // contexts
+  const {
+    values,
+    errors,
+    isValid,
+    resetForm,
+    setFieldValue
+  } = useFormikContext();
+  const { notification } = useAppContext();
+
+  // state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // vars
   const {
     banks,
     salesTypes,
@@ -38,11 +57,8 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
     applications
   } = helpers;
 
-  const soldItemsParameterizer = ({ brand, supplier, applications }) => ({
-    'brand.id': brand.id,
-    'supplier.id': supplier.id,
-    'applications_multiple.id': applications.map(({ id }) => id).join(',')
-  });
+  const { modal } = values;
+  const { selectedItem, selectedQuantity } = modal;
 
   const handleSubmit = () => {
     if (!isValid) return;
@@ -50,8 +66,174 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
     onSubmit(values, { resetForm });
   };
 
+  const openAddModal = () => {
+    setIsModalOpen(true);
+    setFieldValue('modal', initialValues.modal);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
+  const checkItemInSoldItems = () =>
+    values.soldItems.some((si) => si.id === selectedItem.id);
+
+  const openUpdateModal = (item) => {
+    setIsModalOpen(true);
+
+    setFieldValue('modal', {
+      ...modal,
+      mode: 'edit',
+      selectedItem: item,
+      selectedQuantity: item.selectedQuantity
+    });
+  };
+
+  const handleAddItem = () => {
+    if (checkItemInSoldItems()) {
+      notification.open({
+        message: 'Your item is already in the list',
+        variant: 'danger',
+        duration: 3000
+      });
+
+      return;
+    }
+
+    // add new item to soldItems
+    setFieldValue(
+      'soldItems',
+      values.soldItems.concat({
+        ...selectedItem,
+        selectedQuantity
+      })
+    );
+
+    // reset modal
+    setFieldValue('modal', initialValues.modal);
+
+    // success message
+    notification.open({
+      message: 'Yay! New item is added 🎉',
+      variant: 'success'
+    });
+  };
+
+  const handleUpdateItem = () => {
+    if (!checkItemInSoldItems()) return;
+
+    setFieldValue(
+      'soldItems',
+      // we only need to update the selectedQuantity, so I'm doing this
+      values.soldItems.map((si) =>
+        si.id === selectedItem.id ? { ...si, selectedQuantity } : si
+      )
+    );
+
+    // success message
+    notification.open({
+      message: 'Updated item! ✨',
+      variant: 'success'
+    });
+  };
+
+  const handleRemoveItem = () => {
+    if (!checkItemInSoldItems()) return;
+
+    setFieldValue(
+      'soldItems',
+      values.soldItems.filter((si) => si.id !== selectedItem.id)
+    );
+
+    setFieldValue('modal', initialValues.modal);
+
+    closeModal();
+  };
+
   return (
     <Form>
+      <Modal
+        title={modal.mode === 'add' ? 'Add Item' : 'Update Item'}
+        isOpen={isModalOpen}
+        closeModal={closeModal}>
+        <p className="sales-report-form-modal__info">
+          {modal.mode === 'add'
+            ? 'Add sales report for purchase order to display on this items list.'
+            : 'Update item for sales report to display on this items list.'}
+        </p>
+        <InputGroup
+          name="modal.selectedItem"
+          label="Your item"
+          initialOptions={[]}
+          serverRoute="/helpers/inventory"
+          component={InputSelectWithFetch}
+          mainKey="particular"
+          error={safety(errors, 'soldItem.data.id', 'Invalid Item!')}
+          takeWhole
+          disabled={modal.mode === 'edit'}
+        />
+        <InputGroup
+          name="modal.selectedQuantity"
+          label="Quantity"
+          type="number"
+          component={Input}
+        />
+        {selectedItem.id && (
+          <ul className="sales-report-form-modal__details">
+            <li className="sales-report-form-modal__detail">
+              <span className="sales-report-form-modal__detail-title">
+                Supplier
+              </span>
+              <span className="sales-report-form-modal__detail-value">
+                {selectedItem.supplier.initials}
+              </span>
+            </li>
+            <li className="sales-report-form-modal__detail">
+              <span className="sales-report-form-modal__detail-title">
+                Brand
+              </span>
+              <span className="sales-report-form-modal__detail-value">
+                {selectedItem.brand.name}
+              </span>
+            </li>
+            <li className="sales-report-form-modal__detail">
+              <span className="sales-report-form-modal__detail-title">
+                Unit Cost
+              </span>
+              <span className="sales-report-form-modal__detail-value">
+                1170 {/* TODO: Calculate this later */}
+              </span>
+            </li>
+            <li className="sales-report-form-modal__detail">
+              <span className="sales-report-form-modal__detail-title">
+                Available Qty.
+              </span>
+              <span className="sales-report-form-modal__detail-value">
+                {selectedItem.quantity - selectedQuantity}
+              </span>
+            </li>
+          </ul>
+        )}
+        <div
+          className={cssClassModifier(
+            'sales-report-form-modal__actions',
+            ['add'],
+            [modal.mode === 'add']
+          )}>
+          {modal.mode === 'add' ? (
+            <Button variant="primary" onClick={handleAddItem}>
+              Add Item
+            </Button>
+          ) : (
+            <>
+              <Button variant="primary-v1" onClick={handleRemoveItem}>
+                Remove
+              </Button>
+              <Button variant="primary" onClick={handleUpdateItem}>
+                Update
+              </Button>
+            </>
+          )}
+        </div>
+      </Modal>
       <div className="sales-report-form">
         <FormActions
           title={mode === 'edit' ? 'Update Sales Report' : 'Add Sales Report'}>
@@ -131,9 +313,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
         </div>
       </div>
       <div className="sales-report-form__table">
-        <TableWithFetch
-          serverRoute="inventory"
-          parameterizer={soldItemsParameterizer}
+        <Table
           title="Sold Items"
           icon="clipboard"
           headers={soldItemsHeaders}
@@ -141,6 +321,9 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
           totalItems={values.soldItems.length}
           filters={soldItemsFilters}
           sortOptions={soldItemsSortOptions}
+          onAdd={openAddModal}
+          onChange={console.log}
+          onRowClick={openUpdateModal}
           renderFilter={() => (
             <div className="sales-report-form__sold-item-filters">
               <InputGroup
@@ -155,7 +338,8 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
                 label="Supplier"
                 component={Select}
                 options={suppliers}
-                mainKey="name"
+                mainKey="id"
+                displayKey="initials"
               />
               <InputGroup
                 name="applications"

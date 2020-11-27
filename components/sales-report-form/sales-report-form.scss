@@ -31,6 +31,52 @@
     }
   }
 
+  // TODO: Crete a seperate component for this later
+  &-modal {
+    &__info {
+      margin-bottom: rem(30);
+      font-size: rem(16);
+      line-height: 1.36;
+      color: var(--primary-accent-3);
+    }
+
+    &__details {
+      margin-bottom: rem(50);
+    }
+
+    &__detail {
+      display: flex;
+      flex-direction: column;
+
+      &-title {
+        @include font('Bold');
+
+        margin-bottom: rem(10);
+        font-size: rem(16);
+        color: var(--primary-accent-3);
+      }
+
+      &-value {
+        @include font('Bold');
+
+        color: var(--dark);
+      }
+    }
+
+    &__details > &__detail:not(:first-of-type) {
+      margin-top: rem(20);
+    }
+
+    &__actions {
+      display: flex;
+      justify-content: space-between;
+
+      &--add {
+        justify-content: flex-end;
+      }
+    }
+  }
+
   @include desktop {
     &__top {
       display: flex;
