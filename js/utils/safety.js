@@ -26,7 +26,7 @@ const safety = (obj = {}, mainKey, defaultValue = null) => {
 };
 
 export const safeType = {
-  string: (val) => val || '',
+  string: (val) => (typeof val === 'string' && val ? val : ''),
   number: (val) => val || 0,
   boolean: (val) => val || false,
   object: (val) => val || {},
