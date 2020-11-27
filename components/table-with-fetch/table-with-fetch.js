@@ -44,15 +44,7 @@ const TableWithFetch = ({
     }
   };
 
-  return (
-    <Table
-      title="Inventory"
-      icon="archive"
-      data={tableData}
-      onChange={handleFetch}
-      {...tableProps}
-    />
-  );
+  return <Table data={tableData} onChange={handleFetch} {...tableProps} />;
 };
 
 export default TableWithFetch;
