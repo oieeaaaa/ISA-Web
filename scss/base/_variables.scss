@@ -9,10 +9,13 @@ $max-width: 1280;
 // Name: <border> <primary> <accent>
 $bp--mobile: 1px solid var(--primary);
 $bp2--mobile: 1px solid var(--primary-accent-2);
+$bp5--mobile: 1px solid var(--primary-accent-5);
 
 // Z-INDEX
 
 // mobile
+$z-notification--mobile: 102;
+$z-modal--mobile: 101;
 $z-sidebar--mobile: 100; // max 100
 $z-header--mobile: 99;
 $z-dropdown--mobile: 51;
@@ -31,6 +34,7 @@ $dropdown-icon-y-position--desktop: 12px;
   --primary-accent-2: #92a3c5;
   --primary-accent-3: #9b9fa8;
   --primary-accent-4: #dee1e7;
+  --primary-accent-5: #d6e1f6;
   --primary: #516ea6;
   --dark: #333;
   --white: #fff;

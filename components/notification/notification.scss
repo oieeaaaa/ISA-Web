@@ -12,6 +12,7 @@
   color: var(--dark);
   transform: translateY(-100%);
   transition: transform 0.25s ease;
+  z-index: $z-notification--mobile;
 
   &--active {
     top: rem(10);
