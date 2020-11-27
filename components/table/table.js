@@ -19,7 +19,10 @@ const TableWrapper = ({ filters, ...tableProps }) => (
   </Formik>
 );
 
-// TODO: Enable config persistency using url
+// TODO:
+// Enable config persistency using url
+// Simplify Add Item button
+// Simplify Pagination
 const Table = ({
   title,
   icon,
@@ -28,7 +31,9 @@ const Table = ({
   data = [],
   sortOptions = [],
   totalItems,
-  onChange
+  onChange,
+  onAdd,
+  onRowClick
 }) => {
   // ref
   const advancedSearch = useRef();
@@ -108,13 +113,15 @@ const Table = ({
     directionHelpers.setValue(directionField.value === 'asc' ? 'desc' : 'asc');
   };
 
-  const visitItem = (id) => (e) => {
+  const handleRowClick = (item) => (e) => {
     e.preventDefault();
+
+    if (onRowClick) return onRowClick(item);
 
     const { pathname, push } = router;
 
     // visit the item's page
-    push(`${pathname}/${id}`);
+    push(`${pathname}/${item.id}`);
   };
 
   useEffect(() => {
@@ -170,8 +177,8 @@ const Table = ({
               />
               <Button
                 className={`table-advanced-search__sort-button ${
-                  values.direction === 'asc'
-                    ? 'table-advanced-search__sort-button--asc'
+                  values.direction === 'desc'
+                    ? 'table-advanced-search__sort-button--desc'
                     : ''
                 }`}
                 variant="primary-v1"
@@ -193,7 +200,7 @@ const Table = ({
         </thead>
         <tbody className="table__body">
           {data.map((item) => (
-            <tr onClick={visitItem(item.id)} key={item.id}>
+            <tr onClick={handleRowClick(item)} key={item.id}>
               {headers.map(({ accessKey, customCell: Cell }) => {
                 const value = safety(item, accessKey, null);
 
@@ -253,13 +260,23 @@ const Table = ({
           </button>
         </div>
       </div>
-      <Link href={`${router.pathname}/add`}>
-        <a className="table__add">
-          <Button variant="primary-v1" icon="plus">
-            Add Item
-          </Button>
-        </a>
-      </Link>
+      {onAdd ? (
+        <Button
+          className="table__add table__add-button"
+          variant="primary-v1"
+          onClick={onAdd}
+          icon="plus">
+          Add Item
+        </Button>
+      ) : (
+        <Link href={`${router.pathname}/add`}>
+          <a className="table__add">
+            <Button variant="primary-v1" icon="plus">
+              Add Item
+            </Button>
+          </a>
+        </Link>
+      )}
     </div>
   );
 };

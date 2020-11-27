@@ -159,7 +159,7 @@
           transition: transform 0.25s ease;
         }
 
-        &--asc .icon {
+        &--desc .icon {
           transform: rotateX(180deg);
         }
       }
@@ -373,6 +373,11 @@
     min-width: rem(130);
     display: inline-block;
     text-decoration: none;
+
+    // TODO: Remove this when the table is fixed
+    &-button {
+      display: flex;
+    }
 
     @include desktop {
       margin-top: rem(40);
