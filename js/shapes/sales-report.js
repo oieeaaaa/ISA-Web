@@ -74,11 +74,7 @@ export const tableHeaders = [
     label: 'Total Sold Items',
     accessKey: 'soldItems',
     customCell: ({ value }) =>
-      value.reduce((total, cur) => {
-        console.log(cur);
-
-        return (total += safeType.number(cur.quantity));
-      }, 0)
+      value.reduce((total, cur) => (total += safeType.number(cur.quantity)), 0)
   }
 ];
 
