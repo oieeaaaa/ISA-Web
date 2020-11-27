@@ -11,8 +11,9 @@ import Layout from 'components/layout/layout';
 import SalesReportForm from 'components/sales-report-form/sales-report-form';
 
 // TODO:
-// Create SalesReportForm - ⏳
+// Wiring upp!
 // Disable initialValidation in formik
+// Create SalesReportForm - ✅
 // Update getStaticProps or update helpers ✅
 // Create api helper for paymentType and banks ✅
 // Add SoldItems table ✅
@@ -55,19 +56,15 @@ export async function getStaticProps() {
   const paymentTypes = await fetcher('/helpers/payment-type');
   const banks = await fetcher('/helpers/bank');
   const salesTypes = await fetcher('/helpers/sales-type');
-  const brands = await fetcher('/helpers/brand');
-  const suppliers = await fetcher('/helpers/supplier');
-  const applications = await fetcher('/helpers/application');
+  const inventory = await fetcher('/helpers/inventory');
 
   return {
     props: {
       helpers: {
+        inventory: inventory.data,
         paymentTypes: paymentTypes.data,
         banks: banks.data,
-        salesTypes: salesTypes.data,
-        brands: brands.data,
-        suppliers: suppliers.data,
-        applications: applications.data
+        salesTypes: salesTypes.data
       }
     }
   };
