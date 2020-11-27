@@ -205,7 +205,7 @@ const MultiSelect = ({
             </button>
           </li>
         )}
-        {isEmpty && (
+        {isEmpty && noCreate && (
           <li
             className={cssClassModifier(
               'multi-select-list__item',
