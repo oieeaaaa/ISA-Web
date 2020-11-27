@@ -5,10 +5,11 @@ import safety from 'js/utils/safety';
 import joinClassName from 'js/utils/joinClassName';
 
 const InputSelect = ({
-  id,
+  name,
   options = [],
   onSearch,
   mainKey = 'name',
+  takeWhole,
   ...etc
 }) => {
   // refs
@@ -30,7 +31,7 @@ const InputSelect = ({
   // custom hooks
   const [field, , helpers] = useField({
     type: 'text',
-    ...etc
+    name
   });
 
   const handleSearch = (e) => {
@@ -64,17 +65,18 @@ const InputSelect = ({
     return () => window.removeEventListener('click', closeDropdownListener);
   }, []);
 
+  // TODO: A lot of things here are wrong, fix it JOIMEE!
   return (
     <div className="input-select">
       <input
         ref={input}
-        id={id}
         className="input-select__input"
         onFocus={handleDropdownOpen}
         onChange={handleSearch}
         onBlur={field.onBlur}
         value={safety(field, 'value', {})[mainKey]}
         autoComplete="off"
+        {...etc}
       />
       {isDropdownOpen && (
         <ul className="input-select__list">
@@ -88,9 +90,13 @@ const InputSelect = ({
                 )}
                 type="button"
                 onClick={() =>
-                  selectValue({
-                    [mainKey]: option[mainKey]
-                  })
+                  selectValue(
+                    takeWhole // TODO: THIS IS MESSY FIX THIS LATER
+                      ? option
+                      : {
+                          [mainKey]: option[mainKey]
+                        }
+                  )
                 }>
                 <span className="input-select__button-index">{index + 1}.</span>
                 <span>{option[mainKey]}</span>
@@ -108,7 +114,7 @@ const InputSelect = ({
                   })
                 }>
                 <span className="input-select__button-text">
-                  Adding {`"${safety(field, 'value', {})[mainKey]}"`}
+                  {`"${safety(field, 'value', {})[mainKey]}"`}
                 </span>
               </button>
             </li>
