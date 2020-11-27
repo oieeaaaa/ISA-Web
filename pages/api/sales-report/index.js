@@ -43,7 +43,11 @@ export default api({
           paymentType: true,
           bank: true,
           type: true,
-          soldItems: true
+          soldItems: {
+            include: {
+              item: true
+            }
+          }
         }
       };
 
@@ -59,12 +63,46 @@ export default api({
     }
   },
   post: async (req, res) => {
+    const { soldItems, ...payload } = req.body;
+
     try {
-      const newItem = await prisma.salesReport.create({
-        data: req.body
+      const createSalesReport = prisma.salesReport.create({
+        data: {
+          ...payload,
+          soldItems: {
+            create: soldItems.map(({ id, selectedQuantity }) => ({
+              quantity: selectedQuantity,
+              item: {
+                connect: {
+                  id
+                }
+              }
+            }))
+          }
+        }
       });
 
-      res.success(newItem);
+      // this is freakin' awesome
+      // TODO:
+      // Find a way to do this the DB way
+      const multiUpdateInventoryItemQuantity = soldItems.map(
+        ({ id, selectedQuantity }) =>
+          prisma.inventory.update({
+            where: { id },
+            data: {
+              quantity: {
+                decrement: selectedQuantity
+              }
+            }
+          })
+      );
+
+      await prisma.$transaction([
+        createSalesReport,
+        ...multiUpdateInventoryItemQuantity
+      ]);
+
+      res.success();
     } catch (error) {
       console.error(error);
       res.error(error);
