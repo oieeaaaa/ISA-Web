@@ -1,3 +1,4 @@
+import omit from 'lodash.omit';
 import {
   connectOrCreateMultiple,
   connectOrCreateSingle
@@ -73,7 +74,11 @@ export const tableHeaders = [
     label: 'Total Sold Items',
     accessKey: 'soldItems',
     customCell: ({ value }) =>
-      value.reduce((total, cur) => (total += safeType.number(cur.quantity)), 0)
+      value.reduce((total, cur) => {
+        console.log(cur);
+
+        return (total += safeType.number(cur.quantity));
+      }, 0)
   }
 ];
 
@@ -170,21 +175,22 @@ export const initialValues = {
 };
 
 export const submitPayload = ({
-  applications,
-  uom,
-  brand,
-  supplier,
+  soldItems,
+  salesStaff,
+  type,
+  paymentType,
+  bank,
   ...payload
 }) => ({
-  ...payload,
-  applications: connectOrCreateMultiple(applications),
-  brand: connectOrCreateSingle(brand),
-  uom: connectOrCreateSingle(uom),
-  supplier: {
-    connect: {
-      id: supplier.id
-    }
-  }
+  ...omit(payload, ['modal']),
+  soldItems: soldItems.map(({ id, selectedQuantity }) => ({
+    id,
+    selectedQuantity
+  })),
+  type: connectOrCreateSingle(type),
+  paymentType: connectOrCreateSingle(paymentType),
+  bank: connectOrCreateSingle(bank),
+  salesStaff: connectOrCreateMultiple(salesStaff)
 });
 
 export const soldItemsHeaders = [
@@ -226,12 +232,6 @@ export const soldItemsHeaders = [
     accessKey: 'remarks'
   }
 ];
-
-export const soldItemsFilters = {
-  brand: {},
-  supplier: {},
-  applications: []
-};
 
 export const soldItemsSortOptions = [
   {
@@ -279,6 +279,5 @@ export default {
   tableSortOptions,
   tableFilters,
   soldItemsHeaders,
-  soldItemsFilters,
   soldItemsSortOptions
 };
