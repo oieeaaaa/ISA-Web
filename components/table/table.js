@@ -33,7 +33,8 @@ const Table = ({
   totalItems,
   onChange,
   onAdd,
-  onRowClick
+  onRowClick,
+  local
 }) => {
   // ref
   const advancedSearch = useRef();
@@ -124,6 +125,30 @@ const Table = ({
     push(`${pathname}/${item.id}`);
   };
 
+  const localSearch = (items) =>
+    items.filter(
+      (item) =>
+        headers
+          .map((th) => safeType.string(item[th.accessKey]).toLowerCase())
+          .join(',')
+          .search(values.search.toLowerCase()) !== -1
+    );
+
+  // TODO: The world might be upside down, fix this later
+  const localSort = (items) =>
+    items.sort((itemA, itemB) => {
+      if (itemA[values.sortBy.key] < itemB[values.sortBy.key]) {
+        return values.direction === 'asc' ? 1 : -1;
+      }
+
+      return values.direction === 'asc' ? -1 : 1;
+    });
+
+  const localLimit = (items) => items.slice(0, values.limit.value);
+
+  // TODO: Create a compose function
+  const localData = () => localSort(localSearch(localLimit(data)));
+
   useEffect(() => {
     window.addEventListener('resize', windowResizeListener);
 
@@ -187,7 +212,7 @@ const Table = ({
               />
             </div>
           </div>
-          {renderFilter && renderFilter()}
+          {renderFilter && !local && renderFilter()}
         </div>
       </div>
       <table className="table-container">
@@ -199,7 +224,7 @@ const Table = ({
           </tr>
         </thead>
         <tbody className="table__body">
-          {data.map((item) => (
+          {(local ? localData() : data).map((item) => (
             <tr onClick={handleRowClick(item)} key={item.id}>
               {headers.map(({ accessKey, customCell: Cell }) => {
                 const value = safety(item, accessKey, null);
@@ -224,41 +249,43 @@ const Table = ({
             mainKey="value"
           />
         </div>
-        <div className="table-footer-pagination">
-          <button
-            className="table-footer-pagination__left"
-            type="button"
-            onClick={() => movePage(pageField.value - 1)}>
-            <Icon icon="chevron-down" />
-          </button>
-          <ul className="table-footer-pagination__numbers">
-            {Array.from({
-              length:
-                values.limit.value / totalItems >= 3
-                  ? 3
-                  : values.limit.value / totalItems
-            }).map((_, index) => (
-              <li key={index}>
-                <Button
-                  className={cssClassModifier(
-                    'table-footer-pagination__number',
-                    ['active'],
-                    [index === 0]
-                  )}
-                  onClick={() => movePage(pageField.value + index)}>
-                  {' '}
-                  {(pageField.value || 1) + index}
-                </Button>
-              </li>
-            ))}
-          </ul>
-          <button
-            className="table-footer-pagination__right"
-            type="button"
-            onClick={() => movePage(pageField.value + 1)}>
-            <Icon icon="chevron-down" />
-          </button>
-        </div>
+        {!local && (
+          <div className="table-footer-pagination">
+            <button
+              className="table-footer-pagination__left"
+              type="button"
+              onClick={() => movePage(pageField.value - 1)}>
+              <Icon icon="chevron-down" />
+            </button>
+            <ul className="table-footer-pagination__numbers">
+              {Array.from({
+                length:
+                  values.limit.value / totalItems >= 3
+                    ? 3
+                    : values.limit.value / totalItems
+              }).map((_, index) => (
+                <li key={index}>
+                  <Button
+                    className={cssClassModifier(
+                      'table-footer-pagination__number',
+                      ['active'],
+                      [index === 0]
+                    )}
+                    onClick={() => movePage(pageField.value + index)}>
+                    {' '}
+                    {(pageField.value || 1) + index}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="table-footer-pagination__right"
+              type="button"
+              onClick={() => movePage(pageField.value + 1)}>
+              <Icon icon="chevron-down" />
+            </button>
+          </div>
+        )}
       </div>
       {onAdd ? (
         <Button

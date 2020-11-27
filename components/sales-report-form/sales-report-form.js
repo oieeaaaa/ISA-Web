@@ -6,7 +6,6 @@ import goTo from 'js/utils/goTo';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import {
   soldItemsHeaders,
-  soldItemsFilters,
   soldItemsSortOptions,
   initialValues
 } from 'js/shapes/sales-report';
@@ -15,9 +14,7 @@ import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
 import Input from 'components/input/input';
-import Select from 'components/select/select';
 import InputSelectWithFetch from 'components/input-select-with-fetch/input-select-with-fetch';
-import MultiSelectWithFetch from 'components/multi-select-with-fetch/multi-select-with-fetch';
 import Button from 'components/button/button';
 import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
@@ -32,7 +29,7 @@ import Table from 'components/table/table';
 // Update Item Modal ✅
 // Delete Item Modal ✅
 // Styles ✅
-// Fix table filters, search, sort, etc...
+// Fix table search, sort, limit ✅
 const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   // contexts
   const {
@@ -48,14 +45,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // vars
-  const {
-    banks,
-    salesTypes,
-    paymentTypes,
-    brands,
-    suppliers,
-    applications
-  } = helpers;
+  const { inventory, banks, salesTypes, paymentTypes } = helpers;
 
   const { modal } = values;
   const { selectedItem, selectedQuantity } = modal;
@@ -162,7 +152,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
         <InputGroup
           name="modal.selectedItem"
           label="Your item"
-          initialOptions={[]}
+          initialOptions={inventory}
           serverRoute="/helpers/inventory"
           component={InputSelectWithFetch}
           mainKey="particular"
@@ -314,43 +304,14 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
       </div>
       <div className="sales-report-form__table">
         <Table
+          local
           title="Sold Items"
           icon="clipboard"
           headers={soldItemsHeaders}
           data={values.soldItems}
-          totalItems={values.soldItems.length}
-          filters={soldItemsFilters}
           sortOptions={soldItemsSortOptions}
           onAdd={openAddModal}
-          onChange={console.log}
           onRowClick={openUpdateModal}
-          renderFilter={() => (
-            <div className="sales-report-form__sold-item-filters">
-              <InputGroup
-                name="brand"
-                label="Brand"
-                component={Select}
-                options={brands}
-                mainKey="name"
-              />
-              <InputGroup
-                name="supplier"
-                label="Supplier"
-                component={Select}
-                options={suppliers}
-                mainKey="id"
-                displayKey="initials"
-              />
-              <InputGroup
-                name="applications"
-                label="Applications"
-                initialOptions={applications}
-                serverRoute="/helpers/application"
-                component={MultiSelectWithFetch}
-                noCreate
-              />
-            </div>
-          )}
         />
       </div>
     </Form>
