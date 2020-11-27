@@ -10,15 +10,6 @@ import validationSchema from 'js/validations/sales-report';
 import Layout from 'components/layout/layout';
 import SalesReportForm from 'components/sales-report-form/sales-report-form';
 
-// TODO:
-// Wiring upp!
-// Disable initialValidation in formik
-// Create SalesReportForm - ✅
-// Update getStaticProps or update helpers ✅
-// Create api helper for paymentType and banks ✅
-// Add SoldItems table ✅
-// Form Validation ✅
-// Form Initial Values ✅
 const SalesReportAdd = ({ helpers }) => {
   const { notification } = useAppContext();
 

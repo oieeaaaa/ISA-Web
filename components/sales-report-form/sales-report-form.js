@@ -22,14 +22,6 @@ import MultiInput from 'components/multi-input/multi-input';
 import MediumCard from 'components/medium-card/medium-card';
 import Table from 'components/table/table';
 
-// TODO:
-// Integrate the table ✅
-// Setup table's props ✅
-// Add Item Modal ✅
-// Update Item Modal ✅
-// Delete Item Modal ✅
-// Styles ✅
-// Fix table search, sort, limit ✅
 const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   // contexts
   const {
