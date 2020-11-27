@@ -158,7 +158,15 @@ export const initialValues = {
   salesStaff: [],
   paymentType: { name: '' },
   bank: { name: '' },
-  soldItems: []
+  soldItems: [],
+
+  // Modal related stuff
+  // NOTE: This should not be submitted as a payload
+  modal: {
+    mode: 'add',
+    selectedItem: { particular: '' },
+    selectedQuantity: 0
+  }
 };
 
 export const submitPayload = ({
@@ -182,7 +190,7 @@ export const submitPayload = ({
 export const soldItemsHeaders = [
   {
     label: 'Quantity',
-    accessKey: 'quantity'
+    accessKey: 'selectedQuantity'
   },
   {
     label: 'Unit of Measurement',
