@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { safeType } from 'js/utils/safety';
 import api from 'js/utils/api';
 
 const prisma = new PrismaClient();
@@ -41,7 +42,7 @@ export default api({
     }
   },
   put: async (req, res) => {
-    const { soldItems, ...payload } = req.body;
+    const { soldItems, removedItems, ...payload } = req.body;
 
     try {
       const updateItem = prisma.salesReport.update({
@@ -51,11 +52,22 @@ export default api({
         data: {
           ...payload,
           soldItems: {
-            create: soldItems.map(({ id, selectedQuantity }) => ({
-              quantity: selectedQuantity,
-              item: {
-                connect: {
-                  id
+            disconnect: removedItems.map(({ id }) => ({
+              id: safeType.string(id)
+            })),
+            upsert: soldItems.map(({ soldItemID, id, selectedQuantity }) => ({
+              where: {
+                id: safeType.string(soldItemID)
+              },
+              update: {
+                quantity: selectedQuantity
+              },
+              create: {
+                quantity: selectedQuantity,
+                item: {
+                  connect: {
+                    id
+                  }
                 }
               }
             }))
@@ -63,24 +75,35 @@ export default api({
         }
       });
 
-      // this is freakin' awesome
-      // TODO:
-      // Find a way to do this the DB way
-      const multiUpdateInventoryItemQuantity = soldItems.map(
-        ({ id, newItemQuantity }) =>
+      const updateItemsQuantity = soldItems.map(
+        ({ id, selectedQuantity, prevQty }) =>
           prisma.inventory.update({
             where: { id },
             data: {
               quantity: {
-                set: newItemQuantity
+                decrement: selectedQuantity - safeType.number(prevQty)
               }
             }
           })
       );
 
+      const putBackRemovedItemsQuantity = removedItems.length
+        ? removedItems.map((ri) =>
+            prisma.inventory.update({
+              where: { id: ri.itemID },
+              data: {
+                quantity: {
+                  increment: ri.quantity
+                }
+              }
+            })
+          )
+        : [];
+
       await prisma.$transaction([
         updateItem,
-        ...multiUpdateInventoryItemQuantity
+        ...updateItemsQuantity,
+        ...putBackRemovedItemsQuantity
       ]);
 
       res.success(updateItem);
