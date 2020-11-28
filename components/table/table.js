@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
+import useAppContext from 'js/contexts/app';
 import { defaultLimits, defaultConfigs } from 'js/shapes/table';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import safety, { safeType } from 'js/utils/safety';
@@ -35,11 +36,15 @@ const Table = ({
   onChange,
   onAdd,
   onRowClick,
-  local
+  local,
+  locked
 }) => {
   // ref
   const advancedSearch = useRef();
   const advancedSearchContent = useRef();
+
+  // contexts
+  const { notification } = useAppContext();
 
   // state
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
@@ -117,6 +122,15 @@ const Table = ({
 
   const handleRowClick = (item) => (e) => {
     e.preventDefault();
+
+    if (locked) {
+      notification.open({
+        message: 'This row is locked.',
+        variant: 'danger'
+      });
+
+      return;
+    }
 
     if (onRowClick) return onRowClick(item);
 
@@ -260,9 +274,9 @@ const Table = ({
             <ul className="table-footer-pagination__numbers">
               {Array.from({
                 length:
-                  values.limit.value / totalItems >= 3
+                  Math.floor(values.limit.value / totalItems) >= 3
                     ? 3
-                    : values.limit.value / totalItems
+                    : Math.floor(values.limit.value / totalItems)
               }).map((_, index) => (
                 <li key={index}>
                   <Button
@@ -287,23 +301,24 @@ const Table = ({
           </div>
         )}
       </div>
-      {onAdd ? (
-        <Button
-          className="table__add table__add-button"
-          variant="primary-v1"
-          onClick={onAdd}
-          icon="plus">
-          Add Item
-        </Button>
-      ) : (
-        <Link href={`${router.pathname}/add`}>
-          <a className="table__add">
-            <Button variant="primary-v1" icon="plus">
-              Add Item
-            </Button>
-          </a>
-        </Link>
-      )}
+      {!locked &&
+        (onAdd ? (
+          <Button
+            className="table__add table__add-button"
+            variant="primary-v1"
+            onClick={onAdd}
+            icon="plus">
+            Add Item
+          </Button>
+        ) : (
+          <Link href={`${router.pathname}/add`}>
+            <a className="table__add">
+              <Button variant="primary-v1" icon="plus">
+                Add Item
+              </Button>
+            </a>
+          </Link>
+        ))}
     </div>
   );
 };
