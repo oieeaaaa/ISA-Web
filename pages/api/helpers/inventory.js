@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
+import toFilterQuery from 'js/utils/toFilterQuery';
 
 const prisma = new PrismaClient();
 
+// TODO: Analyze if this a duplicate or not.
 export default api({
   get: async (req, res) => {
     try {
@@ -12,7 +14,8 @@ export default api({
         limit = 5,
         search,
         sortBy = 'particular',
-        direction = 'desc'
+        direction = 'desc',
+        ...filters
       } = req.query;
 
       const query = {
@@ -21,6 +24,7 @@ export default api({
           [sortBy]: direction
         },
         where: {
+          AND: toFilterQuery(filters),
           OR: toFullTextSearchQuery(
             [
               'particular',
