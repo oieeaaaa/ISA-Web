@@ -2,6 +2,10 @@ import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
+import {
+  connectOrCreateMultiple,
+  connectOrCreateSingle
+} from 'js/utils/connectOrCreate';
 
 const prisma = new PrismaClient();
 
@@ -63,12 +67,23 @@ export default api({
     }
   },
   post: async (req, res) => {
-    const { soldItems, ...payload } = req.body;
+    const {
+      type,
+      paymentType,
+      bank,
+      salesStaff,
+      soldItems,
+      ...payload
+    } = req.body;
 
     try {
       const createSalesReport = prisma.salesReport.create({
         data: {
           ...payload,
+          type: connectOrCreateSingle(type),
+          paymentType: connectOrCreateSingle(paymentType),
+          bank: connectOrCreateSingle(bank),
+          salesStaff: connectOrCreateMultiple(salesStaff),
           soldItems: {
             create: soldItems.map(({ id, selectedQuantity }) => ({
               quantity: selectedQuantity,
