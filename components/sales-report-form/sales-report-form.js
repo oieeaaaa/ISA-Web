@@ -342,7 +342,8 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
                   type="number"
                   component={Input}
                 />
-                {values.paymentType.name.toLowerCase() === 'cheque' ? (
+                {safety(values, 'paymentType.name', '').toLowerCase() ===
+                'cheque' ? (
                   <>
                     <InputGroup
                       name="bank"
