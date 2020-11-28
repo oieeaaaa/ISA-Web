@@ -1,4 +1,5 @@
 import isJson from 'js/utils/isJson';
+import isObjectEmpty from 'js/utils/isObjectEmpty';
 
 /*
  * Safety
@@ -8,6 +9,8 @@ import isJson from 'js/utils/isJson';
     safety({ profile: { image: 'yo' } }, 'profile.image', '');
 */
 const safety = (obj = {}, mainKey, defaultValue = null) => {
+  if (!obj) return defaultValue;
+
   const keys = mainKey.split('.');
   let currentValue = null;
 
@@ -29,7 +32,7 @@ export const safeType = {
   string: (val) => (typeof val === 'string' && val ? val : ''),
   number: (val) => val || 0,
   boolean: (val) => val || false,
-  object: (val) => val || {},
+  object: (val) => (isObjectEmpty(val) ? {} : val),
   array: (val) => val || [],
   function: (val) => val || (() => {}),
   json: (val) => (isJson(val) ? JSON.parse(val) : val),
