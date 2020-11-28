@@ -54,17 +54,30 @@
         margin-bottom: rem(10);
         font-size: rem(16);
         color: var(--primary-accent-3);
+
+        @include desktop {
+          margin-bottom: rem(20);
+          font-size: rem(18);
+        }
       }
 
       &-value {
         @include font('Bold');
 
         color: var(--dark);
+
+        @include desktop {
+          font-size: rem(18);
+        }
       }
     }
 
     &__details > &__detail:not(:first-of-type) {
       margin-top: rem(20);
+
+      @include desktop {
+        margin-top: rem(30);
+      }
     }
 
     &__actions {
