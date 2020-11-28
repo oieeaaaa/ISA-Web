@@ -1,0 +1,5 @@
+.input-display {
+  @include font('Bold');
+
+  color: var(--dark);
+}
