@@ -1,3 +1,3 @@
-const isObjectEmpty = (obj) => !Object.keys(obj).length;
+const isObjectEmpty = (obj) => !Object.keys(obj || {}).length;
 
 export default isObjectEmpty;
