@@ -1,8 +1,4 @@
 import omit from 'lodash.omit';
-import {
-  connectOrCreateMultiple,
-  connectOrCreateSingle
-} from 'js/utils/connectOrCreate';
 import { safeType } from 'js/utils/safety';
 import dateFormat from 'js/utils/dateFormat';
 
@@ -155,14 +151,16 @@ export const initialValues = {
   chequeNumber: '',
   chequeDate: new Date(),
   discount: 0.0,
+  amount: 0.0,
   type: { name: '' },
   salesStaff: [],
   paymentType: { name: '' },
   bank: { name: '' },
   soldItems: [],
+  removedItems: [],
 
   // Modal related stuff
-  // NOTE: This should not be submitted as a payload
+  // NOTE: Properties below should not be submitted as a payload
   modal: {
     mode: 'add',
     selectedItem: { particular: '' },
@@ -170,24 +168,22 @@ export const initialValues = {
   }
 };
 
-export const submitPayload = ({
-  soldItems,
-  salesStaff,
-  type,
-  paymentType,
-  bank,
-  ...payload
-}) => ({
-  ...omit(payload, ['modal']),
-  soldItems: soldItems.map(({ id, quantity, selectedQuantity }) => ({
+export const submitPayload = ({ soldItems, ...payload }) => ({
+  ...omit(payload, ['modal', 'removedItems']),
+  soldItems: soldItems.map(({ id, selectedQuantity }) => ({
     id,
-    selectedQuantity,
-    newItemQuantity: quantity - selectedQuantity
-  })),
-  type: connectOrCreateSingle(type),
-  paymentType: connectOrCreateSingle(paymentType),
-  bank: connectOrCreateSingle(bank),
-  salesStaff: connectOrCreateMultiple(salesStaff)
+    selectedQuantity
+  }))
+});
+
+export const updatePayload = ({ soldItems, ...payload }) => ({
+  ...omit(payload, ['modal']),
+  soldItems: soldItems.map(({ soldItemID, id, prevQty, selectedQuantity }) => ({
+    soldItemID,
+    id,
+    prevQty, // TODO: Find a way in BE where we don't need to pass this
+    selectedQuantity
+  }))
 });
 
 export const soldItemsHeaders = [
@@ -275,12 +271,15 @@ export const soldItemsSortOptions = [
 
 export const toSoldItems = (items) =>
   items.map((item) => ({
+    soldItemID: item.id,
+    prevQty: item.quantity,
     selectedQuantity: item.quantity,
-    ...omit(item, ['id', 'quantity']).item
+    ...item.item
   }));
 
 export default {
   initialValues,
+  updatePayload,
   submitPayload,
   tableHeaders,
   tableSortOptions,
