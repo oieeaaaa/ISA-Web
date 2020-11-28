@@ -86,12 +86,12 @@ export default api({
       // TODO:
       // Find a way to do this the DB way
       const multiUpdateInventoryItemQuantity = soldItems.map(
-        ({ id, newItemQuantity }) =>
+        ({ id, selectedQuantity }) =>
           prisma.inventory.update({
             where: { id },
             data: {
               quantity: {
-                set: newItemQuantity
+                decrement: selectedQuantity
               }
             }
           })

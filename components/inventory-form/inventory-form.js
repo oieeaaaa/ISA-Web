@@ -83,6 +83,7 @@ const InventoryForm = ({ mode = 'add', helpers }) => {
               options={suppliers}
               component={Select}
               error={safety(errors, 'supplier.id', 'Invalid supplier!')}
+              displayKey="initials"
             />
             <InputGroup
               name="description"
