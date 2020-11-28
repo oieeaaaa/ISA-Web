@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { safeType } from 'js/utils/safety';
+import safety, { safeType } from 'js/utils/safety';
 import api from 'js/utils/api';
+import omit from 'lodash.omit';
+import {
+  connectOrCreateMultiple,
+  connectOrCreateSingle
+} from 'js/utils/connectOrCreate';
+import { disconnectSingle } from 'js/utils/disconnect';
 
 const prisma = new PrismaClient();
 
@@ -42,38 +48,99 @@ export default api({
     }
   },
   put: async (req, res) => {
-    const { soldItems, removedItems, ...payload } = req.body;
+    const {
+      type,
+      paymentType,
+      bank,
+      salesStaff,
+      soldItems,
+      removedItems,
+      ...payload
+    } = req.body;
 
-    try {
-      const updateItem = prisma.salesReport.update({
-        where: {
-          id: req.query.id
-        },
-        data: {
-          ...payload,
-          soldItems: {
-            disconnect: removedItems.map(({ id }) => ({
-              id: safeType.string(id)
-            })),
-            upsert: soldItems.map(({ soldItemID, id, selectedQuantity }) => ({
-              where: {
-                id: safeType.string(soldItemID)
-              },
-              update: {
-                quantity: selectedQuantity
-              },
-              create: {
-                quantity: selectedQuantity,
-                item: {
-                  connect: {
-                    id
-                  }
+    console.log({
+      type,
+      bank,
+      salesStaff,
+      paymentType,
+      removedItems,
+      soldItems
+    });
+
+    let updateItemQuery = {
+      where: {
+        id: req.query.id
+      },
+      data: {
+        ...omit(payload, ['typeID', 'paymentTypeID', 'bankID']),
+        type: connectOrCreateSingle(type),
+        paymentType: connectOrCreateSingle(safeType.object(paymentType)),
+        bank: connectOrCreateSingle(safeType.object(bank)),
+        salesStaff: connectOrCreateMultiple(salesStaff),
+        soldItems: {
+          disconnect: removedItems.map(({ id }) => ({
+            id: safeType.string(id)
+          })),
+          upsert: soldItems.map(({ soldItemID, id, selectedQuantity }) => ({
+            where: {
+              id: safeType.string(soldItemID)
+            },
+            update: {
+              quantity: selectedQuantity
+            },
+            create: {
+              quantity: selectedQuantity,
+              item: {
+                connect: {
+                  id
                 }
               }
-            }))
-          }
+            }
+          }))
         }
-      });
+      }
+    };
+
+    // TODO: Find a way to restrict the user to only use type of Account | Sale and payment type of Cash | Cheque
+    if (type.name.toLowerCase() === 'account') {
+      updateItemQuery.data = {
+        ...updateItemQuery.data,
+        siNumber: null,
+        crsNumber: null,
+        tin: null,
+        chequeDate: null,
+        chequeNumber: null,
+        paymentType: disconnectSingle(paymentType),
+        bank: disconnectSingle(bank)
+      };
+    }
+
+    if (type.name.toLowerCase() === 'sale') {
+      updateItemQuery.data = {
+        ...updateItemQuery.data,
+        drNumber: null,
+        crsNumber: null
+      };
+    }
+
+    if (safety(paymentType, 'name', '').toLowerCase() === 'cash') {
+      updateItemQuery.data = {
+        ...updateItemQuery.data,
+        chequeDate: null,
+        chequeNumber: null,
+        bank: disconnectSingle(bank)
+      };
+    }
+
+    if (safety(paymentType, 'name', '').toLowerCase() === 'cheque') {
+      updateItemQuery.data = {
+        ...updateItemQuery.data,
+        amount: null
+      };
+    }
+
+    try {
+      const updateItem = prisma.salesReport.update(updateItemQuery);
 
       const updateItemsQuantity = soldItems.map(
         ({ id, selectedQuantity, prevQty }) =>
