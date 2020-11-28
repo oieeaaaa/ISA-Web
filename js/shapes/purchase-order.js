@@ -40,7 +40,6 @@ export const initialValues = {
   dateCreated: new Date(),
   supplier: {},
   items: [],
-  removedItems: [],
 
   // Modal related stuff
   // NOTE: Properties below should not be submitted as a payload
@@ -51,8 +50,7 @@ export const initialValues = {
   }
 };
 
-export const submitPayload = (payload) =>
-  omit(payload, ['modal', 'removedItems']);
+export const submitPayload = (payload) => omit(payload, ['modal']);
 
 export const itemsHeaders = [
   {
@@ -137,6 +135,12 @@ export const itemsSortOptions = [
   }
 ];
 
+export const toItems = (items) =>
+  items.map((item) => ({
+    selectedQuantity: item.quantity,
+    ...item.item
+  }));
+
 export default {
   initialValues,
   submitPayload,
@@ -144,5 +148,6 @@ export default {
   tableSortOptions,
   tableFilters,
   itemsHeaders,
-  itemsSortOptions
+  itemsSortOptions,
+  toItems
 };
