@@ -23,6 +23,11 @@ const Sidebar = () => {
       icon: 'list'
     },
     {
+      name: 'Purchase Order',
+      location: '/purchase-order',
+      icon: 'clipboard'
+    },
+    {
       name: 'Sales Report',
       location: '/sales-report',
       icon: 'activity'
