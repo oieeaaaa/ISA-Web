@@ -74,6 +74,9 @@ model Supplier {
 
   // emails
   emails Email[]
+
+  // po
+  purchaseOrders PurchaseOrder[]
 }
 
 // ===========================================================================
@@ -111,6 +114,17 @@ model SalesReport {
 
   // soldItems
   soldItems SoldItem[]
+}
+
+// ===========================================================================
+// Purchase Order
+// ===========================================================================
+model PurchaseOrder {
+  id String @id @default(uuid())
+  dateCreated DateTime @default(now())
+  supplier Supplier? @relation(fields: [supplierID], references: [id])
+  supplierID String?
+  items POItem[]
 }
 
 // ===========================================================================
@@ -189,4 +203,12 @@ model SoldItem {
   item Inventory? @relation(fields: [itemID], references: [id])
   itemID String?
   salesReports SalesReport[]
+}
+
+model POItem {
+  id String @id @default(uuid())
+  quantity Int
+  item Inventory? @relation(fields: [itemID], references: [id])
+  itemID String?
+  purchaseOrders PurchaseOrder[]
 }
