@@ -1,4 +1,5 @@
 import isObjectEmpty from './isObjectEmpty';
+import { safeType } from 'js/utils/safety';
 
 export const connectOrCreateMultiple = (list, uniqueKey = 'name') => {
   const newList = {};
@@ -13,7 +14,7 @@ export const connectOrCreateMultiple = (list, uniqueKey = 'name') => {
 
   if (forConnection.length) {
     newList.connect = forConnection.map((item) => ({
-      [uniqueKey]: item[uniqueKey]
+      [uniqueKey]: safeType.string(item[uniqueKey])
     }));
   }
 
@@ -27,6 +28,8 @@ export const connectOrCreateMultiple = (list, uniqueKey = 'name') => {
 };
 
 export const connectOrCreateSingle = (item = {}, uniqueKey = 'name') => {
+  if (!item) return null;
+
   const { isNew, ...newItem } = item;
   let payload = {};
 
@@ -37,7 +40,7 @@ export const connectOrCreateSingle = (item = {}, uniqueKey = 'name') => {
   } else {
     payload = {
       connect: {
-        [uniqueKey]: newItem[uniqueKey]
+        [uniqueKey]: safeType.string(newItem[uniqueKey])
       }
     };
   }
