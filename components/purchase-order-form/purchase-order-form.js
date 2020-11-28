@@ -7,6 +7,7 @@ import useAppContext from 'js/contexts/app';
 // utils
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
+import dateFormat from 'js/utils/dateFormat';
 
 // shapes
 import {
@@ -23,6 +24,7 @@ import ModalActions from 'components/modal-actions/modal-actions';
 import FormActions from 'components/form-actions/form-actions';
 import InputGroup from 'components/input-group/input-group';
 import Input from 'components/input/input';
+import InputDisplay from 'components/input-display/input-display';
 import Select from 'components/select/select';
 import InputSelectWithFetch from 'components/input-select-with-fetch/input-select-with-fetch';
 import Button from 'components/button/button';
@@ -30,11 +32,6 @@ import DatePicker from 'components/date-picker/date-picker';
 import MediumCard from 'components/medium-card/medium-card';
 import Table from 'components/table/table';
 
-// TODO:
-// Update modal props ✅
-// Update shapes ✅
-// Update styles ✅
-// Wire up to BE
 const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
   // contexts
   const {
@@ -71,7 +68,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
   const openAddModal = () => {
     if (!values.supplier.id) {
       notification.open({
-        message: 'Supplier must be selected.',
+        message: 'Please select a supplier first',
         variant: 'danger'
       });
 
@@ -86,10 +83,6 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
 
   const isItemInSoldItems = values.items.some(
     (si) => si.id === selectedItem.id
-  );
-
-  const isItemInRemovedItems = values.removedItems.some(
-    ({ id }) => id === selectedItem.id
   );
 
   const openUpdateModal = (item) => {
@@ -116,13 +109,6 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
       });
 
       return;
-    }
-
-    if (isItemInRemovedItems) {
-      setFieldValue(
-        'removedItems',
-        values.removedItems.filter(({ id }) => id !== selectedItem.id)
-      );
     }
 
     // add new item to items
@@ -164,17 +150,6 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
 
   const handleRemoveItem = () => {
     if (!isItemInSoldItems) return;
-
-    if (mode === 'edit') {
-      setFieldValue(
-        'removedItems',
-        values.removedItems.concat({
-          id: selectedItem.soldItemID,
-          itemID: selectedItem.id,
-          quantity: selectedItem.selectedQuantity
-        })
-      );
-    }
 
     setFieldValue(
       'items',
@@ -268,27 +243,48 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
         </ModalActions>
       </Modal>
       <div className="purchase-order-form">
-        <FormActions title={mode === 'edit' ? 'Update PO' : 'Add PO'}>
-          <Button onClick={() => goTo('/purchase-order')}>Cancel</Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            {mode === 'edit' ? 'Update PO' : 'Add PO'}
-          </Button>
+        <FormActions title={mode === 'view' ? 'View PO' : 'Add PO'}>
+          <Button onClick={() => goTo('/purchase-order')}>Go back</Button>
+          {mode === 'add' && (
+            <Button variant="primary" onClick={handleSubmit}>
+              {mode === 'edit' ? 'Update PO' : 'Add PO'}
+            </Button>
+          )}
         </FormActions>
         <div className="purchase-order-form-container">
           <div className="purchase-order-form__group">
-            <InputGroup
-              name="dateCreated"
-              label="Date Created"
-              component={DatePicker}
-            />
-            <InputGroup
-              name="supplier"
-              label="Supplier"
-              options={suppliers}
-              component={Select}
-              displayKey="initials"
-              error={safety(errors, 'supplier.id', 'Invalid supplier!')}
-            />
+            {mode === 'view' ? (
+              <>
+                <InputGroup
+                  name="dateCreated"
+                  label="Date Created"
+                  component={InputDisplay}
+                  formatVal={dateFormat}
+                />
+                <InputGroup
+                  name="supplier"
+                  label="Supplier"
+                  component={InputDisplay}
+                  formatVal={(val) => val.vendor}
+                />
+              </>
+            ) : (
+              <>
+                <InputGroup
+                  name="dateCreated"
+                  label="Date Created"
+                  component={DatePicker}
+                />
+                <InputGroup
+                  name="supplier"
+                  label="Supplier"
+                  options={suppliers}
+                  component={Select}
+                  displayKey="initials"
+                  error={safety(errors, 'supplier.id', 'Invalid supplier!')}
+                />
+              </>
+            )}
           </div>
           <div className="purchase-order-form__group purchase-order-form__group--info">
             <MediumCard title="Grand Total" content="₱ 300,602.00" />
@@ -299,6 +295,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
       <div className="purchase-order-form__table">
         <Table
           local
+          locked={mode === 'view'}
           title="Items to PO"
           icon="clipboard"
           headers={itemsHeaders}
