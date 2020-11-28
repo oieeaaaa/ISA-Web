@@ -1,0 +1,9 @@
+.purchase-order {
+  &-filters {
+    @include desktop {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
