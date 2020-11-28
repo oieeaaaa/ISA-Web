@@ -217,18 +217,20 @@ const Table = ({
         <thead className="table__head">
           <tr>
             {headers.map((header) => (
-              <th key={header.accessKey}>{header.label}</th>
+              <th key={`${header.accessKey}--${header.label}`}>
+                {header.label}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody className="table__body">
           {(local ? localData() : data).map((item) => (
             <tr onClick={handleRowClick(item)} key={item.id}>
-              {headers.map(({ accessKey, customCell: Cell }) => {
+              {headers.map(({ label, accessKey, customCell: Cell }) => {
                 const value = safety(item, accessKey, null);
 
                 return (
-                  <td key={accessKey}>
+                  <td key={`${accessKey}--${label}`}>
                     {Cell ? <Cell key={accessKey} value={value} /> : value}
                   </td>
                 );
