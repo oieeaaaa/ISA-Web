@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
+import orderBy from 'lodash.orderby';
 import { defaultLimits, defaultConfigs } from 'js/shapes/table';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import safety, { safeType } from 'js/utils/safety';
@@ -134,20 +135,13 @@ const Table = ({
           .search(values.search.toLowerCase()) !== -1
     );
 
-  // TODO: The world might be upside down, fix this later
   const localSort = (items) =>
-    items.sort((itemA, itemB) => {
-      if (itemA[values.sortBy.key] < itemB[values.sortBy.key]) {
-        return values.direction === 'asc' ? 1 : -1;
-      }
-
-      return values.direction === 'asc' ? -1 : 1;
-    });
+    orderBy(items, [values.sortBy.key], [values.direction]);
 
   const localLimit = (items) => items.slice(0, values.limit.value);
 
   // TODO: Create a compose function
-  const localData = () => localSort(localSearch(localLimit(data)));
+  const localData = () => localSearch(localSort(localLimit(data)));
 
   useEffect(() => {
     window.addEventListener('resize', windowResizeListener);
@@ -160,6 +154,10 @@ const Table = ({
     if (!onChange) return;
 
     onChangeListener();
+
+    return () => {
+      onChangeListener();
+    };
   }, [values]);
 
   return (
