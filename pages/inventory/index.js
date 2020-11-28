@@ -55,7 +55,7 @@ const Inventory = ({ data, helpers }) => {
               label="Supplier"
               component={Select}
               options={helpers.suppliers}
-              mainKey="id"
+              displayKey="initials"
             />
           </div>
         )}
