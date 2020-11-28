@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Form, useFormikContext } from 'formik';
 import useAppContext from 'js/contexts/app';
-import safety from 'js/utils/safety';
+import safety, { safeType } from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import {
@@ -43,6 +43,13 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   const { selectedItem, selectedQuantity } = modal;
 
   const handleSubmit = () => {
+    if (errors.soldItems) {
+      notification.open({
+        message: 'Sold Items is required!',
+        variant: 'danger'
+      });
+    }
+
     if (!isValid) return;
 
     onSubmit(values, { resetForm });
@@ -55,8 +62,13 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
 
   const closeModal = () => setIsModalOpen(false);
 
-  const checkItemInSoldItems = () =>
-    values.soldItems.some((si) => si.id === selectedItem.id);
+  const isItemInSoldItems = values.soldItems.some(
+    (si) => si.id === selectedItem.id
+  );
+
+  const isItemInRemovedItems = values.removedItems.some(
+    ({ id }) => id === selectedItem.id
+  );
 
   const openUpdateModal = (item) => {
     setIsModalOpen(true);
@@ -64,13 +76,17 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
     setFieldValue('modal', {
       ...modal,
       mode: 'edit',
-      selectedItem: item,
+      selectedItem: {
+        ...item,
+        quantity: item.quantity
+      },
       selectedQuantity: item.selectedQuantity
     });
   };
 
+  // TODO: Only use setFieldValue once, maybe replace it with setFormValues??
   const handleAddItem = () => {
-    if (checkItemInSoldItems()) {
+    if (isItemInSoldItems) {
       notification.open({
         message: 'Your item is already in the list',
         variant: 'danger',
@@ -78,6 +94,13 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
       });
 
       return;
+    }
+
+    if (isItemInRemovedItems) {
+      setFieldValue(
+        'removedItems',
+        values.removedItems.filter(({ id }) => id !== selectedItem.id)
+      );
     }
 
     // add new item to soldItems
@@ -100,7 +123,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   };
 
   const handleUpdateItem = () => {
-    if (!checkItemInSoldItems()) return;
+    if (!isItemInSoldItems) return;
 
     setFieldValue(
       'soldItems',
@@ -118,7 +141,18 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   };
 
   const handleRemoveItem = () => {
-    if (!checkItemInSoldItems()) return;
+    if (!isItemInSoldItems) return;
+
+    if (mode === 'edit') {
+      setFieldValue(
+        'removedItems',
+        values.removedItems.concat({
+          id: selectedItem.soldItemID,
+          itemID: selectedItem.id,
+          quantity: selectedItem.selectedQuantity
+        })
+      );
+    }
 
     setFieldValue(
       'soldItems',
@@ -157,6 +191,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
           label="Quantity"
           type="number"
           component={Input}
+          max={selectedItem.quantity}
         />
         {selectedItem.id && (
           <ul className="sales-report-form-modal__details">
@@ -189,7 +224,8 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
                 Available Qty.
               </span>
               <span className="sales-report-form-modal__detail-value">
-                {selectedItem.quantity - selectedQuantity}
+                {selectedItem.quantity -
+                  (selectedQuantity - safeType.number(selectedItem.prevQty))}
               </span>
             </li>
           </ul>
@@ -243,13 +279,34 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
           <FormSection title="Details">
             <div className="sales-report-form__group">
               <InputGroup name="name" label="Name" component={Input} />
-              <InputGroup name="tin" label="Tin" component={Input} />
-              <InputGroup name="siNumber" label="SI Number" component={Input} />
-              <InputGroup
-                name="arsNumber"
-                label="ARS Number"
-                component={Input}
-              />
+              {values.type.name.toLowerCase() === 'account' ? (
+                <>
+                  <InputGroup
+                    name="drNumber"
+                    label="DR Number"
+                    component={Input}
+                  />
+                  <InputGroup
+                    name="crsNumber"
+                    label="CRS Number"
+                    component={Input}
+                  />
+                </>
+              ) : (
+                <>
+                  <InputGroup name="tin" label="Tin" component={Input} />
+                  <InputGroup
+                    name="siNumber"
+                    label="SI Number"
+                    component={Input}
+                  />
+                  <InputGroup
+                    name="arsNumber"
+                    label="ARS Number"
+                    component={Input}
+                  />
+                </>
+              )}
             </div>
             <div className="sales-report-form__group">
               <InputGroup name="address" label="Address" component={TextArea} />
@@ -262,30 +319,60 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
             </div>
           </FormSection>
           <FormSection title="Payment">
-            <InputGroup
-              name="paymentType"
-              label="Type"
-              initialOptions={paymentTypes}
-              serverRoute="/helpers/payment-type"
-              component={InputSelectWithFetch}
-              error={safety(errors, 'type.id', 'Invalid payment type!')}
-            />
-            <InputGroup
-              name="discount"
-              label="Discount"
-              type="number"
-              component={Input}
-            />
-            <InputGroup
-              name="bank"
-              label="Bank"
-              initialOptions={banks}
-              serverRoute="/helpers/bank"
-              component={InputSelectWithFetch}
-              error={safety(errors, 'bank.id', 'Invalid bank!')}
-            />
-            <InputGroup name="chequeNumber" label="Number" component={Input} />
-            <InputGroup name="chequeDate" label="Date" component={DatePicker} />
+            {values.type.name.toLowerCase() === 'account' ? (
+              <InputGroup
+                name="discount"
+                label="Discount"
+                type="number"
+                component={Input}
+              />
+            ) : (
+              <>
+                <InputGroup
+                  name="paymentType"
+                  label="Type"
+                  initialOptions={paymentTypes}
+                  serverRoute="/helpers/payment-type"
+                  component={InputSelectWithFetch}
+                  error={safety(errors, 'type.id', 'Invalid payment type!')}
+                />
+                <InputGroup
+                  name="discount"
+                  label="Discount"
+                  type="number"
+                  component={Input}
+                />
+                {values.paymentType.name.toLowerCase() === 'cheque' ? (
+                  <>
+                    <InputGroup
+                      name="bank"
+                      label="Bank"
+                      initialOptions={banks}
+                      serverRoute="/helpers/bank"
+                      component={InputSelectWithFetch}
+                      error={safety(errors, 'bank.id', 'Invalid bank!')}
+                    />
+                    <InputGroup
+                      name="chequeNumber"
+                      label="Number"
+                      component={Input}
+                    />
+                    <InputGroup
+                      name="chequeDate"
+                      label="Date"
+                      component={DatePicker}
+                    />
+                  </>
+                ) : (
+                  <InputGroup
+                    name="amount"
+                    label="Amount"
+                    type="number"
+                    component={Input}
+                  />
+                )}
+              </>
+            )}
           </FormSection>
           <div className="sales-report-form__pricing-info">
             <MediumCard title="Gross Sales" content="₱20,602.00" />
