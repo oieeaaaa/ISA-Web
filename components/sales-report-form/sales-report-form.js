@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import { Form, useFormikContext } from 'formik';
+
+// contexts
 import useAppContext from 'js/contexts/app';
+
+// utils
 import safety, { safeType } from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
-import cssClassModifier from 'js/utils/cssClassModifier';
+
+// shapes
 import {
   soldItemsHeaders,
   soldItemsSortOptions,
   initialValues
 } from 'js/shapes/sales-report';
+
+// components
 import Modal from 'components/modal/modal';
+import ModalInfoText from 'components/modal-info-text/modal-info-text';
+import ModalInfoDetails from 'components/modal-info-details/modal-info-details';
+import ModalActions from 'components/modal-actions/modal-actions';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -170,11 +180,11 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
         title={modal.mode === 'add' ? 'Add Item' : 'Update Item'}
         isOpen={isModalOpen}
         closeModal={closeModal}>
-        <p className="sales-report-form-modal__info">
+        <ModalInfoText>
           {modal.mode === 'add'
             ? 'Add sales report for purchase order to display on this items list.'
             : 'Update item for sales report to display on this items list.'}
-        </p>
+        </ModalInfoText>
         <InputGroup
           name="modal.selectedItem"
           label="Your item"
@@ -194,48 +204,30 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
           max={selectedItem.quantity}
         />
         {selectedItem.id && (
-          <ul className="sales-report-form-modal__details">
-            <li className="sales-report-form-modal__detail">
-              <span className="sales-report-form-modal__detail-title">
-                Supplier
-              </span>
-              <span className="sales-report-form-modal__detail-value">
-                {selectedItem.supplier.initials}
-              </span>
-            </li>
-            <li className="sales-report-form-modal__detail">
-              <span className="sales-report-form-modal__detail-title">
-                Brand
-              </span>
-              <span className="sales-report-form-modal__detail-value">
-                {selectedItem.brand.name}
-              </span>
-            </li>
-            <li className="sales-report-form-modal__detail">
-              <span className="sales-report-form-modal__detail-title">
-                Unit Cost
-              </span>
-              <span className="sales-report-form-modal__detail-value">
-                1170 {/* TODO: Calculate this later */}
-              </span>
-            </li>
-            <li className="sales-report-form-modal__detail">
-              <span className="sales-report-form-modal__detail-title">
-                Available Qty.
-              </span>
-              <span className="sales-report-form-modal__detail-value">
-                {selectedItem.quantity -
-                  (selectedQuantity - safeType.number(selectedItem.prevQty))}
-              </span>
-            </li>
-          </ul>
+          <ModalInfoDetails
+            details={[
+              {
+                title: 'Supplier',
+                value: selectedItem.supplier.initials
+              },
+              {
+                title: 'Brand',
+                value: selectedItem.brand.name
+              },
+              {
+                title: 'Unit Cost',
+                value: 1170 // TODO: Calculate this later
+              },
+              {
+                title: 'Available Qty.',
+                value:
+                  selectedItem.quantity -
+                  (selectedQuantity - safeType.number(selectedItem.prevQty))
+              }
+            ]}
+          />
         )}
-        <div
-          className={cssClassModifier(
-            'sales-report-form-modal__actions',
-            ['add'],
-            [modal.mode === 'add']
-          )}>
+        <ModalActions mode={modal.mode}>
           {modal.mode === 'add' ? (
             <Button variant="primary" onClick={handleAddItem}>
               Add Item
@@ -250,7 +242,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
               </Button>
             </>
           )}
-        </div>
+        </ModalActions>
       </Modal>
       <div className="sales-report-form">
         <FormActions
