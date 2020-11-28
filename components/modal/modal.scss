@@ -1,10 +1,9 @@
 .modal {
   $this: &;
 
-  @include flex-center;
-  @include container;
-
-  height: 100%;
+  justify-content: center;
+  align-items: start;
+  min-height: 100%;
   width: 100%;
   top: 0;
   left: 0;
@@ -14,12 +13,20 @@
   backdrop-filter: blur(rem(10));
   opacity: 0;
   transition: opacity 0.25s ease;
+  overflow-y: scroll;
 
   &--open {
     opacity: 1;
   }
 
   &-container {
+    @include container;
+    @include padding-y(50);
+
+    position: absolute;
+  }
+
+  &-content {
     background-color: var(--white);
     border-radius: rem(15);
     animation: slideUp 0.25s ease;

@@ -23,11 +23,13 @@ const Modal = ({ isOpen, title, closeModal, children }) => {
       ref={modalRef}
       className={cssClassModifier('modal', ['open'], [isOpen])}>
       <div className="modal-container">
-        <div className="modal-header">
-          <h2 className="modal__title">{title}</h2>
-          <Button className="modal__close" icon="x" onClick={closeModal} />
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal__title">{title}</h2>
+            <Button className="modal__close" icon="x" onClick={closeModal} />
+          </div>
+          <div className="modal-body">{children}</div>
         </div>
-        <div className="modal-body">{children}</div>
       </div>
     </div>
   );
