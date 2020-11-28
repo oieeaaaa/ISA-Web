@@ -14,7 +14,9 @@ const Notification = () => {
   } = notification;
 
   useEffect(() => {
-    setTimeout(() => {
+    const closeTimeout = setTimeout(() => {
+      if (isActive) clearTimeout(closeTimeout);
+
       close();
     }, duration);
   }, [isActive]);
