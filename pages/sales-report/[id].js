@@ -4,7 +4,7 @@ import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import {
-  submitPayload,
+  updatePayload,
   initialValues,
   toSoldItems
 } from 'js/shapes/sales-report';
@@ -22,7 +22,7 @@ const SalesReportItem = ({ item, helpers }) => {
     try {
       await fetcher(`/sales-report/${router.query.id}`, {
         method: 'PUT',
-        body: JSON.stringify(submitPayload(values))
+        body: JSON.stringify(updatePayload(values))
       });
 
       actions.resetForm();
