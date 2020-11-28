@@ -1,0 +1,8 @@
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+
+  &--add {
+    justify-content: flex-end;
+  }
+}
