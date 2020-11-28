@@ -92,6 +92,7 @@ model SalesReport {
   chequeNumber String?
   chequeDate DateTime?
   discount Float?
+  amount Float?
 
   // type
   type SalesType @relation(fields: [typeID], references: [id])
