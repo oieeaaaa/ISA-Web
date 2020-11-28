@@ -1,3 +1,5 @@
+import set from 'lodash.set';
+
 /**
  * toFullTextSearchQuery.
  *
@@ -25,10 +27,10 @@
  ```
  */
 const toFullTextSearchQuery = (keys, searchVal) =>
-  keys.map((key) => ({
-    [key]: {
+  keys.map((key) =>
+    set({}, key, {
       contains: searchVal
-    }
-  }));
+    })
+  );
 
 export default toFullTextSearchQuery;
