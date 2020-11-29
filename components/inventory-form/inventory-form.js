@@ -20,8 +20,6 @@ const InventoryForm = ({ mode = 'add', helpers }) => {
   const { codes } = useAppContext();
   const { uoms, brands, suppliers, applications } = helpers;
 
-  console.log({ values });
-
   return (
     <Form>
       <div className="inventory-form">
