@@ -2,7 +2,8 @@
   display: flex;
   justify-content: space-between;
 
-  &--add {
+  &--add,
+  &--single {
     justify-content: flex-end;
   }
 }
