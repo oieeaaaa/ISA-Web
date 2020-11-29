@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
-import { submitPayload, initialValues } from 'js/shapes/suppliers';
+import { initialValues } from 'js/shapes/suppliers';
 import validationSchema from 'js/validations/supplier';
 
 // components
@@ -18,7 +18,7 @@ const SupplierItem = ({ item, helpers }) => {
     try {
       await fetcher(`/supplier/${router.query.id}`, {
         method: 'PUT',
-        body: JSON.stringify(submitPayload(values))
+        body: JSON.stringify(values)
       });
 
       actions.resetForm();
