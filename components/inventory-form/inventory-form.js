@@ -1,4 +1,6 @@
 import { Form, useFormikContext } from 'formik';
+import useAppContext from 'js/contexts/app';
+import codeCalc from 'js/utils/codeCalc';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
 import FormActions from 'components/form-actions/form-actions';
@@ -14,8 +16,11 @@ import TextArea from 'components/text-area/text-area';
 import MiniCard from 'components/mini-card/mini-card';
 
 const InventoryForm = ({ mode = 'add', helpers }) => {
-  const { errors } = useFormikContext();
+  const { values, errors } = useFormikContext();
+  const { codes } = useAppContext();
   const { uoms, brands, suppliers, applications } = helpers;
+
+  console.log({ values });
 
   return (
     <Form>
@@ -67,6 +72,7 @@ const InventoryForm = ({ mode = 'add', helpers }) => {
               label="Applications"
               initialOptions={applications}
               serverRoute="/helpers/application"
+              captureRemoved={mode === 'edit'}
               component={MultiSelectWithFetch}
             />
             <InputGroup
@@ -94,8 +100,14 @@ const InventoryForm = ({ mode = 'add', helpers }) => {
           <FormSection title="Pricing">
             <InputGroup name="codes" label="Codes" component={Input} />
             <div className="inventory-form__pricing-info">
-              <MiniCard title="Unit Cost" content="₱1870" />
-              <MiniCard title="Amount" content="₱1870" />
+              <MiniCard
+                title="Unit Cost"
+                content={`₱${codeCalc(codes, values.codes)}`}
+              />
+              <MiniCard
+                title="Amount"
+                content={`₱${codeCalc(codes, values.codes)}`}
+              />
             </div>
             <InputGroup
               name="uom"

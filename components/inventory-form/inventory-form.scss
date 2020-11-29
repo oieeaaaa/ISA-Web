@@ -199,6 +199,7 @@
     grid-column-gap: ratio(20, 300);
 
     @include desktop {
+      align-self: start;
       grid-column: unset;
     }
   }
