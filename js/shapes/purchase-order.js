@@ -1,8 +1,9 @@
 import omit from 'lodash.omit';
 import { safeType } from 'js/utils/safety';
 import dateFormat from 'js/utils/dateFormat';
+import codeCalc from 'js/utils/codeCalc';
 
-export const tableHeaders = [
+export const tableHeaders = (codes) => [
   {
     label: 'Date Created',
     accessKey: 'dateCreated',
@@ -14,13 +15,19 @@ export const tableHeaders = [
   },
   {
     label: 'Quantity',
-    accessKey: 'item',
-    customCell: () => 10 // TODO: Update this later, TALLY THE QUANTITY
+    accessKey: 'items',
+    customCell: ({ value }) =>
+      value.reduce((total, cur) => (total += cur.quantity), 0)
   },
   {
     label: 'Grand Total',
-    accessKey: 'item',
-    customCell: () => 'Php 10,538' // TODO: Update this later, TALLY THE Grand Total
+    accessKey: 'items',
+    customCell: ({ value }) =>
+      `Php ${value.reduce(
+        (total, cur) =>
+          (total += codeCalc(codes, cur.item.codes) * cur.quantity),
+        0
+      )}`
   }
 ];
 
@@ -52,7 +59,7 @@ export const initialValues = {
 
 export const submitPayload = (payload) => omit(payload, ['modal']);
 
-export const itemsHeaders = [
+export const itemsHeaders = (codes) => [
   {
     label: 'Quantity',
     accessKey: 'selectedQuantity'
@@ -89,6 +96,11 @@ export const itemsHeaders = [
   {
     label: 'Codes',
     accessKey: 'codes'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'codes',
+    customCell: ({ value }) => `₱ ${codeCalc(codes, value)}`
   },
   {
     label: 'Remarks',

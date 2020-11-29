@@ -7,6 +7,7 @@ import useAppContext from 'js/contexts/app';
 // utils
 import safety, { safeType } from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
+import codeCalc from 'js/utils/codeCalc';
 
 // shapes
 import {
@@ -41,7 +42,7 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
     resetForm,
     setFieldValue
   } = useFormikContext();
-  const { notification } = useAppContext();
+  const { codes, notification } = useAppContext();
 
   // state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -174,6 +175,16 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
     closeModal();
   };
 
+  const getGrossSales = () => {
+    const itemsTotals = values.soldItems.map(
+      (item) => codeCalc(codes, item.codes) * item.selectedQuantity
+    );
+
+    return itemsTotals.reduce((total, cur) => (total += cur), 0);
+  };
+
+  const getNetSales = () => getGrossSales() - values.discount;
+
   return (
     <Form>
       <Modal
@@ -305,8 +316,9 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
               <InputGroup
                 name="salesStaff"
                 label="Sales Staff"
-                component={MultiInput}
                 mainKey="name"
+                captureRemoved={mode === 'edit'}
+                component={MultiInput}
               />
             </div>
           </FormSection>
@@ -368,9 +380,9 @@ const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
             )}
           </FormSection>
           <div className="sales-report-form__pricing-info">
-            <MediumCard title="Gross Sales" content="₱20,602.00" />
-            <MediumCard title="Net Sales" content="₱20,102.00" />
-            <MediumCard title="Discounts" content="₱500" />
+            <MediumCard title="Gross Sales" content={`₱ ${getGrossSales()}`} />
+            <MediumCard title="Net Sales" content={`₱ ${getNetSales()}`} />
+            <MediumCard title="Discounts" content={`₱ ${values.discount}`} />
           </div>
         </div>
       </div>
