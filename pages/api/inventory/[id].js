@@ -1,5 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import omit from 'lodash.omit';
 import api from 'js/utils/api';
+import { safeType } from 'js/utils/safety';
+import {
+  connectOrCreateMultiple,
+  connectOrCreateSingle
+} from 'js/utils/connectOrCreate';
 
 const prisma = new PrismaClient();
 
@@ -24,12 +30,34 @@ export default api({
     }
   },
   put: async (req, res) => {
+    const {
+      applications,
+      applicationsX,
+      uom,
+      brand,
+      supplier,
+      ...payload
+    } = req.body;
+
     try {
       const updatedItem = await prisma.inventory.update({
         where: {
           id: req.query.id
         },
-        data: req.body
+        data: {
+          ...omit(payload, ['uomID', 'supplierID', 'brandID', 'codeId']),
+          applications: {
+            disconnect: safeType.array(applicationsX).map(({ id }) => ({ id })),
+            ...connectOrCreateMultiple(applications)
+          },
+          brand: connectOrCreateSingle(brand),
+          uom: connectOrCreateSingle(uom),
+          supplier: {
+            connect: {
+              id: supplier.id
+            }
+          }
+        }
       });
 
       res.success(updatedItem);
