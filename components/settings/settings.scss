@@ -1,0 +1,37 @@
+.settings {
+  &__theme {
+    margin-bottom: rem(30);
+  }
+
+  &__heading {
+    @include input-label;
+  }
+
+  &__codes {
+    display: flex;
+
+    &-name {
+      margin-right: rem(10);
+      width: rem(40);
+      text-align: center;
+
+      @include desktop {
+        width: rem(60);
+      }
+    }
+
+    &-value {
+      width: 155 / 260 * 100%;
+    }
+  }
+
+  .input-group--codes {
+    margin-bottom: rem(100);
+
+    .multi-input {
+      @include desktop {
+        max-width: rem(300);
+      }
+    }
+  }
+}
