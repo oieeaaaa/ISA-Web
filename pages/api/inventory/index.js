@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
+import {
+  connectOrCreateMultiple,
+  connectOrCreateSingle
+} from 'js/utils/connectOrCreate';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 
@@ -60,9 +64,21 @@ export default api({
     }
   },
   post: async (req, res) => {
+    const { applications, uom, brand, supplier, ...payload } = req.body;
+
     try {
       const newItem = await prisma.inventory.create({
-        data: req.body
+        data: {
+          ...payload,
+          applications: connectOrCreateMultiple(applications),
+          brand: connectOrCreateSingle(brand),
+          uom: connectOrCreateSingle(uom),
+          supplier: {
+            connect: {
+              id: supplier.id
+            }
+          }
+        }
       });
       res.success(newItem);
     } catch (error) {
