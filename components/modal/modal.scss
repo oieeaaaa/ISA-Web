@@ -23,7 +23,13 @@
     @include container;
     @include padding-y(50);
 
+    width: 100%;
     position: absolute;
+
+    @include desktop {
+      min-width: rem(600);
+      width: auto;
+    }
   }
 
   &-content {
