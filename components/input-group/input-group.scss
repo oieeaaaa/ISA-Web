@@ -6,17 +6,7 @@
   }
 
   &__label {
-    @include font('Bold');
-
-    margin-bottom: rem(10);
-    display: block;
-    font-size: rem(16);
-    color: var(--primary-accent-3);
-
-    @include desktop {
-      margin-bottom: rem(20);
-      font-size: rem(18);
-    }
+    @include input-label;
   }
 
   &__error {
