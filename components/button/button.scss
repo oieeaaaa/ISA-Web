@@ -48,4 +48,9 @@
     background-color: var(--danger);
     color: var(--white);
   }
+
+  &--dark {
+    background-color: var(--dark);
+    color: var(--white);
+  }
 }
