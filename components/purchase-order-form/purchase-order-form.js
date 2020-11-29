@@ -6,6 +6,7 @@ import useAppContext from 'js/contexts/app';
 
 // utils
 import safety from 'js/utils/safety';
+import codeCalc from 'js/utils/codeCalc';
 import goTo from 'js/utils/goTo';
 import dateFormat from 'js/utils/dateFormat';
 
@@ -42,7 +43,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
     setFieldValue,
     dirty
   } = useFormikContext();
-  const { notification } = useAppContext();
+  const { codes, notification } = useAppContext();
 
   // state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,6 +160,14 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
     setFieldValue('modal', initialValues.modal);
 
     closeModal();
+  };
+
+  const getGrandTotal = () => {
+    const itemsTotals = values.items.map(
+      (item) => codeCalc(codes, item.codes) * item.quantity
+    );
+
+    return itemsTotals.reduce((total, cur) => (total += cur), 0);
   };
 
   useEffect(() => {
@@ -287,7 +296,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
             )}
           </div>
           <div className="purchase-order-form__group purchase-order-form__group--info">
-            <MediumCard title="Grand Total" content="₱ 300,602.00" />
+            <MediumCard title="Grand Total" content={`₱ ${getGrandTotal()}`} />
             <MediumCard title="Total Items" content="49" />
           </div>
         </div>
@@ -298,7 +307,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
           locked={mode === 'view'}
           title="Items to PO"
           icon="clipboard"
-          headers={itemsHeaders}
+          headers={itemsHeaders(codes)}
           data={values.items}
           sortOptions={itemsSortOptions}
           onAdd={openAddModal}
