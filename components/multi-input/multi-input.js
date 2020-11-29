@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { useField } from 'formik';
+import { useFormikContext, useField } from 'formik';
+import debounce from 'lodash.debounce';
 import { safeType } from 'js/utils/safety';
 import Button from 'components/button/button';
 
@@ -8,12 +9,17 @@ const MultiInput = ({
   name,
   mainKey = 'name',
   customInput: CustomInput,
+  captureRemoved,
   ...etc
 }) => {
+  const { values, setFieldValue } = useFormikContext();
+
   const [field, , helpers] = useField({
     name,
     multiple: true
   });
+
+  const removedValuesName = `${name}X`;
 
   const addField = () => {
     helpers.setValue(
@@ -24,16 +30,52 @@ const MultiInput = ({
     );
   };
 
-  const removeField = (uniqueVal) => {
-    helpers.setValue(field.value.filter((v) => v[mainKey] !== uniqueVal));
+  // prevent duplicates
+  const isInRemovedValues = (item) =>
+    safeType
+      .array(values[removedValuesName])
+      .some((removedValue) => removedValue[mainKey] === item[mainKey]);
+
+  const captureRemovedValue = (itemToRemove) => {
+    if (!captureRemoved) return;
+
+    if (isInRemovedValues(itemToRemove)) return;
+
+    setFieldValue(
+      removedValuesName,
+      safeType.array(values[removedValuesName]).concat(itemToRemove)
+    );
   };
 
-  const handleChange = (uniqueVal) => {
-    helpers.setValue(
-      field.value.map((v) =>
-        v[mainKey] === uniqueVal ? { ...v, [mainKey]: uniqueVal } : v
-      )
+  const putBackRemovedValue = debounce((itemToPutBack) => {
+    if (!captureRemoved) return;
+
+    if (!isInRemovedValues(itemToPutBack)) return;
+
+    setFieldValue(
+      removedValuesName,
+      safeType
+        .array(values[removedValuesName])
+        .filter((rv) => rv[mainKey] !== itemToPutBack[mainKey])
     );
+  }, 500);
+
+  const removeField = (index, itemToRemove) => {
+    helpers.setValue(field.value.filter((_, vIndex) => vIndex !== index));
+
+    captureRemovedValue(itemToRemove);
+  };
+
+  const handleChange = (e, index, val) => {
+    e.persist();
+
+    putBackRemovedValue(val);
+
+    field.value = field.value.map((curVal, vIndex) =>
+      vIndex === index ? val : curVal
+    );
+
+    helpers.setValue(field.value);
   };
 
   useEffect(() => {
@@ -46,7 +88,7 @@ const MultiInput = ({
     <div className="multi-input">
       <ul className="multi-input__list">
         {field.value.map((value, index) => (
-          <li key={value[mainKey]} className="multi-input__item">
+          <li key={index} className="multi-input__item">
             {CustomInput ? (
               <CustomInput
                 name={`${name}[${index}]`}
@@ -58,7 +100,12 @@ const MultiInput = ({
                 className="multi-input__input"
                 type="text"
                 value={safeType.string(value[mainKey])}
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={(e) =>
+                  handleChange(e, index, {
+                    ...value,
+                    [mainKey]: e.target.value
+                  })
+                }
                 onBlur={helpers.onBlur}
                 {...etc}
               />
@@ -67,7 +114,7 @@ const MultiInput = ({
               <Button
                 className="multi-input__close"
                 icon="x"
-                onClick={() => removeField(value[mainKey])}
+                onClick={() => removeField(index, value)}
               />
             )}
           </li>
