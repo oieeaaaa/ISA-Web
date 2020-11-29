@@ -1,10 +1,7 @@
-import {
-  connectOrCreateMultiple,
-  connectOrCreateSingle
-} from 'js/utils/connectOrCreate';
+import codeCalc from 'js/utils/codeCalc';
 import dateFormat from 'js/utils/dateFormat';
 
-export const tableHeaders = [
+export const tableHeaders = ({ codes }) => [
   {
     label: 'Date Received',
     accessKey: 'dateReceived',
@@ -62,7 +59,8 @@ export const tableHeaders = [
   },
   {
     label: 'Unit Cost',
-    accessKey: 'unitCost' // support this later
+    accessKey: 'codes',
+    customCell: ({ value }) => codeCalc(codes, value)
   },
   {
     label: 'Quantity',
@@ -70,7 +68,8 @@ export const tableHeaders = [
   },
   {
     label: 'Amount',
-    accessKey: 'amount' // support this later
+    accessKey: 'codes',
+    customCell: ({ value }) => codeCalc(codes, value)
   },
   {
     label: 'Suggested Retail Price',
@@ -200,27 +199,8 @@ export const initialValues = {
   codedBy: ''
 };
 
-export const submitPayload = ({
-  applications,
-  uom,
-  brand,
-  supplier,
-  ...payload
-}) => ({
-  ...payload,
-  applications: connectOrCreateMultiple(applications),
-  brand: connectOrCreateSingle(brand),
-  uom: connectOrCreateSingle(uom),
-  supplier: {
-    connect: {
-      id: supplier.id
-    }
-  }
-});
-
 export default {
   initialValues,
-  submitPayload,
   tableHeaders,
   tableSortOptions,
   tableFilters
