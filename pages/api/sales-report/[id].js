@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
+import omit from 'lodash.omit';
 import safety, { safeType } from 'js/utils/safety';
 import api from 'js/utils/api';
-import omit from 'lodash.omit';
+import { disconnectMultiple } from 'js/utils/disconnect';
 import {
   connectOrCreateMultiple,
   connectOrCreateSingle
@@ -53,19 +54,11 @@ export default api({
       paymentType,
       bank,
       salesStaff,
+      salesStaffX,
       soldItems,
       removedItems,
       ...payload
     } = req.body;
-
-    console.log({
-      type,
-      bank,
-      salesStaff,
-      paymentType,
-      removedItems,
-      soldItems
-    });
 
     let updateItemQuery = {
       where: {
@@ -76,7 +69,10 @@ export default api({
         type: connectOrCreateSingle(type),
         paymentType: connectOrCreateSingle(safeType.object(paymentType)),
         bank: connectOrCreateSingle(safeType.object(bank)),
-        salesStaff: connectOrCreateMultiple(salesStaff),
+        salesStaff: {
+          ...disconnectMultiple(salesStaffX),
+          ...connectOrCreateMultiple(salesStaff)
+        },
         soldItems: {
           disconnect: removedItems.map(({ id }) => ({
             id: safeType.string(id)
