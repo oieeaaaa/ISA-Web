@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
-import { submitPayload, initialValues } from 'js/shapes/inventory';
+import { initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
 
 // components
@@ -17,7 +17,7 @@ const InventoryAdd = ({ helpers }) => {
     try {
       await fetcher('/inventory', {
         method: 'POST',
-        body: JSON.stringify(submitPayload(values))
+        body: JSON.stringify(values)
       });
 
       actions.resetForm();

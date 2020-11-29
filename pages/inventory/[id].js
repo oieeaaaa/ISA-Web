@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
 import { Formik } from 'formik';
-import omit from 'lodash.omit';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
-import { submitPayload, initialValues } from 'js/shapes/inventory';
+import { initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
 
 // components
@@ -19,14 +18,7 @@ const InventoryItem = ({ item, helpers }) => {
     try {
       await fetcher(`/inventory/${router.query.id}`, {
         method: 'PUT',
-        body: JSON.stringify(
-          omit(submitPayload(values), [
-            'uomID',
-            'supplierID',
-            'brandID',
-            'codeId'
-          ])
-        )
+        body: JSON.stringify(values)
       });
 
       router.push('/inventory');
