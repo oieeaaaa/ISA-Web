@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
+import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 
@@ -50,9 +51,29 @@ export default api({
     }
   },
   post: async (req, res) => {
+    const {
+      brands,
+      companyPhoneNumbers,
+      representativePhoneNumbers,
+      emails,
+      ...payload
+    } = req.body;
+
     try {
       const newItem = await prisma.supplier.create({
-        data: req.body
+        data: {
+          ...payload,
+          brands: connectOrCreateMultiple(brands),
+          companyPhoneNumbers: connectOrCreateMultiple(
+            companyPhoneNumbers,
+            'phoneNumber'
+          ),
+          representativePhoneNumbers: connectOrCreateMultiple(
+            representativePhoneNumbers,
+            'phoneNumber'
+          ),
+          emails: connectOrCreateMultiple(emails, 'email')
+        }
       });
 
       res.success(newItem);

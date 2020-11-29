@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
+import { disconnectMultiple } from 'js/utils/disconnect';
+import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
 
 const prisma = new PrismaClient();
 
@@ -24,12 +26,46 @@ export default api({
     }
   },
   put: async (req, res) => {
+    const {
+      brands,
+      brandsX,
+      companyPhoneNumbers,
+      companyPhoneNumbersX,
+      representativePhoneNumbers,
+      representativePhoneNumbersX,
+      emails,
+      emailsX,
+      ...payload
+    } = req.body;
+
     try {
       const updatedItem = await prisma.supplier.update({
         where: {
           id: req.query.id
         },
-        data: req.body
+        data: {
+          ...payload,
+          brands: {
+            ...disconnectMultiple(brandsX),
+            ...connectOrCreateMultiple(brands)
+          },
+          companyPhoneNumbers: {
+            ...disconnectMultiple(companyPhoneNumbersX),
+            ...connectOrCreateMultiple(companyPhoneNumbers, 'phoneNumber', 'id')
+          },
+          representativePhoneNumbers: {
+            ...disconnectMultiple(representativePhoneNumbersX),
+            ...connectOrCreateMultiple(
+              representativePhoneNumbers,
+              'phoneNumber',
+              'id'
+            )
+          },
+          emails: {
+            ...disconnectMultiple(emailsX),
+            ...connectOrCreateMultiple(emails, 'email', 'id')
+          }
+        }
       });
 
       res.success(updatedItem);
