@@ -1,4 +1,6 @@
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
+import fetcher from 'js/utils/fetcher';
+import messages from 'js/messages';
 import defaultValues from 'js/shapes/app';
 
 // init context
@@ -7,6 +9,7 @@ const AppContext = createContext();
 // provider
 export const AppProvider = ({ children }) => {
   const [notification, setNotification] = useState(defaultValues.notification);
+  const [codes, setCodes] = useState([]);
 
   const appContextValue = {
     notification: {
@@ -22,8 +25,27 @@ export const AppProvider = ({ children }) => {
           ...newNotification,
           isActive: true
         }))
+    },
+    codes
+  };
+
+  const getCodes = async () => {
+    try {
+      const { data } = await fetcher('/helpers/code');
+
+      setCodes(data);
+    } catch (error) {
+      notification.open({
+        variant: 'danger',
+        message: messages.error.retrieve
+      });
     }
   };
+
+  // init stuff here
+  useEffect(() => {
+    getCodes();
+  }, []);
 
   return (
     <AppContext.Provider value={appContextValue}>
