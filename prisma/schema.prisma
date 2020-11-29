@@ -152,7 +152,7 @@ model uom {
 model Code {
   id String @id @default(uuid())
   name String @unique
-  value Float @default(0)
+  value Float
 }
 
 model CompanyPhoneNumber {
