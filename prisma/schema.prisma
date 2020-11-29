@@ -157,19 +157,19 @@ model Code {
 
 model CompanyPhoneNumber {
   id String @id @default(uuid())
-  phoneNumber String @unique
+  phoneNumber String
   suppliers Supplier[]
 }
 
 model RepresentativePhoneNumber {
   id String @id @default(uuid())
-  phoneNumber String @unique
+  phoneNumber String
   suppliers Supplier[]
 }
 
 model Email {
   id String @id @default(uuid())
-  email String @unique
+  email String
   suppliers Supplier[]
 }
 
