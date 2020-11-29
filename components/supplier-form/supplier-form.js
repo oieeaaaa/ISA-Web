@@ -44,6 +44,7 @@ const SupplierForm = ({ mode = 'add', helpers }) => {
               label="Brands"
               initialOptions={brands}
               serverRoute="/helpers/brand"
+              captureRemoved={mode === 'edit'}
               component={MultiSelectWithFetch}
             />
           </FormSection>
@@ -56,20 +57,23 @@ const SupplierForm = ({ mode = 'add', helpers }) => {
             <InputGroup
               name="representativePhoneNumbers"
               label="Representative Phone Numbers"
-              component={MultiInput}
+              captureRemoved={mode === 'edit'}
               mainKey="phoneNumber"
+              component={MultiInput}
             />
             <InputGroup
               name="emails"
               label="Emails"
-              component={MultiInput}
+              captureRemoved={mode === 'edit'}
               mainKey="email"
+              component={MultiInput}
             />
             <InputGroup
               name="companyPhoneNumbers"
               label="Company Phone Numbers"
-              component={MultiInput}
+              captureRemoved={mode === 'edit'}
               mainKey="phoneNumber"
+              component={MultiInput}
             />
           </FormSection>
         </div>
