@@ -148,29 +148,8 @@ export const initialValues = {
   emails: []
 };
 
-export const submitPayload = ({
-  brands,
-  companyPhoneNumbers,
-  representativePhoneNumbers,
-  emails,
-  ...payload
-}) => ({
-  ...payload,
-  brands: connectOrCreateMultiple(brands),
-  companyPhoneNumbers: connectOrCreateMultiple(
-    companyPhoneNumbers,
-    'phoneNumber'
-  ),
-  representativePhoneNumbers: connectOrCreateMultiple(
-    representativePhoneNumbers,
-    'phoneNumber'
-  ),
-  emails: connectOrCreateMultiple(emails, 'email')
-});
-
 export default {
   initialValues,
-  submitPayload,
   tableHeaders,
   tableSortOptions,
   tableFilters
