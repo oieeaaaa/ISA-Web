@@ -1,3 +1,4 @@
+import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import {
@@ -14,6 +15,8 @@ import Select from 'components/select/select';
 import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const PurchaseOrder = ({ data, helpers }) => {
+  const { codes } = useAppContext();
+
   const parameterizer = ({ dateCreated, supplier }) => ({
     dateCreated_range: toStringifyDate(dateCreated),
     'supplier.id': supplier.id
@@ -26,7 +29,7 @@ const PurchaseOrder = ({ data, helpers }) => {
         parameterizer={parameterizer}
         title="PO"
         icon="clipboard"
-        headers={tableHeaders}
+        headers={tableHeaders(codes)}
         data={data.items}
         totalItems={data.totalItems}
         filters={tableFilters}
