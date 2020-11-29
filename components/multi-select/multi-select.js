@@ -5,10 +5,10 @@
 */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useField } from 'formik';
+import { useFormikContext, useField } from 'formik';
 import throttle from 'lodash.throttle';
 import cssClassModifier from 'js/utils/cssClassModifier';
-import safety from 'js/utils/safety';
+import safety, { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
 
 const MultiSelect = ({
@@ -17,8 +17,12 @@ const MultiSelect = ({
   options = [],
   onSearch,
   noCreate,
+  captureRemoved,
   ...etc
 }) => {
+  // contexts
+  const { values, setFieldValue } = useFormikContext();
+
   // states
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +46,9 @@ const MultiSelect = ({
     name,
     multiple: true
   });
+
+  // my vars, yo!
+  const removedValuesName = `${name}X`;
 
   const handleOpen = () => {
     input.current.focus();
@@ -88,8 +95,42 @@ const MultiSelect = ({
     setQuery('');
   };
 
-  const removeValue = (key) => {
-    helpers.setValue(field.value.filter((value) => value[mainKey] !== key));
+  // prevent duplicates
+  const isInRemovedValues = (item) =>
+    safeType
+      .array(values[removedValuesName])
+      .some((removedValue) => removedValue[mainKey] === item[mainKey]);
+
+  const captureRemovedValue = (itemToRemove) => {
+    if (!captureRemoved) return;
+
+    if (isInRemovedValues(itemToRemove)) return;
+
+    setFieldValue(
+      removedValuesName,
+      safeType.array(values[removedValuesName]).concat(itemToRemove)
+    );
+  };
+
+  const putBackRemovedValue = (itemToPutBack) => {
+    if (!captureRemoved) return;
+
+    if (!isInRemovedValues(itemToPutBack)) return;
+
+    setFieldValue(
+      removedValuesName,
+      safeType
+        .array(values[removedValuesName])
+        .filter((rv) => rv[mainKey] !== itemToPutBack[mainKey])
+    );
+  };
+
+  const removeValue = (itemToRemove) => {
+    helpers.setValue(
+      field.value.filter((value) => value[mainKey] !== itemToRemove[mainKey])
+    );
+
+    captureRemovedValue(itemToRemove);
   };
 
   const createNewValue = () => {
@@ -125,6 +166,9 @@ const MultiSelect = ({
     // clear input
     updateQuery('');
 
+    // put back
+    putBackRemovedValue(value);
+
     input.current.focus();
   };
 
@@ -158,7 +202,7 @@ const MultiSelect = ({
               key={value[mainKey]}
               className="multi-select__value"
               type="button"
-              onClick={() => removeValue(value[mainKey])}>
+              onClick={() => removeValue(value)}>
               {value.name}
             </button>
           ))}
