@@ -101,9 +101,11 @@
       color: var(--dark);
       text-decoration: none;
       border-radius: rem(10);
+      text-align: left;
 
       @include desktop {
         font-size: rem(18);
+        cursor: pointer;
       }
 
       @include state(hover) {
@@ -114,12 +116,6 @@
 
       &--logout {
         color: var(--primary-accent-2);
-      }
-
-      &--active {
-        color: var(--white);
-        background-color: var(--primary-accent-2);
-        border-color: var(--primary);
       }
     }
   }
