@@ -36,9 +36,14 @@
       font-size: rem(18);
     }
 
+    @include state(hover) {
+      background-color: var(--primary-accent-1);
+      cursor: pointer;
+    }
+
     &--active {
       color: var(--white);
-      background-color: var(--primary-accent-2);
+      background-color: var(--primary-accent-2) !important;
       border-color: var(--primary);
     }
 
