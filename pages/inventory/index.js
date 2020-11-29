@@ -1,3 +1,4 @@
+import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import {
@@ -12,6 +13,8 @@ import Select from 'components/select/select';
 import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const Inventory = ({ data, helpers }) => {
+  const { codes } = useAppContext();
+
   const parameterizer = ({ brand, dateReceived, referenceDate, supplier }) => ({
     'brand.id': brand.id,
     'supplier.id': supplier.id,
@@ -26,7 +29,7 @@ const Inventory = ({ data, helpers }) => {
         parameterizer={parameterizer}
         title="Inventory"
         icon="archive"
-        headers={tableHeaders}
+        headers={tableHeaders({ codes })}
         data={data.items}
         totalItems={data.totalItems}
         filters={tableFilters}
