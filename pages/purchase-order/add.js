@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import safety from 'js/utils/safety';
 import { submitPayload, initialValues } from 'js/shapes/purchase-order';
 import validationSchema from 'js/validations/purchase-order';
 
@@ -49,7 +50,7 @@ export async function getStaticProps() {
   return {
     props: {
       helpers: {
-        suppliers: suppliers.data
+        suppliers: safety(suppliers, 'data', [])
       }
     }
   };

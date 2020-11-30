@@ -1,6 +1,7 @@
 import Router from 'next/router';
 import { Formik } from 'formik';
 import messages from 'js/messages';
+import safety from 'js/utils/safety';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import { initialValues } from 'js/shapes/inventory';
@@ -55,10 +56,10 @@ export async function getStaticProps() {
   return {
     props: {
       helpers: {
-        brands: brands.data,
-        uoms: uoms.data,
-        suppliers: suppliers.data,
-        applications: applications.data
+        uoms: safety(uoms, 'data', []),
+        brands: safety(brands, 'data', []),
+        suppliers: safety(suppliers, 'data', []),
+        applications: safety(applications, 'data', [])
       }
     }
   };

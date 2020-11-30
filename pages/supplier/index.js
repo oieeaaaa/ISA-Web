@@ -1,4 +1,5 @@
 import fetcher from 'js/utils/fetcher';
+import safety from 'js/utils/safety';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import {
   tableHeaders,
@@ -61,15 +62,14 @@ const Supplier = ({ data, helpers }) => {
 };
 
 export async function getStaticProps() {
-  const { data } = await fetcher('/supplier');
-
+  const supplier = await fetcher('/supplier');
   const brands = await fetcher('/helpers/brand');
 
   return {
     props: {
-      data,
+      data: safety(supplier, 'data', []),
       helpers: {
-        brands: brands.data
+        brands: safety(brands, 'data', [])
       }
     }
   };

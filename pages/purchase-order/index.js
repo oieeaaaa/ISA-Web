@@ -1,6 +1,7 @@
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import toStringifyDate from 'js/utils/toStringifyDate';
+import safety from 'js/utils/safety';
 import {
   tableHeaders,
   tableFilters,
@@ -57,16 +58,16 @@ const PurchaseOrder = ({ data, helpers }) => {
 };
 
 export async function getStaticProps() {
-  const { data } = await fetcher('/purchase-order');
+  const po = await fetcher('/purchase-order');
 
   // helpers
   const suppliers = await fetcher('/helpers/supplier');
 
   return {
     props: {
-      data,
+      data: safety(po, 'data', []),
       helpers: {
-        suppliers: suppliers.data
+        suppliers: safety(suppliers, 'data', [])
       }
     }
   };
