@@ -70,7 +70,7 @@
 
     &-list {
       position: absolute;
-      top: rem(50);
+      top: rem(30);
       left: 0;
       display: none;
       flex-direction: column;
@@ -81,7 +81,7 @@
       z-index: $z-dropdown--mobile;
 
       @include desktop {
-        top: rem(60);
+        top: rem(40);
         left: 50%;
         transform: translateX(-50%);
       }
@@ -101,6 +101,7 @@
       color: var(--dark);
       text-decoration: none;
       border-radius: rem(10);
+      font-size: rem(16);
       text-align: left;
 
       @include desktop {
@@ -120,25 +121,13 @@
     }
   }
 
-  &-avatar {
-    @include circle(40);
-
-    background-color: var(--dark);
-
-    @include desktop {
-      @include circle(50);
-    }
-  }
-
   &-greeting {
-    @include margin-x(10);
     @include font('Bold');
 
+    margin-right: rem(10);
     font-size: rem(16);
 
     @include desktop {
-      @include margin-x(15);
-
       font-size: rem(18);
     }
   }
