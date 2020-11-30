@@ -29,6 +29,7 @@ $z-form-actions--desktop: 99;
 $dropdown-icon-y-position: 7px;
 $dropdown-icon-y-position--desktop: 12px;
 
+// TODO: Make css var names more generic
 :root {
   --primary-accent-1: #f4f6fa;
   --primary-accent-2: #92a3c5;
@@ -38,6 +39,19 @@ $dropdown-icon-y-position--desktop: 12px;
   --primary: #516ea6;
   --dark: #333;
   --white: #fff;
+  --danger: #f55;
+  --success: #d7ffab;
+}
+
+body.dark {
+  --primary-accent-1: #39404f;
+  --primary-accent-2: #92a3c5;
+  --primary-accent-3: #9b9fa8;
+  --primary-accent-4: #1e283c;
+  --primary-accent-5: #435882;
+  --primary: #516ea6;
+  --dark: #fff;
+  --white: #333;
   --danger: #f55;
   --success: #d7ffab;
 }

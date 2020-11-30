@@ -57,6 +57,7 @@
 
       display: flex;
       align-items: center;
+      color: var(--dark);
 
       @include desktop {
         cursor: pointer;

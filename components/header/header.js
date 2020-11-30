@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { Formik } from 'formik';
 import throttle from 'lodash.throttle';
 import debounce from 'lodash.debounce';
@@ -104,13 +103,6 @@ const Header = () => {
                   onClick={handleOpenModal('settings')}>
                   Settings
                 </button>
-              </li>
-              <li className="header-dropdown__item">
-                <Link href="/">
-                  <a className="header-dropdown__link header-dropdown__link--logout">
-                    Logout
-                  </a>
-                </Link>
               </li>
             </ul>
           </div>

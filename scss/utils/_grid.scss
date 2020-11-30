@@ -64,7 +64,8 @@ $default-guide: map-get($grid-guides, "mobile");
 	grid-template-columns: repeat(map-get(get-guide($screen), "cols"), 1fr);
 
 	@if (map-get(get-guide($screen), "gutter") > 0) {
-		padding: 0 rem(map-get(get-guide($screen), "gutter"));
+		padding-left: rem(map-get(get-guide($screen), "gutter"));
+		padding-right: rem(map-get(get-guide($screen), "gutter"));
 	}
 }
 
