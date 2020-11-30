@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
-import { safeType } from 'js/utils/safety';
+import safety, { safeType } from 'js/utils/safety';
 import Button from 'components/button/button';
 
 // TODO: Replace the custom input with Input component
@@ -71,15 +71,15 @@ const MultiInput = ({
 
     putBackRemovedValue(val);
 
-    field.value = field.value.map((curVal, vIndex) =>
-      vIndex === index ? val : curVal
-    );
+    field.value = safeType
+      .array(field.value)
+      .map((curVal, vIndex) => (vIndex === index ? val : curVal));
 
     helpers.setValue(field.value);
   };
 
   useEffect(() => {
-    if (field.value.length) return;
+    if (safety(field, 'value.length', 0)) return;
 
     helpers.setValue([{ [mainKey]: '', isNew: true }]);
   }, [field.value]);
@@ -87,7 +87,7 @@ const MultiInput = ({
   return (
     <div className="multi-input">
       <ul className="multi-input__list">
-        {field.value.map((value, index) => (
+        {safeType.array(field.value).map((value, index) => (
           <li key={index} className="multi-input__item">
             {CustomInput ? (
               <CustomInput

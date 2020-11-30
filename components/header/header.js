@@ -18,7 +18,7 @@ const Header = () => {
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [modals, setModals] = useState({ settings: false });
+  const [modals, setModals] = useState({ settings: false, profile: false });
 
   // callbacks
   const hideDropdown = useCallback(
@@ -76,62 +76,56 @@ const Header = () => {
   }, []);
 
   return (
-    <Formik initialValues={{ codes: [], removedCodes: [] }}>
-      <header
-        className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
-        <div
-          className={cssClassModifier(
-            'header-dropdown',
-            ['open'],
-            [isDropdownOpen]
-          )}>
+    <Formik
+      initialValues={{
+        codes: [],
+        removedCodes: []
+      }}>
+      <>
+        <header
+          className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
+          <div
+            className={cssClassModifier(
+              'header-dropdown',
+              ['open'],
+              [isDropdownOpen]
+            )}>
+            <button
+              className="header-dropdown__toggler"
+              type="button"
+              onClick={toggleDropdown}>
+              <p className="header-greeting">Admin</p>
+              <Icon icon="chevron-down" />
+            </button>
+            <ul className="header-dropdown-list">
+              <li className="header-dropdown__item">
+                <button
+                  className="header-dropdown__link"
+                  onClick={handleOpenModal('settings')}>
+                  Settings
+                </button>
+              </li>
+              <li className="header-dropdown__item">
+                <Link href="/">
+                  <a className="header-dropdown__link header-dropdown__link--logout">
+                    Logout
+                  </a>
+                </Link>
+              </li>
+            </ul>
+          </div>
           <button
-            className="header-dropdown__toggler"
+            className="header-menu"
             type="button"
-            onClick={toggleDropdown}>
-            <figure className="header-avatar">
-              <img src="" alt="" />
-            </figure>
-            <p className="header-greeting">
-              Yo, Cris
-              <span aria-label="Wave" role="img">
-                {' '}
-                👋
-              </span>
-            </p>
-            <Icon icon="chevron-down" />
+            onClick={handlers.openSidebar}>
+            <Icon icon="menu" />
           </button>
-          <ul className="header-dropdown-list">
-            <li className="header-dropdown__item">
-              <button className="header-dropdown__link">Profile</button>
-            </li>
-            <li className="header-dropdown__item">
-              <button
-                className="header-dropdown__link"
-                onClick={handleOpenModal('settings')}>
-                Settings
-              </button>
-            </li>
-            <li className="header-dropdown__item">
-              <Link href="/">
-                <a className="header-dropdown__link header-dropdown__link--logout">
-                  Logout
-                </a>
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <button
-          className="header-menu"
-          type="button"
-          onClick={handlers.openSidebar}>
-          <Icon icon="menu" />
-        </button>
+        </header>
         <Settings
           isOpen={modals.settings}
           onClose={handleCloseModal('settings')}
         />
-      </header>
+      </>
     </Formik>
   );
 };

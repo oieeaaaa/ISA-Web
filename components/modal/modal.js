@@ -3,25 +3,26 @@ import cssClassModifier from 'js/utils/cssClassModifier';
 import Button from 'components/button/button';
 
 const Modal = ({ isOpen, title, closeModal, children }) => {
-  const modalRef = useRef();
+  const modal = useRef(null);
 
   useEffect(() => {
+    if (!modal) return;
+
     if (isOpen) {
-      modalRef.current.style.display = 'flex';
+      modal.current.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
 
       setTimeout(() => {
-        modalRef.current.style.display = 'none';
+        if (!modal.current) return;
+        modal.current.style.display = 'none';
       }, 300);
     }
-  }, [isOpen]);
+  }, [isOpen, modal]);
 
   return (
-    <div
-      ref={modalRef}
-      className={cssClassModifier('modal', ['open'], [isOpen])}>
+    <div ref={modal} className={cssClassModifier('modal', ['open'], [isOpen])}>
       <div className="modal-container">
         <div className="modal-content">
           <div className="modal-header">
