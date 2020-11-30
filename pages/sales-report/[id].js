@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import safety from 'js/utils/safety';
 import {
   updatePayload,
   initialValues,
@@ -67,12 +68,12 @@ export async function getServerSideProps({ params }) {
 
   return {
     props: {
-      item: item.data,
+      item: safety(item, 'data', {}),
       helpers: {
-        inventory: inventory.data,
-        paymentTypes: paymentTypes.data,
-        banks: banks.data,
-        salesTypes: salesTypes.data
+        inventory: safety(inventory, 'data', []),
+        paymentTypes: safety(paymentTypes, 'data', []),
+        banks: safety(banks, 'data', []),
+        salesTypes: safety(salesTypes, 'data', [])
       }
     }
   };

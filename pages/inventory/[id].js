@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import safety from 'js/utils/safety';
 import { initialValues } from 'js/shapes/inventory';
 import validationSchema from 'js/validations/inventory';
 
@@ -60,12 +61,12 @@ export async function getServerSideProps({ params }) {
 
   return {
     props: {
-      item: item.data,
+      item: safety(item, 'data', {}),
       helpers: {
-        brands: brands.data,
-        uoms: uoms.data,
-        suppliers: suppliers.data,
-        applications: applications.data
+        uoms: safety(uoms, 'data', []),
+        brands: safety(brands, 'data', []),
+        suppliers: safety(suppliers, 'data', []),
+        applications: safety(applications, 'data', [])
       }
     }
   };

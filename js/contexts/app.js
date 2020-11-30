@@ -35,7 +35,7 @@ export const AppProvider = ({ children }) => {
 
       setCodes(data);
     } catch (error) {
-      notification.open({
+      appContextValue.notification.open({
         variant: 'danger',
         message: messages.error.retrieve
       });

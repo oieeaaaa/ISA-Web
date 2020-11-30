@@ -1,5 +1,6 @@
 import { Formik } from 'formik';
 import fetcher from 'js/utils/fetcher';
+import safety from 'js/utils/safety';
 import { initialValues, toItems } from 'js/shapes/purchase-order';
 import validationSchema from 'js/validations/purchase-order';
 
@@ -26,7 +27,7 @@ export async function getServerSideProps({ params }) {
 
   return {
     props: {
-      item: item.data
+      item: safety(item, 'data', {})
     }
   };
 }
