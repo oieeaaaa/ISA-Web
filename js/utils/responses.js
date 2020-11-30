@@ -12,9 +12,7 @@ export const response = (res, status) => (
 
   return res.status(status).send({
     data,
-    message: isSuccess
-      ? messages.success[messageType]
-      : messages.error[messageType],
+    message: isSuccess ? messages.success[messageType] : data.message,
     isSuccess
   });
 };
