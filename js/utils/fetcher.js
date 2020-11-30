@@ -8,9 +8,14 @@
  */
 const fetcher = async (route, options = {}) => {
   const { NEXT_PUBLIC_API_URL } = process.env;
+  let url = `/api${route}`;
+
+  if (process.env.NODE_ENV === 'development') {
+    url = `${NEXT_PUBLIC_API_URL}${url}`;
+  }
 
   try {
-    const rawResult = await fetch(`${NEXT_PUBLIC_API_URL}/api${route}`, {
+    const rawResult = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
