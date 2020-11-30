@@ -8,10 +8,6 @@
 # testing
 /coverage
 
-# prisma
-prisma/dev.db
-prisma/migrations
-
 # next.js
 /.next/
 /out/
@@ -33,3 +29,5 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+.vercel
