@@ -164,11 +164,14 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
 
   const getGrandTotal = () => {
     const itemsTotals = values.items.map(
-      (item) => codeCalc(codes, item.codes) * item.quantity
+      (item) => codeCalc(codes, item.codes) * item.selectedQuantity
     );
 
     return itemsTotals.reduce((total, cur) => (total += cur), 0);
   };
+
+  const getTotalItems = () =>
+    values.items.reduce((total, cur) => (total += cur.selectedQuantity), 0);
 
   useEffect(() => {
     // Reset items if the supplier changed
@@ -297,7 +300,7 @@ const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
           </div>
           <div className="purchase-order-form__group purchase-order-form__group--info">
             <MediumCard title="Grand Total" content={`₱ ${getGrandTotal()}`} />
-            <MediumCard title="Total Items" content="49" />
+            <MediumCard title="Total Items" content={getTotalItems()} />
           </div>
         </div>
       </div>
