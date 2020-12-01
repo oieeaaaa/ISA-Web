@@ -74,7 +74,10 @@ const Table = ({
     [values]
   );
 
-  const onChangeListener = useCallback(debounce(() => onChange(values), 300));
+  const onChangeListener = useCallback(
+    debounce(() => onChange(values), 300),
+    [values]
+  );
 
   /**
    * toggleAdvancedSearch.
