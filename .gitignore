@@ -19,6 +19,10 @@
 .DS_Store
 notes/
 
+# prisma
+prisma/migrations
+prisma/dev.db
+
 # debug
 npm-debug.log*
 yarn-debug.log*

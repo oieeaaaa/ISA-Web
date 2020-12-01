@@ -11,7 +11,7 @@ export const response = (res, status) => (
   }
 
   return res.status(status).send({
-    data,
+    data: isSuccess ? data : null,
     message: isSuccess ? messages.success[messageType] : data.message,
     isSuccess
   });
