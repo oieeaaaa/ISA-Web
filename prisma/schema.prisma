@@ -20,9 +20,9 @@ model Inventory {
   referenceNumber String
   partsNumber String
   particular String
-  size String
   codes String
   srp Float?
+  size String ?
   description String?
   remarks String?
   receivedBy String?
