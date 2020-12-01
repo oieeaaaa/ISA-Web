@@ -61,8 +61,8 @@ export default api({
           ...payload,
           supplier: connectOrCreateSingle(supplier, 'id'),
           items: {
-            create: items.map(({ id, quantity }) => ({
-              quantity,
+            create: items.map(({ id, selectedQuantity }) => ({
+              quantity: selectedQuantity,
               item: {
                 connect: {
                   id
