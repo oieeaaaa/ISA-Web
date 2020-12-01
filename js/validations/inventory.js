@@ -13,9 +13,7 @@ export default Yup.object().shape({
   // details
   particular: Yup.string().required(message.required),
   partsNumber: Yup.string().required(message.required),
-  size: Yup.string().required(message.required),
   quantity: Yup.number().min(1).required(message.required),
-  applications: Yup.array().required(message.required),
   brand: Yup.object().shape({
     name: Yup.string().required(message.required)
   }),
