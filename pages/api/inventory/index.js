@@ -59,7 +59,6 @@ export default api({
         totalItems
       });
     } catch (error) {
-      console.log(error);
       res.error(error);
     }
   },

@@ -30,7 +30,6 @@ export default (table = '', otherProps = {}) => async (req, res) => {
 
     res.success(items);
   } catch (error) {
-    console.log(error);
     res.error(error);
   }
 };

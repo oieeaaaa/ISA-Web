@@ -75,7 +75,6 @@ export default api({
 
       res.success(deletedItem);
     } catch (error) {
-      console.log(error);
       res.error(error);
     }
   }

@@ -52,7 +52,6 @@ export default api({
 
       res.success(data);
     } catch (error) {
-      console.log(error);
       res.error(error);
     }
   }
