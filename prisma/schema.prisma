@@ -1,7 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -30,7 +30,7 @@ model Inventory {
   codedBy String?
 
   // uom
-  uom uom @relation(fields: [uomID], references: [id])
+  uom Uom @relation(fields: [uomID], references: [id])
   uomID String
 
   // brand
@@ -143,7 +143,7 @@ model Brand {
   supplier Supplier?
 }
 
-model uom {
+model Uom {
   id String @id @default(uuid())
   name String @unique
   inventory Inventory[]

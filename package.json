@@ -12,11 +12,11 @@
     "prettify": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
     "fix": "npm run lint:eslint && npm run lint:stylelint && npm run prettify",
     "component": "node ./internals/component.js",
+    "prisma": "yarn prisma:migrate && yarn prisma:migrate:up && yarn prisma:generate",
     "prisma:migrate": "npx prisma migrate save --experimental",
     "prisma:migrate:up": "npx prisma migrate up --experimental",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
-    "prisma:update": "yarn prisma:migrate && yarn prisma:migrate:up && yarn prisma:generate",
     "prisma:reset": "sh ./internals/db-clean.sh"
   },
   "dependencies": {
