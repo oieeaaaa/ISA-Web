@@ -32,7 +32,7 @@ export const connectOrCreateMultiple = (
 };
 
 export const connectOrCreateSingle = (item = {}, uniqueKey = 'name') => {
-  if (!item) return null;
+  if (!item || !item[uniqueKey]) return {};
 
   const { isNew, ...newItem } = item;
   let payload = {};

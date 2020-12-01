@@ -84,6 +84,8 @@ const MultiSelect = ({
 
   // TODO: Fix auto-submit form on enter
   const handleKeyPress = (e) => {
+    e.persist();
+
     // add item on enter
     if (e.type === 'keypress' && !e.ctrlKey && e.key !== 'Enter') return;
 
@@ -138,7 +140,9 @@ const MultiSelect = ({
 
     if (!query || isInValue) return;
 
-    const isInOptions = options.some((option) => option[mainKey] === query);
+    const isInOptions = safeType
+      .array(options)
+      .some((option) => option[mainKey] === query);
 
     let value = {
       name: query
@@ -172,14 +176,18 @@ const MultiSelect = ({
     input.current.focus();
   };
 
-  const isOptionNew = !options.some((option) => option[mainKey] === query);
+  const isOptionNew = !safeType
+    .array(options)
+    .some((option) => option[mainKey] === query);
 
-  const availableOptions = options.filter(
-    (option) =>
-      !safety(field, 'value', []).some(
-        (value) => value[mainKey] === option[mainKey]
-      )
-  );
+  const availableOptions = safeType
+    .array(options)
+    .filter(
+      (option) =>
+        !safety(field, 'value', []).some(
+          (value) => value[mainKey] === option[mainKey]
+        )
+    );
 
   const isEmpty = !availableOptions.length;
 
