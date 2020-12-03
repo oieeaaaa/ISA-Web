@@ -31,6 +31,23 @@ export const connectOrCreateMultiple = (
   return newList;
 };
 
+/**
+ * connectOrCreateSingle.
+ *
+ Sample usage:
+```
+const myPayload = { isNew: true, name: 'aaa' };
+
+console.log(connectOrCreateSingle(myPayload));
+
+// result will be
+{
+  create: {
+    name: 'aaa',
+  }
+}
+```
+ */
 export const connectOrCreateSingle = (item = {}, uniqueKey = 'name') => {
   if (!item || !item[uniqueKey]) return {};
 
