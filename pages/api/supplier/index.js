@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import api from 'js/utils/api';
-import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
+import { multiConnectOrCreate } from 'js/shapes/prisma-query';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 
@@ -63,16 +63,22 @@ export default api({
       const newItem = await prisma.supplier.create({
         data: {
           ...payload,
-          brands: connectOrCreateMultiple(brands),
-          companyPhoneNumbers: connectOrCreateMultiple(
-            companyPhoneNumbers,
-            'phoneNumber'
-          ),
-          representativePhoneNumbers: connectOrCreateMultiple(
-            representativePhoneNumbers,
-            'phoneNumber'
-          ),
-          emails: connectOrCreateMultiple(emails, 'email')
+          brands: multiConnectOrCreate(brands, 'name'),
+          companyPhoneNumbers: {
+            create: companyPhoneNumbers.map(({ phoneNumber }) => ({
+              phoneNumber
+            }))
+          },
+          representativePhoneNumbers: {
+            create: representativePhoneNumbers.map(({ phoneNumber }) => ({
+              phoneNumber
+            }))
+          },
+          emails: {
+            create: emails.map(({ email }) => ({
+              email
+            }))
+          }
         }
       });
 
