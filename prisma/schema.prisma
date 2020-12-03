@@ -14,38 +14,62 @@ generator client {
 // ===========================================================================
 model Inventory {
   id String @id @default(uuid())
-  referenceDate DateTime @default(now())
-  dateReceived  DateTime @default(now())
-  quantity Int @default(0)
-  referenceNumber String
-  partsNumber String
-  particular String
+  dateCreated DateTime @default(now())
+  partsNumber String @unique
+  particular String @unique
+  quantity Int
   codes String
   srp Float?
-  size String ?
   description String?
-  remarks String?
-  receivedBy String?
-  checkedBy String?
-  codedBy String?
 
-  // uom
   uom Uom @relation(fields: [uomID], references: [id])
   uomID String
 
-  // brand
+  applications Application[]
+  sizes Size[]
+  brands Brand[]
+  suppliers Supplier[]
+
+  // others
+  stockInItems StockInItem[]
+  soldItems SoldItem[]
+}
+
+model StockInItem {
+  id String @id @default(uuid())
+
+  inventory Inventory @relation(fields: [inventoryID], references: [id])
+  inventoryID String
+
+  size Size @relation(fields: [sizeID], references: [id])
+  sizeID String
+
   brand Brand @relation(fields: [brandID], references: [id])
   brandID String
 
-  // supplier
   supplier Supplier @relation(fields: [supplierID], references: [id])
   supplierID String
 
-  // applications
-  applications Application[]
+  stockIn StockIn @relation(fields: [stockInID], references: [id])
+  stockInID String
+}
 
-  // soldItems
-  soldItems SoldItem[]
+// ===========================================================================
+// Stock In
+// ===========================================================================
+model StockIn {
+  id String @id @default(uuid())
+  dateCreated DateTime @default(now())
+  referenceNumber String
+  referenceDate DateTime
+  receivedBy String
+  checkedBy String
+  codedBy String
+  remarks String?
+  items StockInItem[]
+
+  supplier Supplier @relation(fields: [supplierID], references: [id])
+  supplierID String
 }
 
 // ===========================================================================
@@ -53,9 +77,10 @@ model Inventory {
 // ===========================================================================
 model Supplier {
   id String @id @default(uuid())
-  vendor String
+  dateCreated DateTime @default(now())
   entry DateTime @default(now())
-  initials String
+  initials String @unique
+  vendor String
   terms Int
   owner String?
   tin String?
@@ -65,8 +90,8 @@ model Supplier {
   // brands
   brands Brand[]
 
-  // inventory
-  inventory Inventory[]
+  // items
+  items Inventory[]
 
   // phoneNumbers
   companyPhoneNumbers CompanyPhoneNumber[]
@@ -130,75 +155,94 @@ model PurchaseOrder {
 // ===========================================================================
 // Helpers
 // ===========================================================================
+model Size {
+  id String @id @default(uuid())
+  dateCreated DateTime @default(now())
+  name String @unique
+  item Inventory[]
+}
+
 model Application {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
-  inventory Inventory[]
+  item Inventory[]
 }
 
 model Brand {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
-  inventory Inventory[]
+  item Inventory[]
   supplier Supplier?
 }
 
 model Uom {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
-  inventory Inventory[]
+  item Inventory[]
 }
 
 model Code {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
   value Float
 }
 
 model CompanyPhoneNumber {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   phoneNumber String
   suppliers Supplier[]
 }
 
 model RepresentativePhoneNumber {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   phoneNumber String
   suppliers Supplier[]
 }
 
 model Email {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   email String
   suppliers Supplier[]
 }
 
 model SalesStaff {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
   salesReports SalesReport[]
 }
 
 model PaymentType {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
   salesReports SalesReport[]
 }
 
 model Bank {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
   salesReports SalesReport[]
 }
 
 model SalesType {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
   salesReports SalesReport[]
 }
 
 model SoldItem {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   quantity Int
   item Inventory? @relation(fields: [itemID], references: [id])
   itemID String?
@@ -207,6 +251,7 @@ model SoldItem {
 
 model POItem {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   quantity Int
   item Inventory? @relation(fields: [itemID], references: [id])
   itemID String?
