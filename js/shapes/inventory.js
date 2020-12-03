@@ -1,6 +1,21 @@
 import codeCalc from 'js/utils/codeCalc';
 import dateFormat from 'js/utils/dateFormat';
 
+export const inventoryAttributes = {
+  dateCreated: true,
+  partsNumber: true,
+  particular: true,
+  quantity: true,
+  codes: true,
+  srp: true,
+  description: true,
+  uom: true,
+  applications: true,
+  sizes: true,
+  brands: true,
+  suppliers: true
+};
+
 export const tableHeaders = ({ codes }) => [
   {
     label: 'Date Received',
@@ -200,6 +215,7 @@ export const initialValues = {
 };
 
 export default {
+  inventoryAttributes,
   initialValues,
   tableHeaders,
   tableSortOptions,
