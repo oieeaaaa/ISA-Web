@@ -1,0 +1,15 @@
+.stock-in {
+  &-filters {
+    @include desktop {
+      margin-top: rem(30);
+      display: grid;
+      grid-template-areas: "dateCreated referenceDate" "supplier receivedBy" "checkedBy codedBy";
+      grid-column-gap: rem(60);
+      grid-row-gap: rem(30);
+
+      .input-group {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
