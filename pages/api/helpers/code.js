@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import { safeType } from 'js/utils/safety';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (_, res) => {

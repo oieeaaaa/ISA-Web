@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 import toFilterQuery from 'js/utils/toFilterQuery';
-
-const prisma = new PrismaClient();
 
 // TODO: Analyze if this a duplicate or not.
 export default api({

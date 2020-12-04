@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 import { connectOrCreateSingle } from 'js/utils/connectOrCreate';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (req, res) => {

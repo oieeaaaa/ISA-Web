@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (req, res) => {

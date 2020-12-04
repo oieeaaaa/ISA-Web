@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import omit from 'lodash.omit';
 import safety, { safeType } from 'js/utils/safety';
 import api from 'js/utils/api';
@@ -8,8 +8,6 @@ import {
   connectOrCreateSingle
 } from 'js/utils/connectOrCreate';
 import { disconnectSingle } from 'js/utils/disconnect';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (req, res) => {

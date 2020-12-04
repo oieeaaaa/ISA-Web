@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import { disconnectMultiple } from 'js/utils/disconnect';
 import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (req, res) => {
