@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from 'prisma-client';
 import isObjectEmpty from 'js/utils/isObjectEmpty';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
-
-const prisma = new PrismaClient();
 
 export default (table = '', otherProps = {}) => async (req, res) => {
   try {
