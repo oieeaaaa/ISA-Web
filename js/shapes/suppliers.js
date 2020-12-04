@@ -1,5 +1,3 @@
-import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
-
 export const tableHeaders = [
   {
     label: 'Initials',

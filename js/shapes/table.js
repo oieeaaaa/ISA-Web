@@ -4,21 +4,31 @@ export const defaultLimits = [
     value: 5
   },
   {
-    name: 'Ten',
-    value: 10
-  },
-  {
     name: 'Twenty',
     value: 20
+  },
+  {
+    name: 'Thirty',
+    value: 30
+  },
+  {
+    name: 'Fifty',
+    value: 50
+  },
+  {
+    name: 'Hundred',
+    value: 100
   }
 ];
 
 export const defaultConfigs = {
-  sortBy: {},
+  sortBy: {
+    key: 'dateCreated'
+  },
   direction: 'desc', // asc | desc
   search: '',
   limit: defaultLimits[0],
-  page: 0
+  page: 1
 };
 
 export default defaultConfigs;
