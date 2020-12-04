@@ -9,8 +9,8 @@ import { defaultLimits, defaultConfigs } from 'js/shapes/table';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import safety, { safeType } from 'js/utils/safety';
 import Icon from 'components/icon/icon';
-import Input from 'components/input/input';
 import InputGroup from 'components/input-group/input-group';
+import Input from 'components/input/input';
 import Select from 'components/select/select';
 import Button from 'components/button/button';
 
@@ -74,10 +74,20 @@ const Table = ({
     [values]
   );
 
-  const onChangeListener = useCallback(
-    debounce(() => onChange(values), 300),
+  const triggerOnChange = useCallback(
+    debounce(() => {
+      onChange(values);
+    }, 300),
     [values]
   );
+
+  const getTotalPages = useCallback(() => {
+    const totalPages = Math.round(totalItems / values.limit.value);
+
+    if (totalPages === Infinity || totalPages <= 0) return 1;
+
+    return totalPages;
+  }, [data]);
 
   /**
    * toggleAdvancedSearch.
@@ -110,7 +120,7 @@ const Table = ({
    * Updates the values.page
    */
   const movePage = (pageNumber) => {
-    if (pageNumber <= 0) return;
+    if (pageNumber < 1 || pageNumber > getTotalPages()) return;
 
     pageHelpers.setValue(pageNumber);
   };
@@ -169,13 +179,12 @@ const Table = ({
   // trigger onChange prop if values changed
   useEffect(() => {
     if (!onChange) return;
-
-    onChangeListener();
-
-    return () => {
-      onChangeListener();
-    };
+    triggerOnChange(values);
   }, [values]);
+
+  useEffect(() => {
+    movePage(1); // move back to page 1 if the items changes
+  }, [totalItems]);
 
   return (
     <div
@@ -188,7 +197,7 @@ const Table = ({
           <h2 className="table-heading__title">{title}</h2>
         </div>
         <div className="table-filter">
-          <Input name="search" placeholder="Search item..." />
+          <Input name="search" placeholder="Search here..." />
           <button
             className="table-filter__advanced"
             type="button"
@@ -216,11 +225,11 @@ const Table = ({
                 mainKey="key"
               />
               <Button
-                className={`table-advanced-search__sort-button ${
-                  values.direction === 'desc'
-                    ? 'table-advanced-search__sort-button--desc'
-                    : ''
-                }`}
+                className={cssClassModifier(
+                  'table-advanced-search__sort-button',
+                  ['desc'],
+                  [values.direction === 'desc']
+                )}
                 variant="primary-v1"
                 icon="arrow-up"
                 onClick={flipDirection}
@@ -271,33 +280,33 @@ const Table = ({
             <button
               className="table-footer-pagination__left"
               type="button"
+              disabled={pageField.value === 1}
               onClick={() => movePage(pageField.value - 1)}>
               <Icon icon="chevron-down" />
             </button>
             <ul className="table-footer-pagination__numbers">
-              {Array.from({
-                length:
-                  Math.floor(values.limit.value / totalItems) >= 3
-                    ? 3
-                    : Math.floor(values.limit.value / totalItems)
-              }).map((_, index) => (
-                <li key={index}>
-                  <Button
-                    className={cssClassModifier(
-                      'table-footer-pagination__number',
-                      ['active'],
-                      [index === 0]
-                    )}
-                    onClick={() => movePage(pageField.value + index)}>
-                    {' '}
-                    {(pageField.value || 1) + index}
-                  </Button>
-                </li>
-              ))}
+              {Array.from({ length: getTotalPages() }).map((_, index) => {
+                const pageNum = index + 1;
+
+                return (
+                  <li key={index}>
+                    <Button
+                      className={cssClassModifier(
+                        'table-footer-pagination__number',
+                        ['active'],
+                        [pageField.value === pageNum]
+                      )}
+                      onClick={() => movePage(pageNum)}>
+                      {index + 1}
+                    </Button>
+                  </li>
+                );
+              })}
             </ul>
             <button
               className="table-footer-pagination__right"
               type="button"
+              disabled={pageField.value === getTotalPages()}
               onClick={() => movePage(pageField.value + 1)}>
               <Icon icon="chevron-down" />
             </button>
@@ -311,13 +320,13 @@ const Table = ({
             variant="primary-v1"
             onClick={onAdd}
             icon="plus">
-            Add Item
+            Add
           </Button>
         ) : (
           <Link href={`${router.pathname}/add`}>
-            <a className="table__add">
+            <a className="table__add table__add--link">
               <Button variant="primary-v1" icon="plus">
-                Add Item
+                Add
               </Button>
             </a>
           </Link>

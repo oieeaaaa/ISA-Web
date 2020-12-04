@@ -212,13 +212,16 @@
     }
 
     &::-webkit-scrollbar {
-      height: rem(2);
-      width: rem(2);
+      height: rem(10);
     }
 
     &::-webkit-scrollbar-thumb:horizontal {
-      background: var(--primary);
+      background-color: var(--primary-accent-2);
       border-radius: rem(10);
+
+      @include state(hover) {
+        background-color: var(--primary);
+      }
     }
 
     th,
@@ -364,6 +367,15 @@
         transform: rotate(-90deg);
         color: var(--primary);
       }
+
+      &__left,
+      &__right {
+        &:disabled {
+          svg {
+            color: var(--primary-accent-1);
+          }
+        }
+      }
     }
   }
 
@@ -371,12 +383,11 @@
     margin-left: auto;
     margin-top: rem(30);
     min-width: rem(130);
-    display: inline-block;
+    display: inline-flex;
     text-decoration: none;
 
-    // TODO: Remove this when the table is fixed
-    &-button {
-      display: flex;
+    &--link {
+      justify-content: flex-end;
     }
 
     @include desktop {
