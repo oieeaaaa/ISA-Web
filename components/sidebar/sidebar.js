@@ -18,6 +18,11 @@ const Sidebar = () => {
       icon: 'archive'
     },
     {
+      name: 'Stock In',
+      location: '/stock-in',
+      icon: 'inbox'
+    },
+    {
       name: 'Suppliers',
       location: '/supplier',
       icon: 'list'
