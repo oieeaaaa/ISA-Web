@@ -60,10 +60,14 @@ const toFilterQuery = (filters = {}) =>
         {},
         key.replace('_range', ''),
         omitBy(
-          {
-            gte: values[0],
-            lte: values[1]
-          },
+          !values[1] || values[0] === values[1]
+            ? {
+                gte: values[0]
+              }
+            : {
+                gte: values[0],
+                lte: values[1]
+              },
           (val) => !val
         )
       );
