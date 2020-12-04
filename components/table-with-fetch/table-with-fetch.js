@@ -8,9 +8,10 @@ const TableWithFetch = ({
   serverRoute,
   parameterizer, // cool name
   data,
+  totalItems,
   ...tableProps
 }) => {
-  const [tableData, setTableData] = useState(data);
+  const [tableData, setTableData] = useState({ items: data, totalItems });
 
   const handleFetch = async ({
     limit,
@@ -38,13 +39,20 @@ const TableWithFetch = ({
       const url = `/${serverRoute}?${param}`;
       const result = await fetcher(url);
 
-      setTableData(result.data.items);
+      setTableData(result.data);
     } catch (error) {
       console.error(error.message);
     }
   };
 
-  return <Table data={tableData} onChange={handleFetch} {...tableProps} />;
+  return (
+    <Table
+      data={tableData.items}
+      totalItems={tableData.totalItems}
+      onChange={handleFetch}
+      {...tableProps}
+    />
+  );
 };
 
 export default TableWithFetch;
