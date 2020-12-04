@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { v4 } from 'uuid';
 import omit from 'lodash.omit';
+import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import {
   connect,
@@ -10,8 +10,6 @@ import {
 import { stockInAttributes } from 'js/shapes/stock-in';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
-
-const prisma = new PrismaClient();
 
 export default api({
   get: async (req, res) => {
@@ -25,7 +23,49 @@ export default api({
         ...filters
       } = req.query;
 
+      const supplierQuery = (supplier) => {
+        if (!supplier) return {};
+
+        return {
+          supplier: {
+            OR: [
+              {
+                initials: {
+                  contains: supplier
+                }
+              },
+              {
+                vendor: {
+                  contains: supplier
+                }
+              }
+            ]
+          }
+        };
+      };
+
+      const where = {
+        OR: [
+          ...toFullTextSearchQuery(
+            [
+              'referenceNumber',
+              'remarks',
+              'receivedBy',
+              'checkedBy',
+              'codedBy'
+            ],
+            search
+          ),
+          supplierQuery(search)
+        ],
+        AND: [
+          ...toFilterQuery(omit(filters, ['supplier'])),
+          supplierQuery(filters.supplier)
+        ]
+      };
+
       const items = await prisma.stockIn.findMany({
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {
@@ -40,41 +80,13 @@ export default api({
               vendor: true
             }
           }
-        },
-        where: {
-          AND: toFilterQuery(filters),
-          OR: [
-            {
-              supplier: {
-                OR: [
-                  {
-                    initials: {
-                      contains: search
-                    }
-                  },
-                  {
-                    vendor: {
-                      contains: search
-                    }
-                  }
-                ]
-              }
-            },
-            ...toFullTextSearchQuery(
-              [
-                'referenceNumber',
-                'remarks',
-                'receivedBy',
-                'checkedBy',
-                'codedBy'
-              ],
-              search
-            )
-          ]
         }
       });
 
-      const totalItems = await prisma.stockIn.count();
+      const { count: totalItems } = await prisma.stockIn.aggregate({
+        where,
+        count: true
+      });
 
       res.success({
         items,
