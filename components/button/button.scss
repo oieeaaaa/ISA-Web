@@ -8,6 +8,12 @@
   border-radius: rem(10);
   font-size: rem(16);
 
+  &:disabled {
+    background-color: var(--primary-accent-1);
+    color: var(--primary-accent-3);
+    cursor: not-allowed;
+  }
+
   @include desktop {
     @include padding-y(13);
 
