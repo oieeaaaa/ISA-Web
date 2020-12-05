@@ -148,18 +148,19 @@ export default api({
       await prisma.$transaction(upsertInventoryItems);
 
       // then create the stockIn
-      await prisma.stockIn.create({
+      const result = await prisma.stockIn.create({
         // StockIn
         data: {
           ...stockIn,
           supplier: connect(supplier),
 
-          // StockItems (many)
+          // Variants (many)
           items: {
-            create: newItems.map(({ size, brand, inventory }) => {
+            create: newItems.map(({ name, size, brand, inventory }) => {
               const { applications, uom, ...restOfInventory } = inventory;
 
               return {
+                name,
                 inventory: {
                   connectOrCreate: {
                     where: {
@@ -184,7 +185,7 @@ export default api({
         }
       });
 
-      res.success();
+      res.success(result);
     } catch (error) {
       console.error(error);
       res.error(error);
