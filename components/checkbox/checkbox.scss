@@ -1,0 +1,28 @@
+.checkbox {
+  $this: &;
+
+  display: flex;
+  position: relative;
+  width: rem(25);
+  height: rem(25);
+  border-radius: rem(5);
+  background-color: var(--primary-accent-2);
+  cursor: pointer;
+
+  input {
+    @include hide-appearance;
+  }
+
+  .icon {
+    @include absolute-center;
+
+    display: none;
+    color: var(--white);
+  }
+
+  &--checked {
+    .icon {
+      display: block;
+    }
+  }
+}
