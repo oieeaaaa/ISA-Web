@@ -1,0 +1,65 @@
+.stock-in-form {
+  padding-bottom: rem(40);
+
+  &-container {
+    @include container;
+
+    @include desktop {
+      @include padding-x(0);
+    }
+  }
+
+  &__table {
+    @include margin-y(30);
+
+    @include desktop {
+      @include margin-y(40);
+    }
+  }
+
+  .form-section--references {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-columns: rem(180) 1fr 1fr;
+        grid-column-gap: rem(60);
+      }
+    }
+
+    .input-group {
+      @include desktop {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .form-section--details {
+    .form-section__content {
+      @include desktop {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-column-gap: rem(60);
+      }
+    }
+
+    .input-group {
+      &--remarks {
+        @include desktop {
+          margin-bottom: 0;
+        }
+
+        .text-area {
+          @include desktop {
+            height: calc(100% - 38px);
+          }
+        }
+      }
+
+      &--codedBy {
+        @include desktop {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
