@@ -31,12 +31,13 @@ model Inventory {
   suppliers Supplier[]
 
   // others
-  stockInItems StockInItem[]
+  variants Variant[]
   soldItems SoldItem[]
 }
 
-model StockInItem {
+model Variant {
   id String @id @default(uuid())
+  name String @unique
 
   inventory Inventory @relation(fields: [inventoryID], references: [id])
   inventoryID String
@@ -66,7 +67,7 @@ model StockIn {
   checkedBy String
   codedBy String
   remarks String?
-  items StockInItem[]
+  items Variant[]
 
   supplier Supplier @relation(fields: [supplierID], references: [id])
   supplierID String
@@ -244,7 +245,7 @@ model SoldItem {
   id String @id @default(uuid())
   dateCreated DateTime @default(now())
   quantity Int
-  item Inventory? @relation(fields: [itemID], references: [id])
+  item Variant? @relation(fields: [itemID], references: [id])
   itemID String?
   salesReports SalesReport[]
 }
@@ -253,7 +254,7 @@ model POItem {
   id String @id @default(uuid())
   dateCreated DateTime @default(now())
   quantity Int
-  item Inventory? @relation(fields: [itemID], references: [id])
+  item Variant? @relation(fields: [itemID], references: [id])
   itemID String?
   purchaseOrders PurchaseOrder[]
 }
