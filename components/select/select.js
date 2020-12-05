@@ -8,6 +8,7 @@ const Select = ({
   options = [],
   mainKey = 'id',
   displayKey = 'name',
+  noEmpty,
   ...etc
 }) => {
   const [field, , helpers] = useField(name);
@@ -28,7 +29,7 @@ const Select = ({
         onBlur={field.onBlur}
         value={safety(field, 'value', {})[mainKey]}
         {...etc}>
-        <option value={undefined}>&nbsp;</option>
+        {!noEmpty && <option value={undefined}>&nbsp;</option>}
         {options.map((option) => (
           <option key={option[mainKey]} value={option[mainKey]}>
             {option[displayKey]}
