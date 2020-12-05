@@ -1,0 +1,21 @@
+.table-select {
+  display: flex;
+  flex-direction: column;
+
+  //&__title {}
+
+  &__table {
+    @include margin-y(0);
+  }
+
+  &__checkbox-cell {
+    padding-right: rem(10);
+    position: sticky;
+    left: 0;
+    background-color: var(--primary-accent-1);
+  }
+
+  &__submit {
+    align-self: flex-end;
+  }
+}
