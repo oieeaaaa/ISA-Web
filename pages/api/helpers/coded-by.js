@@ -1,5 +1,6 @@
 import prisma from 'prisma-client';
 import api from 'js/utils/api';
+import removeDuplicates from 'js/utils/removeDuplicates';
 
 export default api({
   get: async (req, res) => {
@@ -19,7 +20,7 @@ export default api({
         }
       });
 
-      res.success(data);
+      res.success(removeDuplicates(data, 'codedBy'));
     } catch (error) {
       res.error(error);
     }
