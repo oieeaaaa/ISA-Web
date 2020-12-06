@@ -26,8 +26,13 @@ export const initialValues = {
     id: '',
     initials: ''
   },
+  items: [],
 
-  items: []
+  // don't send this to BE
+  addToListModal: {
+    data: {},
+    quantity: null
+  }
 };
 
 export const tableHeaders = [
@@ -96,5 +101,32 @@ export const tableSortOptions = [
   {
     name: 'Coded by',
     key: 'codedBy'
+  }
+];
+
+export const addedItemsHeaders = [
+  {
+    label: 'Quantity',
+    accessKey: 'inventory.plusQuantity'
+  },
+  {
+    label: 'Particular',
+    accessKey: 'inventory.particular'
+  },
+  {
+    label: 'Parts No.',
+    accessKey: 'inventory.partsNumber'
+  },
+  {
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size.name'
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
   }
 ];
