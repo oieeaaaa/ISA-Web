@@ -1,9 +1,16 @@
 import prisma from 'prisma-client';
-import api from 'js/utils/api';
 import {
-  connectOrCreateMultiple,
-  connectOrCreateSingle
-} from 'js/utils/connectOrCreate';
+  connect,
+  multiConnect,
+  connectOrCreateByName,
+  multiConnectOrCreateByName,
+  connectByName,
+  selectSingle,
+  select,
+  multiCreate
+} from 'js/shapes/prisma-query';
+import { inventoryAttributes } from 'js/shapes/inventory';
+import api from 'js/utils/api';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 
@@ -14,70 +21,76 @@ export default api({
         page = 1,
         limit = 5,
         search,
-        sortBy = 'particular',
+        sortBy = 'dateCreated',
         direction = 'desc',
         ...filters
       } = req.query;
 
       const query = {
         skip: (page - 1) * limit,
+        take: limit,
         orderBy: {
           [sortBy]: direction
         },
         where: {
-          AND: toFilterQuery(filters),
           OR: toFullTextSearchQuery(
-            [
-              'particular',
-              'referenceNumber',
-              'partsNumber',
-              'description',
-              'remarks',
-              'receivedBy',
-              'checkedBy',
-              'codedBy'
-            ],
+            ['particular', 'partsNumber', 'description'],
             search
-          )
+          ),
+          AND: toFilterQuery(filters)
         },
-        take: limit,
-        include: {
-          brand: true,
-          supplier: true,
-          uom: true,
-          applications: true
+        select: {
+          ...inventoryAttributes,
+          uom: selectSingle('name'),
+          variants: selectSingle('name'),
+          applications: selectSingle('name'),
+          brands: selectSingle('name'),
+          sizes: selectSingle('name'),
+          suppliers: select(['vendor', 'initials'])
         }
       };
 
-      const items = await prisma.inventory.findMany(query);
-      const totalItems = await prisma.inventory.count();
+      const result = await prisma.inventory.findMany(query);
 
-      res.success({
-        items,
-        totalItems
-      });
+      res.success(result);
     } catch (error) {
       res.error(error);
     }
   },
+  // TODO: handle validation
   post: async (req, res) => {
-    const { applications, uom, brand, supplier, ...payload } = req.body;
+    const { uom, applications, variants, ...inventory } = req.body;
 
     try {
-      const newItem = await prisma.inventory.create({
+      // aggregate variants attributes, for the creation of inventory
+      const suppliers = variants.map(({ supplier }) => supplier);
+      const brands = variants.map(({ brand }) => brand);
+      const sizes = variants.map(({ size }) => size);
+
+      // connect or create variant relationships
+      const newVariants = variants.map(
+        ({ supplier, brand, size, ...variant }) => ({
+          ...variant,
+          supplier: connect(supplier),
+          size: connectByName(size),
+          brand: connectByName(brand)
+        })
+      );
+
+      // create inventory w/ aggregated attributes & "querified" variants
+      const result = await prisma.inventory.create({
         data: {
-          ...payload,
-          applications: connectOrCreateMultiple(applications),
-          brand: connectOrCreateSingle(brand),
-          uom: connectOrCreateSingle(uom),
-          supplier: {
-            connect: {
-              id: supplier.id
-            }
-          }
+          ...inventory,
+          uom: connectOrCreateByName(uom),
+          suppliers: multiConnect(suppliers),
+          brands: multiConnectOrCreateByName(brands),
+          sizes: multiConnectOrCreateByName(sizes),
+          applications: multiConnectOrCreateByName(applications),
+          variants: multiCreate(newVariants)
         }
       });
-      res.success(newItem);
+
+      res.success(result);
     } catch (error) {
       console.error(error);
       res.error(error);
