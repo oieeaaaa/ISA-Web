@@ -1,3 +1,6 @@
+/* ============================================================================
+  CONNECT OR CREATE
+ ============================================================================ */
 export const connectOrCreate = (payload = {}, uniqueKey = 'id') => ({
   connectOrCreate: {
     where: {
@@ -24,3 +27,17 @@ export const connect = (item, uniqueKey = 'id') => ({
 
 export const connectOrCreateByName = (payload) =>
   connectOrCreate(payload, 'name');
+
+/* ============================================================================
+  SELECT
+ ============================================================================ */
+export const select = (attributes) => ({
+  select: attributes.reduce(
+    (selected, attribute) => ({ ...selected, [attribute]: true }),
+    {}
+  )
+});
+
+export const selectSingle = (attribute) => ({
+  select: { [attribute]: true }
+});
