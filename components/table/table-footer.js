@@ -25,8 +25,8 @@ const TableFooter = ({ currentPage, totalPages, onPageChange }) => (
         <Icon icon="chevron-down" />
       </button>
       <ul className="table-footer-pagination__numbers">
-        {Array.from({ length: totalPages }).map((_, index) => {
-          const pageNum = index + 1;
+        {Array.from({ length: 3 }).map((_, index) => {
+          const pageNum = currentPage + index;
 
           return (
             <li key={index}>
@@ -36,8 +36,9 @@ const TableFooter = ({ currentPage, totalPages, onPageChange }) => (
                   ['active'],
                   [currentPage === pageNum]
                 )}
-                onClick={() => onPageChange(pageNum)}>
-                {index + 1}
+                onClick={() => onPageChange(pageNum)}
+                disabled={pageNum > totalPages}>
+                {pageNum}
               </Button>
             </li>
           );
