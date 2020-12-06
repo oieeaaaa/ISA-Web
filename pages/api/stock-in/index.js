@@ -28,18 +28,7 @@ export default api({
 
         return {
           supplier: {
-            OR: [
-              {
-                initials: {
-                  contains: supplier
-                }
-              },
-              {
-                vendor: {
-                  contains: supplier
-                }
-              }
-            ]
+            OR: toFullTextSearchQuery(['initials', 'vendors'], supplier)
           }
         };
       };
