@@ -10,6 +10,9 @@ export const connectOrCreate = (payload = {}, uniqueKey = 'id') => ({
   }
 });
 
+export const connectOrCreateByName = (payload) =>
+  connectOrCreate(payload, 'name');
+
 export const multiConnectOrCreate = (list = [], uniqueKey = 'id') => ({
   connectOrCreate: list.map((listItem) => ({
     where: {
@@ -19,14 +22,36 @@ export const multiConnectOrCreate = (list = [], uniqueKey = 'id') => ({
   }))
 });
 
+export const multiConnectOrCreateByName = (payload) =>
+  multiConnectOrCreate(payload, 'name');
+
+/* ============================================================================
+  CONNECT
+ ============================================================================ */
 export const connect = (item, uniqueKey = 'id') => ({
   connect: {
     [uniqueKey]: item[uniqueKey]
   }
 });
 
-export const connectOrCreateByName = (payload) =>
-  connectOrCreate(payload, 'name');
+export const connectByName = (item) => connect(item, 'name');
+
+export const multiConnect = (items, uniqueKey = 'id') => ({
+  connect: items.map((item) => ({
+    [uniqueKey]: item[uniqueKey]
+  }))
+});
+
+/* ============================================================================
+  CREATE
+ ============================================================================ */
+export const create = (item) => ({
+  create: item
+});
+
+export const multiCreate = (items) => ({
+  create: items
+});
 
 /* ============================================================================
   SELECT
