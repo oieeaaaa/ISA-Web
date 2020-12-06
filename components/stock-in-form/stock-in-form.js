@@ -218,15 +218,17 @@ const StockInForm = ({ mode = 'add', helpers, onSubmit }) => {
           )}
         />
       </div>
-      <div className="stock-in-form-container">
-        <TableSelect
-          title="Added Items"
-          headers={addedItemsHeaders}
-          itemsKey="items"
-          onSubmit={removeSelectedItems}
-          submitButtonLabel="Remove Marked"
-        />
-      </div>
+      {!!values.items.length && (
+        <div className="stock-in-form-container">
+          <TableSelect
+            title="Added Items"
+            headers={addedItemsHeaders}
+            itemsKey="items"
+            onSubmit={removeSelectedItems}
+            submitButtonLabel="Remove Marked"
+          />
+        </div>
+      )}
       <div className="stock-in-form-container">
         <FormSection title="Details">
           <InputGroup name="remarks" label="Remarks" component={TextArea} />
