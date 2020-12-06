@@ -10,7 +10,8 @@ const TableSelect = ({
   headers,
   onSubmit,
   itemsKey,
-  submitButtonLabel = 'Submit'
+  submitButtonLabel = 'Submit',
+  ...etc
 }) => {
   const [isSelectedAll, setIsSelectedAll] = useState(false);
 
@@ -18,16 +19,12 @@ const TableSelect = ({
   const { values, setFieldValue } = useFormikContext();
 
   // callbacks
-  const isAllItemUnselect = useCallback(
-    () => values[itemsKey].some((item) => !item.isSelected),
-    [values[itemsKey]]
-  );
-
   const isSomeItemSelected = useCallback(
     () => values[itemsKey].some((item) => item.isSelected),
     [values[itemsKey]]
   );
 
+  // the order matters: update the items first -> check if isAllItemsSelected -> then set state
   const onSelectItem = (itemToSelect) => {
     setFieldValue(
       itemsKey,
@@ -39,6 +36,12 @@ const TableSelect = ({
         return item;
       })
     );
+
+    const isAllItemsSelected = !values[itemsKey].some(
+      (item) => !item.isSelected
+    );
+
+    setIsSelectedAll(isAllItemsSelected);
   };
 
   const onSelectAllItem = () => {
@@ -56,13 +59,15 @@ const TableSelect = ({
   const submitAllSelectedItem = () => {
     const allSelectedItems = values[itemsKey].filter((item) => item.isSelected);
 
-    onSubmit(allSelectedItems);
+    onSubmit(allSelectedItems, isSelectedAll);
+
+    setIsSelectedAll(false);
   };
 
   const tableSelectHeaders = [
     {
       customClass: 'table-select__checkbox-cell',
-      customLabel: () => <Checkbox value={!isAllItemUnselect()} onClick={onSelectAllItem} />, // eslint-disable-line
+      customLabel: () => <Checkbox value={isSelectedAll} onClick={onSelectAllItem} />, // eslint-disable-line
       customCell: ({value}) => <Checkbox value={value.isSelected} onClick={() => onSelectItem(value)} />, // eslint-disable-line
     },
     ...headers
@@ -75,6 +80,7 @@ const TableSelect = ({
         className="table-select__table"
         headers={tableSelectHeaders}
         data={values[itemsKey]}
+        {...etc}
       />
       {isSomeItemSelected() && (
         <Button

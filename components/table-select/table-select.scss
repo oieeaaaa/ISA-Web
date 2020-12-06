@@ -6,6 +6,9 @@
 
   &__table {
     @include margin-y(0);
+
+    min-height: unset;
+    padding-bottom: 0;
   }
 
   &__checkbox-cell {
@@ -16,6 +19,7 @@
   }
 
   &__submit {
+    margin-top: rem(20);
     align-self: flex-end;
   }
 }
