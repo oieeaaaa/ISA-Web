@@ -1,4 +1,5 @@
 import set from 'lodash.set';
+import merge from 'lodash.merge';
 
 /**
  * toFullTextSearchQuery.
@@ -7,6 +8,7 @@ import set from 'lodash.set';
  * @param {string} searchVal
  *
  * Sample usage:
+ NORMAL
  ```
   toFullTextSearchQuery(['particular', 'referenceNumber'], 'asd');
  ```
@@ -25,12 +27,41 @@ import set from 'lodash.set';
     },
   ]
  ```
+
+ NESTED
+ ```
+  toFullTextSearchQuery(['inventory.name', 'referenceNumber'], 'asd');
+ ```
+ Result:
+ ```
+  [
+    {
+      inventory: {
+        name: {
+          contains: 'asd',
+        },
+      }
+    },
+    {
+      referenceNumber: {
+        contains: 'asd',
+      },
+    },
+  ]
+ ```
  */
 const toFullTextSearchQuery = (keys, searchVal) =>
-  keys.map((key) =>
-    set({}, key, {
-      contains: searchVal
-    })
-  );
+  Object.entries(
+    merge(
+      ...keys.map((key) =>
+        set({}, key, {
+          contains: searchVal ? String(searchVal) : '',
+          mode: 'insensitive'
+        })
+      )
+    )
+  ).map(([key, value]) => ({
+    [key]: value
+  }));
 
 export default toFullTextSearchQuery;
