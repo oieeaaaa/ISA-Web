@@ -4,7 +4,7 @@ import breakpoint from 'js/utils/breakpoint';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import FormTitle from 'components/form-title/form-title';
 
-const FormActions = ({ title, className, children }) => {
+const FormActions = ({ title, icon, className, children }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const scrollListener = useCallback(
@@ -33,7 +33,7 @@ const FormActions = ({ title, className, children }) => {
         [isScrolled, className]
       )}>
       <div className="form-actions-container">
-        <FormTitle icon="archive" title={title} />
+        <FormTitle icon={icon} title={title} />
       </div>
       <div className="form-actions-body">{children}</div>
     </div>
