@@ -37,6 +37,7 @@ model Inventory {
 
 model Variant {
   id String @id @default(uuid())
+  dateCreated DateTime @default(now())
   name String @unique
 
   inventory Inventory @relation(fields: [inventoryID], references: [id])
@@ -51,8 +52,7 @@ model Variant {
   supplier Supplier @relation(fields: [supplierID], references: [id])
   supplierID String
 
-  stockIn StockIn @relation(fields: [stockInID], references: [id])
-  stockInID String
+  stockIn StockIn[]
 }
 
 // ===========================================================================
