@@ -1,5 +1,14 @@
 import dateFormat from 'js/utils/dateFormat';
 
+export const variantAttributes = {
+  id: true,
+  dateCreated: true,
+  name: true,
+  size: true,
+  brand: true,
+  supplier: true
+};
+
 export const tableHeaders = [
   {
     label: 'Date Created',

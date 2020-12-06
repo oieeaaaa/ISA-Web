@@ -2,6 +2,7 @@ import codeCalc from 'js/utils/codeCalc';
 import dateFormat from 'js/utils/dateFormat';
 
 export const inventoryAttributes = {
+  id: true,
   dateCreated: true,
   partsNumber: true,
   particular: true,
