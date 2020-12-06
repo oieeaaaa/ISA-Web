@@ -31,6 +31,7 @@
     text-align: left;
     font-size: rem(16);
     border-radius: rem(10);
+    white-space: nowrap;
 
     @include desktop {
       font-size: rem(18);

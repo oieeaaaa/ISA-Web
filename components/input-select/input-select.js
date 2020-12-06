@@ -115,7 +115,11 @@ const InputSelect = ({
                   })
                 }>
                 <span className="input-select__button-text">
-                  {`"${safety(field, 'value', {})[mainKey]}"`}
+                  {`${
+                    safety(field, 'value', {})[mainKey]
+                      ? `"${safety(field, 'value', {})[mainKey]}"`
+                      : 'Empty'
+                  }`}
                 </span>
               </button>
             </li>
