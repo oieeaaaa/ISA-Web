@@ -17,6 +17,24 @@
     }
   }
 
+  &--disabled {
+    #{$multi-select}-group {
+      background-color: var(--white);
+
+      .icon {
+        display: none;
+      }
+    }
+
+    #{$multi-select}-values {
+      @include padding-x(0);
+    }
+
+    #{$multi-select}__value {
+      cursor: default;
+    }
+  }
+
   &-group {
     @include input;
 

@@ -18,6 +18,7 @@ const MultiSelect = ({
   onSearch,
   noCreate,
   captureRemoved,
+  disabled,
   ...etc
 }) => {
   // contexts
@@ -61,6 +62,8 @@ const MultiSelect = ({
   };
 
   const handleToggler = () => {
+    if (disabled) return;
+
     if (isOpen) {
       handleClose();
     } else {
@@ -127,7 +130,11 @@ const MultiSelect = ({
     );
   };
 
-  const removeValue = (itemToRemove) => {
+  const removeValue = (e, itemToRemove) => {
+    if (disabled) return;
+
+    e.stopPropagation();
+
     helpers.setValue(
       field.value.filter((value) => value[mainKey] !== itemToRemove[mainKey])
     );
@@ -198,7 +205,12 @@ const MultiSelect = ({
   }, []);
 
   return (
-    <div className={`multi-select ${isOpen ? 'multi-select--open' : ''}`}>
+    <div
+      className={cssClassModifier(
+        'multi-select',
+        ['open', 'disabled'],
+        [isOpen, disabled]
+      )}>
       <div
         onClick={handleToggler}
         className="multi-select-group"
@@ -210,7 +222,7 @@ const MultiSelect = ({
               key={value[mainKey]}
               className="multi-select__value"
               type="button"
-              onClick={() => removeValue(value)}>
+              onClick={(e) => removeValue(e, value)}>
               {value.name}
             </button>
           ))}
@@ -224,6 +236,7 @@ const MultiSelect = ({
             onBlur={field.onBlur}
             value={query}
             size={query.length || 1}
+            disabled={disabled}
           />
         </div>
         <Icon className="multi-select__toggler" icon="chevron-down" />
