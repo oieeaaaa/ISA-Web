@@ -1,4 +1,5 @@
 import { useFormikContext } from 'formik';
+import safety from 'js/utils/safety';
 
 const InputGroup = ({ name, label, component: Component, error, ...etc }) => {
   const { errors } = useFormikContext();
@@ -9,8 +10,8 @@ const InputGroup = ({ name, label, component: Component, error, ...etc }) => {
         {label}
       </label>
       <Component id={name} name={name} {...etc} />
-      {errors[name] && (
-        <p className="input-group__error">{error || errors[name]}</p>
+      {safety(errors, name) && (
+        <p className="input-group__error">{error || safety(errors, name)}</p>
       )}
     </div>
   );
