@@ -1,8 +1,9 @@
 import { useRef, useEffect } from 'react';
+import joinClassName from 'js/utils/joinClassName';
 import cssClassModifier from 'js/utils/cssClassModifier';
 import Button from 'components/button/button';
 
-const Modal = ({ isOpen, title, closeModal, children }) => {
+const Modal = ({ className, isOpen, title, closeModal, children }) => {
   const modal = useRef(null);
 
   useEffect(() => {
@@ -22,7 +23,12 @@ const Modal = ({ isOpen, title, closeModal, children }) => {
   }, [isOpen, modal]);
 
   return (
-    <div ref={modal} className={cssClassModifier('modal', ['open'], [isOpen])}>
+    <div
+      ref={modal}
+      className={joinClassName(
+        cssClassModifier('modal', ['open'], [isOpen]),
+        className
+      )}>
       <div className="modal-container">
         <div className="modal-content">
           <div className="modal-header">
