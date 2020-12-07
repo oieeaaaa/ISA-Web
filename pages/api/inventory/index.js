@@ -59,7 +59,7 @@ export default api({
   },
   // TODO: handle validation
   post: async (req, res) => {
-    const { uom, applications, variants, ...inventory } = req.body;
+    const { quantity, uom, applications, variants, ...inventory } = req.body;
 
     try {
       // aggregate variants attributes, for the creation of inventory
@@ -81,6 +81,7 @@ export default api({
       const result = await prisma.inventory.create({
         data: {
           ...inventory,
+          quantity: Number(quantity),
           uom: connectOrCreateByName(uom),
           suppliers: multiConnect(suppliers),
           brands: multiConnectOrCreateByName(brands),
