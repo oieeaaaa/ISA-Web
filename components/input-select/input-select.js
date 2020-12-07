@@ -8,8 +8,10 @@ const InputSelect = ({
   name,
   options = [],
   onSearch,
+  onSelect,
+  onChange,
   mainKey = 'name',
-  takeWhole,
+  noIsNew = false,
   ...etc
 }) => {
   // refs
@@ -35,14 +37,25 @@ const InputSelect = ({
   });
 
   const handleSearch = (e) => {
+    const { value } = e.target;
+
     if (onSearch) {
-      onSearch(e.target.value);
+      onSearch(value);
     }
 
-    helpers.setValue({
-      [mainKey]: e.target.value,
-      isNew: !options.length // It's new
-    });
+    if (onChange) {
+      onChange(value);
+    }
+
+    if (!value) return helpers.setValue({});
+
+    const newValue = noIsNew
+      ? {
+          [mainKey]: value
+        }
+      : { [mainKey]: value, isNew: !options.length };
+
+    helpers.setValue(newValue);
   };
 
   const handleDropdownOpen = () => {
@@ -50,15 +63,19 @@ const InputSelect = ({
   };
 
   const selectValue = (selectedValue) => {
+    if (onSelect) {
+      onSelect(selectedValue);
+    }
+
     helpers.setValue(selectedValue);
     setIsDropdownOpen(false);
   };
 
-  const createValue = (newValue) =>
-    selectValue({
-      ...newValue,
-      isNew: true
-    });
+  const createValue = (newValue) => {
+    const newCreateValue = noIsNew ? newValue : { ...newValue, isNew: true };
+
+    selectValue(newCreateValue);
+  };
 
   useEffect(() => {
     window.addEventListener('click', closeDropdownListener);
@@ -90,15 +107,7 @@ const InputSelect = ({
                     'input-select__button--active'
                 )}
                 type="button"
-                onClick={() =>
-                  selectValue(
-                    takeWhole // TODO: THIS IS MESSY FIX THIS LATER
-                      ? option
-                      : {
-                          [mainKey]: option[mainKey]
-                        }
-                  )
-                }>
+                onClick={() => selectValue(option)}>
                 <span className="input-select__button-index">{index + 1}.</span>
                 <span>{option[mainKey]}</span>
               </button>
