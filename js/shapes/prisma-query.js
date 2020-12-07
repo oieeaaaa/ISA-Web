@@ -1,3 +1,5 @@
+import omit from 'lodash.omit';
+
 /* ============================================================================
   CONNECT OR CREATE
  ============================================================================ */
@@ -23,7 +25,10 @@ export const multiConnectOrCreate = (list = [], uniqueKey = 'id') => ({
 });
 
 export const multiConnectOrCreateByName = (payload) =>
-  multiConnectOrCreate(payload, 'name');
+  multiConnectOrCreate(
+    payload.map((item) => omit(item, ['id'])),
+    'name'
+  );
 
 /* ============================================================================
   CONNECT
@@ -34,7 +39,7 @@ export const connect = (item, uniqueKey = 'id') => ({
   }
 });
 
-export const connectByName = (item) => connect(item, 'name');
+export const connectByName = (item) => connect(omit(item, ['id']), 'name');
 
 export const multiConnect = (items, uniqueKey = 'id') => ({
   connect: items.map((item) => ({
