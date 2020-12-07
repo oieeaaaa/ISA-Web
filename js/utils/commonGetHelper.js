@@ -8,6 +8,11 @@ export default (table = '', otherProps = {}) => async (req, res) => {
     const isOtherPropsEmpty = isObjectEmpty(otherProps);
 
     const items = await prisma[table].findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        dateCreated: 'desc'
+      },
       select: isOtherPropsEmpty
         ? {
             id: true,
@@ -21,9 +26,7 @@ export default (table = '', otherProps = {}) => async (req, res) => {
         OR: isOtherPropsEmpty
           ? toFullTextSearchQuery(['name'], search)
           : toFullTextSearchQuery(Object.keys(otherProps), search)
-      },
-      skip: (page - 1) * limit,
-      take: limit
+      }
     });
 
     res.success(items);
