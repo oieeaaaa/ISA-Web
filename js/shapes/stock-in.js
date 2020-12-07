@@ -18,9 +18,9 @@ export const initialValues = {
   referenceNumber: '',
   referenceDate: new Date(),
   remarks: '',
-  receivedBy: '',
-  checkedBy: '',
-  codedBy: '',
+  receivedBy: { receivedBy: '' },
+  checkedBy: { checkedBy: '' },
+  codedBy: { codedBy: '' },
 
   supplier: {
     id: '',
@@ -29,9 +29,25 @@ export const initialValues = {
   items: [],
 
   // don't send this to BE
-  addToListModal: {
+  listModal: {
     data: {},
-    quantity: null
+    quantity: ''
+  },
+  inventoryModal: {
+    particular: { particular: '' },
+    partsNumber: { partsNumber: '' },
+    quantity: 0,
+    uom: { name: '' },
+    codes: '',
+    srp: 0,
+    description: '',
+    applications: [],
+    variant: {
+      name: '',
+      size: { name: '' },
+      brand: { name: '' },
+      supplier: { initials: '' }
+    }
   }
 };
 
@@ -110,16 +126,16 @@ export const addedItemsHeaders = [
     accessKey: 'inventory.plusQuantity'
   },
   {
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
     label: 'Particular',
     accessKey: 'inventory.particular'
   },
   {
     label: 'Parts No.',
     accessKey: 'inventory.partsNumber'
-  },
-  {
-    label: 'Variant Name',
-    accessKey: 'name'
   },
   {
     label: 'Size',

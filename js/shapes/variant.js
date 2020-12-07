@@ -58,7 +58,7 @@ export const tableSortOptions = [
     key: 'dateCreated'
   },
   {
-    name: 'Name',
+    name: 'Variant Name',
     key: 'name'
   }
 ];
