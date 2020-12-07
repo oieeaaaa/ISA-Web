@@ -1,17 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormikContext } from 'formik';
-import omitBy from 'lodash.omitby';
-import set from 'lodash.set';
-import fetcher from 'js/utils/fetcher';
-import { initialValues, addedItemsHeaders } from 'js/shapes/stock-in';
-import {
-  tableHeaders,
-  tableSortOptions,
-  tableFilters
-} from 'js/shapes/variant';
+import { initialValues } from 'js/shapes/stock-in';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
-import toParam from 'js/utils/toParam';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -20,114 +11,74 @@ import InputSelectWithFetch from 'components/input-select-with-fetch/input-selec
 import Button from 'components/button/button';
 import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
-import Table from 'components/table/table';
-import TableSelect from 'components/table-select/table-select';
-import Modal from 'components/modal/modal';
-import ModalInfoText from 'components/modal-info-text/modal-info-text';
-import ModalInfoDetails from 'components/modal-info-details/modal-info-details';
-import ModalActions from 'components/modal-actions/modal-actions';
+import ProductsTable from './products-table';
+import AddedItems from './added-items';
+import AddToListModal from './add-to-list';
+import CreateInventoryModal from './create-inventory';
 
-const StockInForm = ({ mode = 'add', helpers, onSubmit }) => {
-  const { values, errors, setFieldValue } = useFormikContext();
+const StockInForm = ({ mode = 'add', helpers }) => {
+  // contexts
+  const {
+    values,
+    errors,
+    setFieldValue,
+    validateForm,
+    isSubmitting,
+    submitForm,
+    status,
+    setStatus
+  } = useFormikContext();
 
-  const [tableData, setTableData] = useState({ items: [], totalItems: 0 });
+  // states
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
+  const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
 
+  // destructured
   const { suppliers, receivedBy, codedBy, checkedBy } = helpers;
-  const { addToListModal } = values;
 
-  const handleFetch = async ({
-    limit,
-    sortBy,
-    direction,
-    search,
-    page,
-    brand,
-    size,
-    supplier,
-    inventory
-  }) => {
-    try {
-      const param = toParam({
-        search,
-        ...omitBy(
-          {
-            direction,
-            page,
-            limit: limit.value,
-            sortBy: sortBy.key,
-            'brand.name': brand.name,
-            'size.name': size.name,
-            'supplier.initials': supplier.initials,
-            'inventory.particular': inventory.particular
-          },
-          (val) => !val
-        ) // omit falsy values
-      });
-
-      const url = `/helpers/variant?${param}`;
-      const { data } = await fetcher(url);
-
-      setTableData(data);
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+  //
+  // ADD TO LIST MODAL
+  //
 
   const openAddToListModal = (product) => {
     if (checkIfProductExistInValues(product)) {
-      setFieldValue('addToListModal', {
+      setFieldValue('listModal', {
         data: product,
         quantity: safety(product, 'inventory.plusQuantity', 0)
       });
     } else {
-      setFieldValue('addToListModal.data', product);
+      setFieldValue('listModal.data', product);
     }
 
     setIsAddToListModalOpen(true);
   };
 
   const closeAddToListModal = () => {
-    setFieldValue('addToListModal', initialValues.addToListModal);
+    setFieldValue('listModal', initialValues.listModal);
     setIsAddToListModalOpen(false);
   };
 
   const checkIfProductExistInValues = (product) =>
     values.items.some((item) => item.id === product.id);
 
-  const handleQuantityChange = (e) => {
-    const { value } = e.target;
+  //
+  // END OF ADD TO LIST MODAL
+  //
 
-    if (value !== '' && value <= 0) return;
+  //
+  // ADD INVENTORY MODAL
+  //
 
-    setFieldValue(e.target.name, value);
-  };
+  const openAddInventoryModal = () => setIsAddInventoryModalOpen(true);
+  const closeAddInventoryModal = () => setIsAddInventoryModalOpen(false);
 
-  const handleItemToListSubmit = () => {
-    const newItem = set(
-      addToListModal.data,
-      'inventory.plusQuantity',
-      Number(addToListModal.quantity)
-    );
+  //
+  // END OF ADD INVENTORY MODAL
+  //
 
-    if (checkIfProductExistInValues(addToListModal.data)) {
-      setFieldValue(
-        'items',
-        values.items.map((item) => {
-          if (item.id === addToListModal.data.id) {
-            return newItem;
-          }
-
-          return item;
-        })
-      );
-    } else {
-      setFieldValue('items', [newItem, ...values.items]);
-    }
-
-    setFieldValue('addToListModal', initialValues.addToListModal);
-    closeAddToListModal();
-  };
+  //
+  // OTHERS
+  //
 
   const removeSelectedItems = (selectedItems, isSelectedAll) => {
     if (isSelectedAll) return setFieldValue('items', initialValues.items); // reset items
@@ -141,13 +92,37 @@ const StockInForm = ({ mode = 'add', helpers, onSubmit }) => {
     );
   };
 
+  const handleSubmit = async () => {
+    if (!status?.isSubmitted) {
+      setStatus({ isSubmitted: true });
+    }
+
+    await submitForm();
+    console.log('Submitting everything...');
+  };
+
+  //
+  // END OF OTHERS
+  //
+
+  console.log(values.items);
+
+  // NOTE: Eliminate this once you found a better & efficient alternive
+  // Validate on change after submit
+  useEffect(() => {
+    if (!status?.isSubmitted) return;
+    const validate = async () => await validateForm(values);
+
+    validate();
+  }, [status, isSubmitting, values]); // maybe listen to required values only
+
   return (
     <div className="stock-in-form">
       <FormActions
         icon="inbox"
         title={mode === 'edit' ? 'Update Stock In' : 'Create a Stock In'}>
         <Button onClick={() => goTo('/stock-in')}>Go back</Button>
-        <Button variant="primary" type="submit" onClick={onSubmit}>
+        <Button variant="primary" onClick={handleSubmit}>
           {mode === 'edit' ? 'Update' : 'Save'}
         </Button>
       </FormActions>
@@ -174,60 +149,12 @@ const StockInForm = ({ mode = 'add', helpers, onSubmit }) => {
           />
         </FormSection>
       </div>
-      <div className="stock-in-form__table">
-        <Table
-          title="Products"
-          icon="archive"
-          headers={tableHeaders}
-          filters={tableFilters}
-          sortOptions={tableSortOptions}
-          data={tableData.items}
-          totalItems={tableData.totalItems}
-          onChange={handleFetch}
-          onRowClick={openAddToListModal}
-          renderFilter={() => (
-            <div className="stock-in-form__table-filters">
-              <InputGroup
-                name="supplier"
-                label="Supplier"
-                initialOptions={suppliers}
-                mainKey="initials"
-                serverRoute="/helpers/supplier"
-                component={InputSelectWithFetch}
-              />
-              <InputGroup
-                name="inventory"
-                label="Particular"
-                mainKey="particular"
-                serverRoute="/helpers/inventory"
-                component={InputSelectWithFetch}
-              />
-              <InputGroup
-                name="size"
-                label="Size"
-                serverRoute="/helpers/size"
-                component={InputSelectWithFetch}
-              />
-              <InputGroup
-                name="brand"
-                label="Brand"
-                serverRoute="/helpers/brand"
-                component={InputSelectWithFetch}
-              />
-            </div>
-          )}
-        />
-      </div>
+      <ProductsTable
+        onCreateProduct={openAddInventoryModal}
+        onClickProduct={openAddToListModal}
+      />
       {!!values.items.length && (
-        <div className="stock-in-form-container">
-          <TableSelect
-            title="Added Items"
-            headers={addedItemsHeaders}
-            itemsKey="items"
-            onSubmit={removeSelectedItems}
-            submitButtonLabel="Remove Marked"
-          />
-        </div>
+        <AddedItems onRemoveItems={removeSelectedItems} />
       )}
       <div className="stock-in-form-container">
         <FormSection title="Details">
@@ -260,69 +187,14 @@ const StockInForm = ({ mode = 'add', helpers, onSubmit }) => {
           </div>
         </FormSection>
       </div>
-      <Modal
-        title="Add to list"
+      <AddToListModal
         isOpen={isAddToListModalOpen}
-        closeModal={closeAddToListModal}>
-        <ModalInfoText>
-          Before adding the item, please specify the quantity below.
-        </ModalInfoText>
-        <ModalInfoDetails
-          details={[
-            {
-              title: 'Particular',
-              value: safety(addToListModal, 'data.inventory.particular', '')
-            },
-            {
-              title: 'Parts Number',
-              value: safety(addToListModal, 'data.inventory.partsNumber', '')
-            },
-            {
-              title: 'Variant Name',
-              value: safety(addToListModal, 'data.name', '')
-            },
-            {
-              title: 'Supplier',
-              value: safety(addToListModal, 'data.supplier.initials', '')
-            },
-            {
-              title: 'Brand',
-              value: safety(addToListModal, 'data.brand.name', '')
-            },
-            {
-              title: 'Size',
-              value: safety(addToListModal, 'data.size.name', '')
-            },
-            {
-              title: 'Unit Cost',
-              value: safety(addToListModal, 'data.inventory.codes', '')
-            },
-            {
-              title: 'Available Qty.',
-              value:
-                safety(addToListModal, 'data.inventory.quantity', 0) +
-                Number(addToListModal.quantity)
-            }
-          ]}
-        />
-        {isAddToListModalOpen && (
-          <InputGroup
-            name="addToListModal.quantity"
-            label="Quantity"
-            type="number"
-            onChange={handleQuantityChange}
-            component={Input}
-          />
-        )}
-        <ModalActions mode="add">
-          <Button
-            variant="primary"
-            onClick={handleItemToListSubmit}
-            disabled={!addToListModal.quantity}>
-            Add Item
-          </Button>
-        </ModalActions>
-      </Modal>
+        onClose={closeAddToListModal}
+      />
+      <CreateInventoryModal
+        isOpen={isAddInventoryModalOpen}
+        onClose={closeAddInventoryModal}
+      />
     </div>
   );
 };

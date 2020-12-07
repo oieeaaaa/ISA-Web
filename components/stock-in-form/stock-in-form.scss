@@ -30,6 +30,26 @@
     }
   }
 
+  &__add-to-list-modal {
+    .modal-container {
+      @include desktop {
+        width: rem(480);
+      }
+    }
+  }
+
+  &__inventory-modal {
+    &__actions {
+      justify-content: space-between;
+    }
+
+    .modal-container {
+      @include desktop {
+        width: rem(480);
+      }
+    }
+  }
+
   .form-section--references {
     .form-section__content {
       @include desktop {
