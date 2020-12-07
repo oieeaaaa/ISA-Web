@@ -38,6 +38,7 @@ const StockInAdd = ({ helpers }) => {
   return (
     <Layout>
       <Formik
+        onSubmit={console.log}
         initialValues={initialValues}
         validationSchema={validationSchema}
         validateOnMount={false}
