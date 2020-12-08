@@ -20,16 +20,16 @@ export const tableHeaders = [
     accessKey: 'inventory.quantity'
   },
   {
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
     label: 'Particular',
     accessKey: 'inventory.particular'
   },
   {
     label: 'Parts No.',
     accessKey: 'inventory.partsNumber'
-  },
-  {
-    label: 'Variant Name',
-    accessKey: 'name'
   },
   {
     label: 'Supplier',
