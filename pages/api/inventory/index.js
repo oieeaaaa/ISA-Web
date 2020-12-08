@@ -88,6 +88,14 @@ export default api({
           sizes: multiConnectOrCreateByName(sizes),
           applications: multiConnectOrCreateByName(applications),
           variants: multiCreate(newVariants)
+        },
+        include: {
+          variants: {
+            take: 5,
+            orderBy: {
+              dateCreated: 'desc'
+            }
+          }
         }
       });
 

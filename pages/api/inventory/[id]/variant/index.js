@@ -14,7 +14,6 @@ export default api({
     const { quantity = 0, supplier, size, brand, ...variant } = req.body;
 
     try {
-      // create inventory w/ aggregated attributes & "querified" variants
       const result = await prisma.inventory.update({
         where: {
           id
@@ -32,6 +31,14 @@ export default api({
             size: connectByName(size),
             brand: connectByName(brand)
           })
+        },
+        include: {
+          variants: {
+            take: 1,
+            orderBy: {
+              dateCreated: 'desc'
+            }
+          }
         }
       });
 
