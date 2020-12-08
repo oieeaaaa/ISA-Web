@@ -1,12 +1,7 @@
-import { v4 } from 'uuid';
 import omit from 'lodash.omit';
 import prisma from 'prisma-client';
 import api from 'js/utils/api';
-import {
-  connect,
-  connectOrCreateByName,
-  multiConnectOrCreate
-} from 'js/shapes/prisma-query';
+import { connect, multiConnect } from 'js/shapes/prisma-query';
 import { stockInAttributes } from 'js/shapes/stock-in';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
@@ -91,88 +86,34 @@ export default api({
     const { items, supplier, ...stockIn } = req.body;
 
     try {
-      // making sure that each inventory have an id
-      const newItems = items.map(({ inventory, ...item }) => {
-        if (!inventory.id) {
-          inventory = {
-            ...inventory,
-            id: v4() // new inventory id, so we can relate this when creating the stockIn
-          };
-        }
-
-        return {
-          ...item,
-          inventory
-        };
-      });
-
-      const upsertInventoryItems = newItems.map(
-        ({ size, brand, inventory }) => {
-          const { uom, applications, quantity, ...rest } = inventory;
-
-          const data = {
-            ...rest,
-            quantity: { increment: quantity },
-            uom: connectOrCreateByName(uom),
-            suppliers: connect(supplier),
-            sizes: connectOrCreateByName(size),
-            brands: connectOrCreateByName(brand),
-            applications: multiConnectOrCreate(applications, 'name')
-          };
-
-          return prisma.inventory.upsert({
-            where: {
-              id: inventory.id
-            },
-            create: {
-              ...data,
-              quantity
-            },
-            update: data
-          });
-        }
-      );
-
-      // upsert the items first
-      await prisma.$transaction(upsertInventoryItems);
-
       // then create the stockIn
-      const result = await prisma.stockIn.create({
+      const createStockIn = prisma.stockIn.create({
         // StockIn
         data: {
           ...stockIn,
           supplier: connect(supplier),
 
           // Variants (many)
-          items: {
-            create: newItems.map(({ name, size, brand, inventory }) => {
-              const { applications, uom, ...restOfInventory } = inventory;
-
-              return {
-                name,
-                inventory: {
-                  connectOrCreate: {
-                    where: {
-                      id: inventory.id
-                    },
-                    create: {
-                      ...restOfInventory,
-                      uom: connectOrCreateByName(uom),
-                      suppliers: connect(supplier),
-                      sizes: connectOrCreateByName(size),
-                      brands: connectOrCreateByName(brand),
-                      applications: multiConnectOrCreate(applications, 'name')
-                    }
-                  }
-                },
-                supplier: connect(supplier),
-                size: connect(size, 'name'),
-                brand: connect(brand, 'name')
-              };
-            })
-          }
+          items: multiConnect(items)
         }
       });
+
+      // new items are incoming... so let's add 'em quantities!
+      const incrementItemsQuantity = items.map(({ inventoryID, quantity }) =>
+        prisma.inventory.update({
+          where: { id: inventoryID },
+          data: {
+            quantity: {
+              increment: Number(quantity)
+            }
+          }
+        })
+      );
+
+      const result = await prisma.$transaction([
+        createStockIn,
+        ...incrementItemsQuantity
+      ]);
 
       res.success(result);
     } catch (error) {
