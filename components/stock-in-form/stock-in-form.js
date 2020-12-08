@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import omit from 'lodash.omit';
 import { useFormikContext } from 'formik';
 import { initialValues } from 'js/shapes/stock-in';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
+import isObjectEmpty from 'js/utils/isObjectEmpty';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
@@ -16,7 +18,7 @@ import AddedItems from './added-items';
 import AddToListModal from './add-to-list';
 import CreateInventoryModal from './create-inventory';
 
-const StockInForm = ({ mode = 'add', helpers }) => {
+const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
   // contexts
   const {
     values,
@@ -24,7 +26,6 @@ const StockInForm = ({ mode = 'add', helpers }) => {
     setFieldValue,
     validateForm,
     isSubmitting,
-    submitForm,
     status,
     setStatus
   } = useFormikContext();
@@ -36,15 +37,13 @@ const StockInForm = ({ mode = 'add', helpers }) => {
   // destructured
   const { suppliers, receivedBy, codedBy, checkedBy } = helpers;
 
-  //
-  // ADD TO LIST MODAL
-  //
-
   const openAddToListModal = (product) => {
-    if (checkIfProductExistInValues(product)) {
+    const item = checkIfProductExistInValues(product);
+
+    if (item) {
       setFieldValue('listModal', {
-        data: product,
-        quantity: safety(product, 'inventory.plusQuantity', 0)
+        data: item,
+        quantity: safety(item, 'inventory.plusQuantity', 0)
       });
     } else {
       setFieldValue('listModal.data', product);
@@ -59,26 +58,10 @@ const StockInForm = ({ mode = 'add', helpers }) => {
   };
 
   const checkIfProductExistInValues = (product) =>
-    values.items.some((item) => item.id === product.id);
-
-  //
-  // END OF ADD TO LIST MODAL
-  //
-
-  //
-  // ADD INVENTORY MODAL
-  //
+    values.items.find((item) => item.id === product.id);
 
   const openAddInventoryModal = () => setIsAddInventoryModalOpen(true);
   const closeAddInventoryModal = () => setIsAddInventoryModalOpen(false);
-
-  //
-  // END OF ADD INVENTORY MODAL
-  //
-
-  //
-  // OTHERS
-  //
 
   const removeSelectedItems = (selectedItems, isSelectedAll) => {
     if (isSelectedAll) return setFieldValue('items', initialValues.items); // reset items
@@ -92,20 +75,20 @@ const StockInForm = ({ mode = 'add', helpers }) => {
     );
   };
 
+  const isSubmittable = (newErrors) =>
+    isObjectEmpty(omit(newErrors, ['inventoryModal', 'listModal']));
+
   const handleSubmit = async () => {
     if (!status?.isSubmitted) {
       setStatus({ isSubmitted: true });
     }
 
-    await submitForm();
-    console.log('Submitting everything...');
+    const newErrors = await validateForm(values);
+
+    if (!isSubmittable(newErrors)) return;
+
+    onSubmit(omit(values, 'inventoryModal', 'listModal'));
   };
-
-  //
-  // END OF OTHERS
-  //
-
-  console.log(values.items);
 
   // NOTE: Eliminate this once you found a better & efficient alternive
   // Validate on change after submit
@@ -122,7 +105,10 @@ const StockInForm = ({ mode = 'add', helpers }) => {
         icon="inbox"
         title={mode === 'edit' ? 'Update Stock In' : 'Create a Stock In'}>
         <Button onClick={() => goTo('/stock-in')}>Go back</Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={!isSubmittable(errors)}>
           {mode === 'edit' ? 'Update' : 'Save'}
         </Button>
       </FormActions>
@@ -145,6 +131,7 @@ const StockInForm = ({ mode = 'add', helpers }) => {
             mainKey="initials"
             serverRoute="/helpers/supplier"
             error={safety(errors, 'supplier.id', 'Invalid supplier!')}
+            noIsNew
             component={InputSelectWithFetch}
           />
         </FormSection>
@@ -166,6 +153,7 @@ const StockInForm = ({ mode = 'add', helpers }) => {
               mainKey="receivedBy"
               serverRoute="/helpers/received-by"
               initialOptions={receivedBy}
+              noIsNew
               component={InputSelectWithFetch}
             />
             <InputGroup
@@ -174,6 +162,7 @@ const StockInForm = ({ mode = 'add', helpers }) => {
               mainKey="checkedBy"
               serverRoute="/helpers/checked-by"
               initialOptions={checkedBy}
+              noIsNew
               component={InputSelectWithFetch}
             />
             <InputGroup
@@ -182,6 +171,7 @@ const StockInForm = ({ mode = 'add', helpers }) => {
               mainKey="codedBy"
               serverRoute="/helpers/coded-by"
               initialOptions={codedBy}
+              noIsNew
               component={InputSelectWithFetch}
             />
           </div>

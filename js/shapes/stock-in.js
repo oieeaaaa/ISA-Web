@@ -146,3 +146,21 @@ export const addedItemsHeaders = [
     accessKey: 'brand.name'
   }
 ];
+
+export const submitPayload = ({
+  receivedBy,
+  codedBy,
+  checkedBy,
+  items,
+  ...stockIn
+}) => ({
+  ...stockIn,
+  receivedBy: receivedBy.receivedBy,
+  codedBy: codedBy.codedBy,
+  checkedBy: checkedBy.checkedBy,
+  items: items.map(({ id, inventory }) => ({
+    id,
+    inventoryID: inventory.id,
+    quantity: Number(inventory.plusQuantity)
+  }))
+});

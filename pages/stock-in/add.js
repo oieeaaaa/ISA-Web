@@ -4,7 +4,7 @@ import messages from 'js/messages';
 import safety from 'js/utils/safety';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
-import { initialValues } from 'js/shapes/stock-in';
+import { submitPayload, initialValues } from 'js/shapes/stock-in';
 import validationSchema from 'js/validations/stock-in';
 
 // components
@@ -18,7 +18,7 @@ const StockInAdd = ({ helpers }) => {
     try {
       const { data } = await fetcher('/stock-in', {
         method: 'POST',
-        body: JSON.stringify(values)
+        body: JSON.stringify(submitPayload(values))
       });
 
       notification.open({
@@ -26,6 +26,7 @@ const StockInAdd = ({ helpers }) => {
         message: messages.success.add
       });
 
+      // go to edit
       Router.push(`/stock-in/${data.id}`);
     } catch (error) {
       notification.open({
@@ -38,7 +39,6 @@ const StockInAdd = ({ helpers }) => {
   return (
     <Layout>
       <Formik
-        onSubmit={console.log}
         initialValues={initialValues}
         validationSchema={validationSchema}
         validateOnMount={false}
