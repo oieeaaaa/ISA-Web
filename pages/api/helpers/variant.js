@@ -44,6 +44,7 @@ export default api({
           name: true,
           dateCreated: true,
           inventory: select([
+            'id',
             'particular',
             'partsNumber',
             'quantity',
