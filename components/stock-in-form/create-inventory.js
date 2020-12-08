@@ -38,17 +38,19 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
     setFieldValue(e.target.name, value);
   };
 
-  const addCreatedItemToItems = () => {
+  const addCreatedItemToItems = ({ inventoryID, variantID }) => {
     const { variant } = inventoryModal;
 
     setFieldValue('items', [
       {
+        ...variant,
+        id: variantID,
         inventory: {
+          id: inventoryID,
           plusQuantity: Number(inventoryModal.quantity),
           particular: inventoryModal.particular.particular,
           partsNumber: inventoryModal.partsNumber.partsNumber
-        },
-        ...variant
+        }
       },
       ...items
     ]);
@@ -60,12 +62,17 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
     try {
       const url = `/inventory/${id}/variant`;
 
-      await fetcher(url, {
+      const { data } = await fetcher(url, {
         method: 'POST',
         body: JSON.stringify({
           ...variant,
           quantity
         })
+      });
+
+      addCreatedItemToItems({
+        inventoryID: data.id,
+        variantID: data.variants[0]?.id
       });
 
       notification.open({
@@ -85,7 +92,7 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
     const { particular, partsNumber, variant, ...inventory } = inventoryModal;
 
     try {
-      await fetcher('/inventory', {
+      const { data } = await fetcher('/inventory', {
         method: 'POST',
         body: JSON.stringify({
           ...omit(inventory, ['id']),
@@ -93,6 +100,11 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
           partsNumber: partsNumber.partsNumber,
           variants: [variant]
         })
+      });
+
+      addCreatedItemToItems({
+        inventoryID: data.id,
+        variantID: data.variants[0]?.id
       });
 
       notification.open({
@@ -115,7 +127,7 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
 
     const newErrors = await validateForm(values);
 
-    // form is invalid, stop this function from submitting.
+    // if one of inventoryModal fields is invalid, stop this function from submitting.
     if (!isObjectEmpty(newErrors.inventoryModal)) return;
 
     try {
@@ -125,14 +137,12 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
         await addInventoryItem();
       }
 
-      addCreatedItemToItems();
+      // reset form
+      setFieldValue('inventoryModal', initialValues.inventoryModal);
+      setIsPreSelected(false);
     } catch (error) {
       console.error(error);
     }
-
-    // clear form
-    setFieldValue('inventoryModal', initialValues.inventoryModal);
-    setIsPreSelected(false);
 
     // close modal
     onClose();
@@ -241,6 +251,7 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
         label="Applications"
         serverRoute="/helpers/application"
         disabled={isPreSelected}
+        noIsNew
         component={MultiSelectWithFetch}
       />
       <InputGroup
