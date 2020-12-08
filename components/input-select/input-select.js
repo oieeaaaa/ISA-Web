@@ -20,6 +20,12 @@ const InputSelect = ({
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // custom hooks
+  const [field, , helpers] = useField({
+    type: 'text',
+    name
+  });
+
   // callbacks
   const closeDropdownListener = useCallback(
     throttle((e) => {
@@ -29,12 +35,6 @@ const InputSelect = ({
     }, 300),
     []
   );
-
-  // custom hooks
-  const [field, , helpers] = useField({
-    type: 'text',
-    name
-  });
 
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -77,6 +77,18 @@ const InputSelect = ({
     selectValue(newCreateValue);
   };
 
+  // auto select option if exact match
+  useEffect(() => {
+    const valueInOptions = options.find(
+      (option) => option[mainKey] === field.value[mainKey]
+    );
+
+    if (valueInOptions) {
+      selectValue(valueInOptions);
+    }
+  }, [field.value[mainKey]]);
+
+  // on component load
   useEffect(() => {
     window.addEventListener('click', closeDropdownListener);
 

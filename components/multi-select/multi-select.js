@@ -19,6 +19,7 @@ const MultiSelect = ({
   noCreate,
   captureRemoved,
   disabled,
+  noIsNew,
   ...etc
 }) => {
   // contexts
@@ -155,7 +156,7 @@ const MultiSelect = ({
       name: query
     };
 
-    if (!isInOptions) {
+    if (!isInOptions && !noIsNew) {
       value = {
         ...value,
         isNew: true
@@ -168,7 +169,9 @@ const MultiSelect = ({
   };
 
   const selectValue = (e, value) => {
-    e.stopPropagation();
+    if (e) {
+      e.stopPropagation();
+    }
 
     // update value
     const newValue = field.value.concat(value);
@@ -203,6 +206,15 @@ const MultiSelect = ({
 
     return () => window.removeEventListener('click', closeDropdownListener);
   }, []);
+
+  // auto select option if exact match
+  useEffect(() => {
+    const valueInOptions = options.find((option) => option[mainKey] === query);
+
+    if (valueInOptions) {
+      selectValue(null, valueInOptions);
+    }
+  }, [field.value, query]);
 
   return (
     <div
