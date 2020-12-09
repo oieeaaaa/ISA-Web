@@ -5,6 +5,7 @@ import useAppContext from 'js/contexts/app';
 import { initialValues } from 'js/shapes/stock-in';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
+import getTomorrowDate from 'js/utils/getTomorrowDate';
 import isObjectEmpty from 'js/utils/isObjectEmpty';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
@@ -139,6 +140,7 @@ const StockInForm = ({ onSubmit, onDelete, mode = 'add', helpers }) => {
         <InputGroup
           name="dateReceived"
           label="Date Received"
+          maxDate={new Date()}
           component={DatePicker}
         />
         <FormSection title="References">
