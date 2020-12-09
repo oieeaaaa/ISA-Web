@@ -61,13 +61,14 @@ model Variant {
 model StockIn {
   id String @id @default(uuid())
   dateCreated DateTime @default(now())
+  dateReceived DateTime @default(now())
   referenceNumber String
   referenceDate DateTime
   receivedBy String
   checkedBy String
   codedBy String
   remarks String?
-  items Variant[]
+  items StockInItem[]
 
   supplier Supplier @relation(fields: [supplierID], references: [id])
   supplierID String
@@ -239,6 +240,15 @@ model SalesType {
   dateCreated DateTime @default(now())
   name String @unique
   salesReports SalesReport[]
+}
+
+model StockInItem {
+  id String @id @default(uuid())
+  dateCreated DateTime @default(now())
+  quantity Int
+  item Variant? @relation(fields: [itemID], references: [id])
+  itemID String?
+  stockIns StockIn[]
 }
 
 model SoldItem {

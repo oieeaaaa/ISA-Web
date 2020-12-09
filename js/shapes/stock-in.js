@@ -1,8 +1,10 @@
+import omit from 'lodash.omit';
 import dateFormat from 'js/utils/dateFormat';
 
 export const stockInAttributes = {
   id: true,
   dateCreated: true,
+  dateReceived: true,
   referenceNumber: true,
   referenceDate: true,
   receivedBy: true,
@@ -15,6 +17,7 @@ export const stockInAttributes = {
 };
 
 export const initialValues = {
+  dateReceived: new Date(),
   referenceNumber: '',
   referenceDate: new Date(),
   remarks: '',
@@ -27,6 +30,7 @@ export const initialValues = {
     initials: ''
   },
   items: [],
+  removedItems: [],
 
   // don't send this to BE
   listModal: {
@@ -58,6 +62,11 @@ export const tableHeaders = [
     customCell: ({ value }) => dateFormat(value)
   },
   {
+    label: 'Date Received',
+    accessKey: 'dateReceived',
+    customCell: ({ value }) => dateFormat(value)
+  },
+  {
     label: 'Reference Date',
     accessKey: 'referenceDate',
     customCell: ({ value }) => dateFormat(value)
@@ -85,7 +94,7 @@ export const tableHeaders = [
 ];
 
 export const tableFilters = {
-  dateCreated: null,
+  dateReceived: null,
   referenceDate: null,
   receivedBy: { receivedBy: '' },
   checkedBy: { checkedBy: '' },
@@ -97,6 +106,10 @@ export const tableSortOptions = [
   {
     name: 'Date Created',
     key: 'dateCreated'
+  },
+  {
+    name: 'Date Received',
+    key: 'dateReceived'
   },
   {
     name: 'Reference Date',
@@ -153,13 +166,71 @@ export const submitPayload = ({
   checkedBy,
   items,
   ...stockIn
+}) =>
+  omit(
+    {
+      ...stockIn,
+      receivedBy: receivedBy.receivedBy,
+      codedBy: codedBy.codedBy,
+      checkedBy: checkedBy.checkedBy,
+      items: items.map(({ id, inventory }) => ({
+        id,
+        inventoryID: inventory.id,
+        quantity: Number(inventory.plusQuantity)
+      }))
+    },
+    ['removedItems']
+  );
+
+export const editInitialPayload = ({
+  items,
+  checkedBy,
+  receivedBy,
+  codedBy,
+  ...payload
+}) => ({
+  ...payload,
+  receivedBy: {
+    receivedBy: receivedBy
+  },
+  codedBy: {
+    codedBy: codedBy
+  },
+  checkedBy: {
+    checkedBy: checkedBy
+  },
+  items: items.map(({ id, quantity, item }) => ({
+    ...item,
+    itemID: id,
+    prevQty: quantity,
+    inventory: {
+      ...item.inventory,
+      plusQuantity: quantity
+    }
+  }))
+});
+
+export const editPayload = ({
+  receivedBy,
+  codedBy,
+  checkedBy,
+  items,
+  removedItems,
+  ...stockIn
 }) => ({
   ...stockIn,
   receivedBy: receivedBy.receivedBy,
   codedBy: codedBy.codedBy,
   checkedBy: checkedBy.checkedBy,
-  items: items.map(({ id, inventory }) => ({
-    id,
+  items: items.map(({ id: variantID, itemID, prevQty, inventory }) => ({
+    prevQty,
+    itemID,
+    variantID,
+    inventoryID: inventory.id,
+    quantity: Number(inventory.plusQuantity)
+  })),
+  removedItems: removedItems.map(({ itemID, inventory }) => ({
+    itemID,
     inventoryID: inventory.id,
     quantity: Number(inventory.plusQuantity)
   }))
