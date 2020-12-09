@@ -1,8 +1,8 @@
 export default {
   success: {
     casual: 'Nice!',
-    add: 'Successfully Added!',
-    update: 'Successfully Updated!'
+    add: 'Added',
+    update: 'Update saved'
   },
   error: {
     casual: 'An error occured!',
