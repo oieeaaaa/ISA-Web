@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import omit from 'lodash.omit';
 import { useFormikContext } from 'formik';
+import useAppContext from 'js/contexts/app';
 import { initialValues } from 'js/shapes/stock-in';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
@@ -18,7 +19,7 @@ import AddedItems from './added-items';
 import AddToListModal from './add-to-list';
 import CreateInventoryModal from './create-inventory';
 
-const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
+const StockInForm = ({ onSubmit, onDelete, mode = 'add', helpers }) => {
   // contexts
   const {
     values,
@@ -29,6 +30,7 @@ const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
     status,
     setStatus
   } = useFormikContext();
+  const { notification } = useAppContext();
 
   // states
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
@@ -66,6 +68,20 @@ const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
   const removeSelectedItems = (selectedItems, isSelectedAll) => {
     if (isSelectedAll) return setFieldValue('items', initialValues.items); // reset items
 
+    setFieldValue('removedItems', [
+      ...values.removedItems,
+      ...selectedItems.reduce((removedItems, current) => {
+        if (
+          !current.itemID ||
+          values.removedItems.some((ri) => ri.itemID === current.itemID)
+        ) {
+          return removedItems;
+        }
+
+        return [...removedItems, current];
+      }, [])
+    ]);
+
     setFieldValue(
       'items',
       values.items.filter(
@@ -84,6 +100,13 @@ const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
     }
 
     const newErrors = await validateForm(values);
+
+    if ('items' in newErrors) {
+      notification.open({
+        message: 'Items is required',
+        variant: 'danger'
+      });
+    }
 
     if (!isSubmittable(newErrors)) return;
 
@@ -113,6 +136,11 @@ const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
         </Button>
       </FormActions>
       <div className="stock-in-form-container">
+        <InputGroup
+          name="dateReceived"
+          label="Date Received"
+          component={DatePicker}
+        />
         <FormSection title="References">
           <InputGroup
             name="referenceNumber"
@@ -176,6 +204,16 @@ const StockInForm = ({ onSubmit, mode = 'add', helpers }) => {
             />
           </div>
         </FormSection>
+      </div>
+      <div className="stock-in-form-container stock-in-form-container__with-delete">
+        {mode === 'edit' && (
+          <Button
+            className="stock-in-form__delete"
+            variant="danger"
+            onClick={onDelete}>
+            Delete stock in
+          </Button>
+        )}
       </div>
       <AddToListModal
         isOpen={isAddToListModalOpen}

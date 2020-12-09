@@ -4,6 +4,12 @@
   &-container {
     @include container;
 
+    &__with-delete {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
     @include desktop {
       @include padding-x(0);
     }
@@ -50,6 +56,17 @@
     }
   }
 
+  &__delete {
+    margin-top: rem(30);
+  }
+
+  .input-group--dateReceived {
+    @include desktop {
+      width: rem(300);
+      margin-left: auto;
+    }
+  }
+
   .form-section--references {
     .form-section__content {
       @include desktop {
@@ -89,9 +106,7 @@
       }
 
       &--codedBy {
-        @include desktop {
-          margin-bottom: 0;
-        }
+        margin-bottom: 0;
       }
     }
   }
