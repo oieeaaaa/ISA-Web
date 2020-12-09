@@ -1,7 +1,7 @@
 import omit from 'lodash.omit';
 import prisma from 'prisma-client';
 import api from 'js/utils/api';
-import { connect, multiConnect } from 'js/shapes/prisma-query';
+import { connect } from 'js/shapes/prisma-query';
 import { stockInAttributes } from 'js/shapes/stock-in';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
@@ -18,33 +18,29 @@ export default api({
         ...filters
       } = req.query;
 
-      const supplierQuery = (supplier) => {
-        if (!supplier) return {};
-
-        return {
-          supplier: {
-            OR: toFullTextSearchQuery(['initials', 'vendors'], supplier)
-          }
-        };
-      };
-
       const where = {
-        OR: [
-          ...toFullTextSearchQuery(
-            [
-              'referenceNumber',
-              'remarks',
-              'receivedBy',
-              'checkedBy',
-              'codedBy'
-            ],
-            search
-          ),
-          supplierQuery(search)
-        ],
+        OR: toFullTextSearchQuery(
+          [
+            'referenceNumber',
+            'remarks',
+            'receivedBy',
+            'checkedBy',
+            'codedBy',
+            'supplier.OR[0].initials',
+            'supplier.OR[1].vendor'
+          ],
+          search
+        ),
         AND: [
           ...toFilterQuery(omit(filters, ['supplier'])),
-          supplierQuery(filters.supplier)
+          {
+            supplier: {
+              OR: toFullTextSearchQuery(
+                ['initials', 'vendor'],
+                filters.supplier
+              )
+            }
+          }
         ]
       };
 
@@ -92,9 +88,12 @@ export default api({
         data: {
           ...stockIn,
           supplier: connect(supplier),
-
-          // Variants (many)
-          items: multiConnect(items)
+          items: {
+            create: items.map((item) => ({
+              quantity: item.quantity,
+              item: connect(item)
+            }))
+          }
         }
       });
 
