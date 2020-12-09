@@ -1,6 +1,5 @@
 import Router from 'next/router';
 import { Formik } from 'formik';
-import messages from 'js/messages';
 import safety from 'js/utils/safety';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
@@ -23,15 +22,16 @@ const StockInAdd = ({ helpers }) => {
 
       notification.open({
         variant: 'success',
-        message: messages.success.add
+        message: 'Added new stock in'
       });
 
       // go to edit
-      Router.push(`/stock-in/${data.id}`);
+      Router.push(`/stock-in/${data[0].id}`);
     } catch (error) {
       notification.open({
         variant: 'danger',
-        message: messages.error.add
+        message:
+          'Failed to add stock in, please double check your inputs and try again'
       });
     }
   };

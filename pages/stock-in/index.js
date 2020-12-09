@@ -14,7 +14,7 @@ import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const StockIn = ({ data, helpers }) => {
   const parameterizer = ({
-    dateCreated,
+    dateReceived,
     referenceDate,
     supplier,
     codedBy,
@@ -27,7 +27,7 @@ const StockIn = ({ data, helpers }) => {
     codedBy: safety(codedBy, 'codedBy', ''),
     checkedBy: safety(checkedBy, 'checkedBy', ''),
     receivedBy: safety(receivedBy, 'receivedBy', ''),
-    dateCreated_range: toStringifyDate(dateCreated),
+    dateReceived_range: toStringifyDate(dateReceived),
     referenceDate_range: toStringifyDate(referenceDate)
   });
 
@@ -46,8 +46,8 @@ const StockIn = ({ data, helpers }) => {
         renderFilter={() => (
           <div className="stock-in-filters">
             <InputGroup
-              name="dateCreated"
-              label="Date Created"
+              name="dateReceived"
+              label="Date Received"
               component={DateRangePicker}
             />
             <InputGroup
