@@ -10,6 +10,7 @@ const MultiInput = ({
   mainKey = 'name',
   customInput: CustomInput,
   captureRemoved,
+  noIsNew,
   ...etc
 }) => {
   const { values, setFieldValue } = useFormikContext();
@@ -22,12 +23,18 @@ const MultiInput = ({
   const removedValuesName = `${name}X`;
 
   const addField = () => {
-    helpers.setValue(
-      field.value.concat({
-        [mainKey]: '',
+    let newValue = {
+      [mainKey]: ''
+    };
+
+    if (!noIsNew) {
+      newValue = {
+        ...newValue,
         isNew: true
-      })
-    );
+      };
+    }
+
+    helpers.setValue(field.value.concat(newValue));
   };
 
   // prevent duplicates
@@ -81,7 +88,18 @@ const MultiInput = ({
   useEffect(() => {
     if (safety(field, 'value.length', 0)) return;
 
-    helpers.setValue([{ [mainKey]: '', isNew: true }]);
+    let newValue = {
+      [mainKey]: ''
+    };
+
+    if (!noIsNew) {
+      newValue = {
+        ...newValue,
+        isNew: true
+      };
+    }
+
+    helpers.setValue([newValue]);
   }, [field.value]);
 
   return (
