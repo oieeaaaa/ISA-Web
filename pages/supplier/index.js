@@ -9,14 +9,14 @@ import {
 import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
 import InputGroup from 'components/input-group/input-group';
-import Select from 'components/select/select';
+import InputSelectWithFetch from 'components/input-select-with-fetch/input-select-with-fetch';
 import Input from 'components/input/input';
 import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const Supplier = ({ data, helpers }) => {
   const parameterizer = ({ brand, entry, ...etc }) => ({
     ...etc,
-    'brands.some.id': brand.id,
+    'brands.some.name': brand.name,
     entry_range: toStringifyDate(entry)
   });
 
@@ -25,7 +25,7 @@ const Supplier = ({ data, helpers }) => {
       <TableWithFetch
         serverRoute="supplier"
         parameterizer={parameterizer}
-        title="Supplier"
+        title="Suppliers"
         icon="list"
         headers={tableHeaders}
         data={data.items}
@@ -43,15 +43,16 @@ const Supplier = ({ data, helpers }) => {
               <InputGroup
                 name="brand"
                 label="Brand"
-                component={Select}
-                options={helpers.brands}
                 mainKey="name"
+                serverRoute="/helpers/brand"
+                initialOptions={helpers.suppliers}
+                component={InputSelectWithFetch}
               />
               <InputGroup
                 name="terms"
                 label="Terms"
-                component={Input}
                 type="number"
+                component={Input}
               />
             </div>
           </div>

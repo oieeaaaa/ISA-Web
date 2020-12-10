@@ -1,6 +1,5 @@
 import Router from 'next/router';
 import { Formik } from 'formik';
-import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import safety from 'js/utils/safety';
@@ -14,23 +13,24 @@ import SupplierForm from 'components/supplier-form/supplier-form';
 const SupplierAdd = ({ helpers }) => {
   const { notification } = useAppContext();
 
-  const handleSubmit = async (values, actions) => {
+  const handleSubmit = async (values) => {
     try {
-      await fetcher('/supplier', {
+      const { data } = await fetcher('/supplier', {
         method: 'POST',
         body: JSON.stringify(values)
       });
 
-      actions.resetForm();
-      Router.push('/supplier');
       notification.open({
         variant: 'success',
-        message: messages.success.add
+        message: 'Added new supplier'
       });
+
+      Router.push(`/supplier/${data.id}`);
     } catch (error) {
       notification.open({
         variant: 'danger',
-        message: messages.error.add
+        message:
+          'Failed to add supplier, please double check your inputs and try again.'
       });
     }
   };
@@ -40,8 +40,10 @@ const SupplierAdd = ({ helpers }) => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
-        <SupplierForm helpers={helpers} />
+        validateOnMount={false}
+        validateOnBlur={false}
+        validateOnChange={false}>
+        <SupplierForm helpers={helpers} onSubmit={handleSubmit} />
       </Formik>
     </Layout>
   );

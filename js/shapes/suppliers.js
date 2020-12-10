@@ -1,4 +1,11 @@
+import dateFormat from 'js/utils/dateFormat';
+
 export const tableHeaders = [
+  {
+    label: 'Entry',
+    accessKey: 'entry',
+    customCell: ({ value }) => <p>{dateFormat(value)}</p> // eslint-disable-line
+  },
   {
     label: 'Initials',
     accessKey: 'initials'
@@ -8,16 +15,12 @@ export const tableHeaders = [
     accessKey: 'vendor'
   },
   {
-    label: 'Terms',
+    label: 'Terms (days)',
     accessKey: 'terms'
   },
   {
     label: 'Address',
     accessKey: 'address'
-  },
-  {
-    label: 'Parts No.',
-    accessKey: 'Parts Number'
   },
   {
     label: 'Tin',
@@ -32,7 +35,7 @@ export const tableHeaders = [
     accessKey: 'representative'
   },
   {
-    label: 'Brand',
+    label: 'Brands',
     accessKey: 'brands',
     customCell: ({ value }) => { // eslint-disable-line
       const brands = value.map((val) => val.name).join(', ');
@@ -74,12 +77,16 @@ export const tableHeaders = [
 ];
 
 export const tableFilters = {
-  entry_range: [],
-  brand: {},
+  entry: [],
+  brand: { name: '' },
   terms: 0
 };
 
 export const tableSortOptions = [
+  {
+    name: 'Date Created',
+    key: 'dateCreated'
+  },
   {
     name: 'Initials',
     key: 'initials'
@@ -97,10 +104,6 @@ export const tableSortOptions = [
     key: 'address'
   },
   {
-    name: 'Parts No.',
-    key: 'Parts Number'
-  },
-  {
     name: 'Tin',
     key: 'tin'
   },
@@ -111,22 +114,6 @@ export const tableSortOptions = [
   {
     name: 'Representative',
     key: 'representative'
-  },
-  {
-    name: 'Brand',
-    key: 'brands'
-  },
-  {
-    name: 'Representative Phone Numbers',
-    key: 'representativePhoneNumbers'
-  },
-  {
-    name: 'Company Phone Numbers',
-    key: 'companyPhoneNumbers'
-  },
-  {
-    name: 'Emails',
-    key: 'emails'
   }
 ];
 
@@ -140,7 +127,6 @@ export const initialValues = {
   representative: '',
   address: '',
   brands: [],
-  inventory: [],
   companyPhoneNumbers: [],
   representativePhoneNumbers: [],
   emails: []

@@ -49,8 +49,8 @@ model Variant {
   brand Brand @relation(fields: [brandID], references: [id])
   brandID String
 
-  supplier Supplier @relation(fields: [supplierID], references: [id])
-  supplierID String
+  supplier Supplier? @relation(fields: [supplierID], references: [id])
+  supplierID String?
 
   stockIn StockIn[]
 }
@@ -70,8 +70,8 @@ model StockIn {
   remarks String?
   items StockInItem[]
 
-  supplier Supplier @relation(fields: [supplierID], references: [id])
-  supplierID String
+  supplier Supplier? @relation(fields: [supplierID], references: [id])
+  supplierID String?
 }
 
 // ===========================================================================
@@ -176,7 +176,7 @@ model Brand {
   dateCreated DateTime @default(now())
   name String @unique
   item Inventory[]
-  supplier Supplier?
+  supplier Supplier[]
 }
 
 model Uom {

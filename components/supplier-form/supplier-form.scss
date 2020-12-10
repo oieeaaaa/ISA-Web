@@ -1,10 +1,22 @@
 .supplier-form {
+  padding-bottom: rem(40);
+
   &-container {
     @include container;
+
+    &__with-delete {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
 
     @include desktop {
       padding: 0;
     }
+  }
+
+  &__delete {
+    margin-top: rem(30);
   }
 
   .form-section--details {
@@ -97,6 +109,16 @@
         grid-template-columns: repeat(2, 1fr);
         grid-column-gap: rem(60);
       }
+    }
+
+    .input-group--emails {
+      @include desktop {
+        margin-bottom: 0;
+      }
+    }
+
+    .input-group--companyPhoneNumbers {
+      margin-bottom: 0;
     }
   }
 }

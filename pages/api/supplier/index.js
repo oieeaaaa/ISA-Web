@@ -1,6 +1,9 @@
 import prisma from 'prisma-client';
 import api from 'js/utils/api';
-import { multiConnectOrCreate } from 'js/shapes/prisma-query';
+import {
+  multiCreate,
+  multiConnectOrCreateByName
+} from 'js/shapes/prisma-query';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 
@@ -11,34 +14,49 @@ export default api({
         page = 1,
         limit = 5,
         search,
-        sortBy = 'vendor',
+        sortBy = 'dateCreated',
         direction = 'desc',
         ...filters
       } = req.query;
 
-      const query = {
+      const where = {
+        AND: toFilterQuery(filters),
+        OR: toFullTextSearchQuery(
+          [
+            'vendor',
+            'initials',
+            'owner',
+            'tin',
+            'representative',
+            'address',
+            'emails.some.email',
+            'brands.some.name',
+            'companyPhoneNumbers.some.phoneNumber',
+            'representativePhoneNumbers.some.phoneNumber'
+          ],
+          search
+        )
+      };
+
+      const items = await prisma.supplier.findMany({
+        where,
         skip: (page - 1) * limit,
+        take: limit,
         orderBy: {
           [sortBy]: direction
         },
-        where: {
-          AND: toFilterQuery(filters),
-          OR: toFullTextSearchQuery(
-            ['vendor', 'initials', 'owner', 'tin', 'representative', 'address'],
-            search
-          )
-        },
-        take: limit,
         include: {
           brands: true,
           representativePhoneNumbers: true,
           companyPhoneNumbers: true,
           emails: true
         }
-      };
+      });
 
-      const items = await prisma.supplier.findMany(query);
-      const totalItems = await prisma.supplier.count();
+      const { count: totalItems } = await prisma.supplier.aggregate({
+        where,
+        count: true
+      });
 
       res.success({
         items,
@@ -61,22 +79,10 @@ export default api({
       const newItem = await prisma.supplier.create({
         data: {
           ...payload,
-          brands: multiConnectOrCreate(brands, 'name'),
-          companyPhoneNumbers: {
-            create: companyPhoneNumbers.map(({ phoneNumber }) => ({
-              phoneNumber
-            }))
-          },
-          representativePhoneNumbers: {
-            create: representativePhoneNumbers.map(({ phoneNumber }) => ({
-              phoneNumber
-            }))
-          },
-          emails: {
-            create: emails.map(({ email }) => ({
-              email
-            }))
-          }
+          brands: multiConnectOrCreateByName(brands),
+          companyPhoneNumbers: multiCreate(companyPhoneNumbers),
+          representativePhoneNumbers: multiCreate(representativePhoneNumbers),
+          emails: multiCreate(emails)
         }
       });
 

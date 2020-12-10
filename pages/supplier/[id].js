@@ -15,23 +15,41 @@ const SupplierItem = ({ item, helpers }) => {
   const { notification } = useAppContext();
   const router = useRouter();
 
-  const handleSubmit = async (values, actions) => {
+  const handleSubmit = async (values) => {
     try {
       await fetcher(`/supplier/${router.query.id}`, {
         method: 'PUT',
         body: JSON.stringify(values)
       });
 
-      actions.resetForm();
-      router.push('/supplier');
       notification.open({
         variant: 'success',
-        message: messages.success.update
+        message: 'Update saved'
       });
     } catch (error) {
       notification.open({
         variant: 'danger',
         message: messages.error.update
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await fetcher(`/supplier/${item.id}`, {
+        method: 'DELETE'
+      });
+
+      notification.open({
+        variant: 'success',
+        message: 'Deleted supplier'
+      });
+
+      router.push('/supplier');
+    } catch (error) {
+      notification.open({
+        variant: 'danger',
+        message: messages.error.delete
       });
     }
   };
@@ -44,8 +62,15 @@ const SupplierItem = ({ item, helpers }) => {
           ...item
         }}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
-        <SupplierForm mode="edit" helpers={helpers} />
+        validateOnMount={false}
+        validateOnBlur={false}
+        validateOnChange={false}>
+        <SupplierForm
+          mode="edit"
+          helpers={helpers}
+          onSubmit={handleSubmit}
+          onDelete={handleDelete}
+        />
       </Formik>
     </Layout>
   );

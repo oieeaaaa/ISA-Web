@@ -1,24 +1,28 @@
 import prisma from 'prisma-client';
 import api from 'js/utils/api';
 import { disconnectMultiple } from 'js/utils/disconnect';
-import { connectOrCreateMultiple } from 'js/utils/connectOrCreate';
+import {
+  multiConnectOrCreateByName,
+  multiConnectOrCreate,
+  select
+} from 'js/shapes/prisma-query';
 
 export default api({
   get: async (req, res) => {
     try {
-      const item = await prisma.supplier.findOne({
+      const result = await prisma.supplier.findOne({
         where: {
           id: req.query.id
         },
         include: {
-          brands: true,
+          brands: select(['id', 'name']),
           representativePhoneNumbers: true,
           companyPhoneNumbers: true,
           emails: true
         }
       });
 
-      res.success(item);
+      res.success(result);
     } catch (error) {
       res.error(error);
     }
@@ -45,23 +49,19 @@ export default api({
           ...payload,
           brands: {
             ...disconnectMultiple(brandsX),
-            ...connectOrCreateMultiple(brands)
+            ...multiConnectOrCreateByName(brands)
           },
           companyPhoneNumbers: {
             ...disconnectMultiple(companyPhoneNumbersX),
-            ...connectOrCreateMultiple(companyPhoneNumbers, 'phoneNumber', 'id')
+            ...multiConnectOrCreate(companyPhoneNumbers)
           },
           representativePhoneNumbers: {
             ...disconnectMultiple(representativePhoneNumbersX),
-            ...connectOrCreateMultiple(
-              representativePhoneNumbers,
-              'phoneNumber',
-              'id'
-            )
+            ...multiConnectOrCreate(representativePhoneNumbers)
           },
           emails: {
             ...disconnectMultiple(emailsX),
-            ...connectOrCreateMultiple(emails, 'email', 'id')
+            ...multiConnectOrCreate(emails)
           }
         }
       });
@@ -72,14 +72,14 @@ export default api({
     }
   },
   delete: async (req, res) => {
+    const { id } = req.query;
+
     try {
-      const deletedItem = await prisma.supplier.delete({
-        where: {
-          id: req.query.id
-        }
+      const result = await prisma.supplier.delete({
+        where: { id }
       });
 
-      res.success(deletedItem);
+      res.success(result);
     } catch (error) {
       res.error(error);
     }
