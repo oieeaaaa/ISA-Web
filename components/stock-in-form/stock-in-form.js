@@ -5,7 +5,6 @@ import useAppContext from 'js/contexts/app';
 import { initialValues } from 'js/shapes/stock-in';
 import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
-import getTomorrowDate from 'js/utils/getTomorrowDate';
 import isObjectEmpty from 'js/utils/isObjectEmpty';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
