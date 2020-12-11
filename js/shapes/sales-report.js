@@ -1,6 +1,26 @@
 import omit from 'lodash.omit';
 import { safeType } from 'js/utils/safety';
 import dateFormat from 'js/utils/dateFormat';
+import toMoney from 'js/utils/toMoney';
+import { initialValues as listModalInitialValues } from 'js/shapes/add-to-list-modal';
+
+export const types = [
+  {
+    name: 'Sale'
+  },
+  {
+    name: 'Account'
+  }
+];
+
+export const paymentTypes = [
+  {
+    name: 'Cheque'
+  },
+  {
+    name: 'Cash'
+  }
+];
 
 export const tableHeaders = [
   {
@@ -10,7 +30,7 @@ export const tableHeaders = [
   },
   {
     label: 'Type',
-    accessKey: 'type.name'
+    accessKey: 'type'
   },
   {
     label: 'Customer',
@@ -42,7 +62,7 @@ export const tableHeaders = [
   },
   {
     label: 'Payment Type',
-    accessKey: 'paymentType.name'
+    accessKey: 'paymentType'
   },
   {
     label: 'Cheque Number',
@@ -51,7 +71,7 @@ export const tableHeaders = [
   {
     label: 'Cheque Date',
     accessKey: 'chequeDate',
-    customCell: ({ value }) => dateFormat(value)
+    customCell: ({ value }) => (value ? dateFormat(value) : 'N/A')
   },
   {
     label: 'Discount',
@@ -68,14 +88,14 @@ export const tableHeaders = [
   },
   {
     label: 'Total Sold Items',
-    accessKey: 'soldItems',
-    customCell: ({ value }) =>
-      value.reduce((total, cur) => (total += safeType.number(cur.quantity)), 0)
+    accessKey: 'totalSoldItems'
   }
 ];
 
 export const tableFilters = {
   dateCreated: null,
+  paymentType: {},
+  customer: {},
   type: {},
   salesStaff: []
 };
@@ -87,7 +107,7 @@ export const tableSortOptions = [
   },
   {
     name: 'Type',
-    key: 'type.name'
+    key: 'type'
   },
   {
     name: 'Customer',
@@ -119,7 +139,7 @@ export const tableSortOptions = [
   },
   {
     name: 'Payment Type',
-    key: 'paymentType.name'
+    key: 'paymentType'
   },
   {
     name: 'Cheque Number',
@@ -132,159 +152,190 @@ export const tableSortOptions = [
   {
     name: 'Discount',
     key: 'discount'
+  }
+];
+
+export const addedItemsHeaders = [
+  {
+    label: 'Quantity',
+    accessKey: 'inventory.plusQuantity'
   },
   {
-    name: 'Bank',
-    key: 'bank.name'
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'unitCost',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'SRP',
+    accessKey: 'srp',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'Particular',
+    accessKey: 'inventory.particular'
+  },
+  {
+    label: 'Parts No.',
+    accessKey: 'inventory.partsNumber'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size.name'
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
   }
 ];
 
 export const initialValues = {
-  dateCreated: new Date(),
+  // common fields
   name: '',
-  tin: '',
-  siNumber: '',
-  arsNumber: '',
-  drNumber: '',
-  crsNumber: '',
   address: '',
-  chequeNumber: '',
-  chequeDate: new Date(),
   discount: 0.0,
-  amount: 0.0,
   type: { name: '' },
   salesStaff: [],
-  paymentType: { name: '' },
-  bank: { name: '' },
-  soldItems: [],
+  items: [],
   removedItems: [],
 
-  // Modal related stuff
+  // if type is sale
+  saleFields: {
+    siNumber: '',
+    arsNumber: '',
+    tin: '',
+    paymentType: { name: '' },
+    chequeNumber: '',
+    chequeDate: new Date(),
+    amount: 0.0,
+    bank: { name: '' }
+  },
+
+  // if type is account
+  accountFields: {
+    drNumber: '',
+    crsNumber: ''
+  },
+
   // NOTE: Properties below should not be submitted as a payload
-  modal: {
-    mode: 'add',
-    selectedItem: { particular: '' },
-    selectedQuantity: 0
+  listModal: listModalInitialValues
+};
+
+export const submitPayload = ({
+  items,
+  accountFields,
+  saleFields,
+  type,
+  ...payload
+}) => {
+  let newPayload = {
+    ...omit(payload, ['listModal', 'removedItems']),
+    type: type.name,
+    soldItems: items.map(({ id, inventory }) => ({
+      id,
+      inventoryID: inventory.id,
+      quantity: inventory.plusQuantity
+    }))
+  };
+
+  switch (newPayload.type) {
+    case 'Account':
+      return {
+        ...accountFields,
+        ...newPayload
+      };
+
+    case 'Sale':
+      return {
+        ...saleFields,
+        paymentType: saleFields.paymentType?.name
+      };
+
+    default:
+      return newPayload;
   }
 };
 
-export const submitPayload = ({ soldItems, ...payload }) => ({
-  ...omit(payload, ['modal', 'removedItems']),
-  soldItems: soldItems.map(({ id, selectedQuantity }) => ({
-    id,
-    selectedQuantity
+export const editPayload = ({
+  items,
+  accountFields,
+  saleFields,
+  type,
+  removedItems,
+  ...payload
+}) => ({
+  ...omit(payload, ['listModal']),
+  ...accountFields,
+  ...saleFields,
+  type: type.name,
+  paymentType: saleFields?.paymentType.name,
+  soldItems: items.map(({ id, prevQty, itemID, inventory }) => ({
+    prevQty,
+    itemID,
+    variantID: id,
+    inventoryID: inventory.id,
+    quantity: Number(inventory.plusQuantity)
+  })),
+  removedItems: removedItems.map(({ itemID, inventory }) => ({
+    itemID,
+    inventoryID: inventory.id,
+    quantity: Number(inventory.plusQuantity)
   }))
 });
 
-export const updatePayload = ({ soldItems, ...payload }) => ({
-  ...omit(payload, ['modal']),
-  soldItems: soldItems.map(({ soldItemID, id, prevQty, selectedQuantity }) => ({
-    soldItemID,
-    id,
-    prevQty, // TODO: Find a way in BE where we don't need to pass this
-    selectedQuantity
-  }))
-});
-
-export const soldItemsHeaders = [
-  {
-    label: 'Quantity',
-    accessKey: 'selectedQuantity'
-  },
-  {
-    label: 'Unit of Measurement',
-    accessKey: 'uom.name'
-  },
-  {
-    label: 'Particular',
-    accessKey: 'particular'
-  },
-  {
-    label: 'Parts Number',
-    accessKey: 'partsNumber'
-  },
-  {
-    label: 'Applications',
-    accessKey: 'applications',
-    customCell: ({ value }) =>
-      safeType
-        .array(value)
-        .map((val) => val.name)
-        .join(', ')
-  },
-  {
-    label: 'Description',
-    accessKey: 'description'
-  },
-  {
-    label: 'Size',
-    accessKey: 'size'
-  },
-  {
-    label: 'Codes',
-    accessKey: 'codes'
-  },
-  {
-    label: 'Remarks',
-    accessKey: 'remarks'
-  }
-];
-
-export const soldItemsSortOptions = [
-  {
-    name: 'Quantity',
-    key: 'quantity'
-  },
-  {
-    name: 'Unit of Measurement',
-    key: 'uom.name'
-  },
-  {
-    name: 'Particular',
-    key: 'particular'
-  },
-  {
-    name: 'Parts Number',
-    key: 'partsNumber'
-  },
-  {
-    name: 'Applications',
-    key: 'applications'
-  },
-  {
-    name: 'Description',
-    key: 'description'
-  },
-  {
-    name: 'Size',
-    key: 'size'
-  },
-  {
-    name: 'Codes',
-    key: 'codes'
-  },
-  {
-    name: 'Remarks',
-    key: 'remarks'
-  }
-];
-
-export const toSoldItems = (items) =>
+export const toItems = (items) =>
   items.map((item) => ({
-    soldItemID: item.id,
+    ...item.item,
     prevQty: item.quantity,
-    selectedQuantity: item.quantity,
-    ...item.item
+    itemID: item.id,
+    inventory: {
+      ...item.item?.inventory,
+      plusQuantity: item.quantity
+    }
   }));
 
-export default {
-  initialValues,
-  updatePayload,
-  submitPayload,
-  tableHeaders,
-  tableSortOptions,
-  tableFilters,
-  soldItemsHeaders,
-  soldItemsSortOptions,
-  toSoldItems
-};
+export const editInitialPayload = ({
+  // common
+  type,
+
+  // account
+  drNumber,
+  crsNumber,
+
+  // sale
+  siNumber,
+  arsNumber,
+  tin,
+  bank,
+  chequeNumber,
+  chequeDate,
+  paymentType,
+
+  // sold items
+  soldItems,
+
+  // others
+  ...payload
+}) => ({
+  type: {
+    name: type
+  },
+  accountFields: {
+    drNumber,
+    crsNumber
+  },
+  saleFields: {
+    siNumber,
+    arsNumber,
+    tin,
+    chequeNumber,
+    chequeDate,
+    bank: safeType.object(bank),
+    paymentType: { name: safeType.string(paymentType) }
+  },
+  items: toItems(soldItems),
+  ...payload
+});
