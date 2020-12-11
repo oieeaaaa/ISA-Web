@@ -1,3 +1,4 @@
+import { safeType } from 'js/utils/safety';
 import omit from 'lodash.omit';
 
 /* ============================================================================
@@ -6,7 +7,7 @@ import omit from 'lodash.omit';
 export const connectOrCreate = (payload = {}, uniqueKey = 'id') => ({
   connectOrCreate: {
     where: {
-      [uniqueKey]: payload[uniqueKey]
+      [uniqueKey]: safeType.string(payload[uniqueKey])
     },
     create: payload
   }
@@ -18,7 +19,7 @@ export const connectOrCreateByName = (payload) =>
 export const multiConnectOrCreate = (list = [], uniqueKey = 'id') => ({
   connectOrCreate: list.map((listItem) => ({
     where: {
-      [uniqueKey]: listItem[uniqueKey]
+      [uniqueKey]: safeType.string(listItem[uniqueKey])
     },
     create: listItem
   }))
@@ -35,7 +36,7 @@ export const multiConnectOrCreateByName = (payload) =>
  ============================================================================ */
 export const connect = (item, uniqueKey = 'id') => ({
   connect: {
-    [uniqueKey]: item[uniqueKey]
+    [uniqueKey]: safeType.string(item[uniqueKey])
   }
 });
 
@@ -43,7 +44,7 @@ export const connectByName = (item) => connect(omit(item, ['id']), 'name');
 
 export const multiConnect = (items, uniqueKey = 'id') => ({
   connect: items.map((item) => ({
-    [uniqueKey]: item[uniqueKey]
+    [uniqueKey]: safeType.string(item[uniqueKey])
   }))
 });
 
