@@ -1,9 +1,12 @@
 import dateFormat from 'js/utils/dateFormat';
+import toMoney from 'js/utils/toMoney';
 
 export const variantAttributes = {
   id: true,
   dateCreated: true,
   name: true,
+  codes: true,
+  srp: true,
   size: true,
   brand: true,
   supplier: true
@@ -22,6 +25,16 @@ export const tableHeaders = [
   {
     label: 'Variant Name',
     accessKey: 'name'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'unitCost',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'SRP',
+    accessKey: 'srp',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
   },
   {
     label: 'Particular',
