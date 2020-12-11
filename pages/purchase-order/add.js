@@ -14,19 +14,19 @@ import PurchaseOrderForm from 'components/purchase-order-form/purchase-order-for
 const PurchaseOrderAdd = ({ helpers }) => {
   const { notification } = useAppContext();
 
-  const handleSubmit = async (values, actions) => {
+  const handleSubmit = async (values) => {
     try {
-      await fetcher('/purchase-order', {
+      const { data } = await fetcher('/purchase-order', {
         method: 'POST',
         body: JSON.stringify(submitPayload(values))
       });
 
-      actions.resetForm();
-      Router.push('/purchase-order');
       notification.open({
         variant: 'success',
-        message: messages.success.add
+        message: 'Added new purchase order'
       });
+
+      Router.push(`/purchase-order/${data.id}`);
     } catch (error) {
       notification.open({
         variant: 'danger',
@@ -37,7 +37,12 @@ const PurchaseOrderAdd = ({ helpers }) => {
 
   return (
     <Layout>
-      <Formik initialValues={initialValues} validationSchema={validationSchema}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        validateOnMount={false}
+        validateOnBlur={false}
+        validateOnChange={false}>
         <PurchaseOrderForm helpers={helpers} onSubmit={handleSubmit} />
       </Formik>
     </Layout>
