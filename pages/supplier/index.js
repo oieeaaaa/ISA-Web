@@ -6,6 +6,7 @@ import {
   tableFilters,
   tableSortOptions
 } from 'js/shapes/suppliers';
+import goTo from 'js/utils/goTo';
 import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
 import InputGroup from 'components/input-group/input-group';
@@ -32,6 +33,7 @@ const Supplier = ({ data, helpers }) => {
         totalItems={data.totalItems}
         filters={tableFilters}
         sortOptions={tableSortOptions}
+        onAdd={() => goTo('/supplier/add')}
         renderFilter={() => (
           <div className="supplier-filters">
             <InputGroup
@@ -50,7 +52,7 @@ const Supplier = ({ data, helpers }) => {
               />
               <InputGroup
                 name="terms"
-                label="Terms"
+                label="Terms (days)"
                 type="number"
                 component={Input}
               />
