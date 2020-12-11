@@ -14,9 +14,9 @@ import InputSelectWithFetch from 'components/input-select-with-fetch/input-selec
 import Button from 'components/button/button';
 import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
-import ProductsTable from './products-table';
+import ProductsTable from 'components/products-table/products-table';
+import AddToListModal from 'components/add-to-list-modal/add-to-list-modal';
 import AddedItems from './added-items';
-import AddToListModal from './add-to-list';
 import CreateInventoryModal from './create-inventory';
 
 const StockInForm = ({ onSubmit, onDelete, mode = 'add', helpers }) => {
@@ -151,6 +151,7 @@ const StockInForm = ({ onSubmit, onDelete, mode = 'add', helpers }) => {
           <InputGroup
             name="referenceDate"
             label="Reference Date"
+            maxDate={new Date()}
             component={DatePicker}
           />
           <InputGroup
