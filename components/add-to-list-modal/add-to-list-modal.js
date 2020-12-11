@@ -1,7 +1,8 @@
 import { useFormikContext } from 'formik';
 import set from 'lodash.set';
-import { initialValues } from 'js/shapes/stock-in';
+import { initialValues } from 'js/shapes/add-to-list-modal';
 import safety from 'js/utils/safety';
+import toMoney from 'js/utils/toMoney';
 import Input from 'components/input/input';
 import Button from 'components/button/button';
 import InputGroup from 'components/input-group/input-group';
@@ -89,13 +90,11 @@ const AddToListModal = ({ isOpen, onClose }) => {
           },
           {
             title: 'Unit Cost',
-            value: safety(listModal, 'data.inventory.codes', '')
+            value: `Php ${toMoney(safety(listModal, 'data.unitCost', 0))}`
           },
           {
-            title: 'Available Qty.',
-            value:
-              safety(listModal, 'data.inventory.quantity', 0) +
-              Number(listModal.quantity)
+            title: 'Quantity',
+            value: safety(listModal, 'data.inventory.quantity', 0)
           }
         ]}
       />
@@ -105,6 +104,7 @@ const AddToListModal = ({ isOpen, onClose }) => {
           label="Quantity"
           type="number"
           onChange={handleQuantityChange}
+          value={listModal.quantity}
           component={Input}
         />
       )}
@@ -113,7 +113,7 @@ const AddToListModal = ({ isOpen, onClose }) => {
           variant="primary"
           onClick={handleItemToListSubmit}
           disabled={!listModal.quantity}>
-          Add Item
+          Add to list
         </Button>
       </ModalActions>
     </Modal>
