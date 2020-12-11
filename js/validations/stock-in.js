@@ -28,7 +28,6 @@ export default Yup.object().shape({
     quantity: Yup.number()
       .min(1, 'Quantity must be greater than or equal to 1')
       .required(message.required),
-    codes: Yup.string().required(message.required),
     applications: Yup.array().required(message.required),
     uom: Yup.object()
       .shape({
@@ -37,6 +36,7 @@ export default Yup.object().shape({
       .required(message.required),
     variant: Yup.object().shape({
       name: Yup.string().required(message.required),
+      codes: Yup.string().required(message.required),
       size: Yup.object()
         .shape({
           name: Yup.string().required(message.required)
@@ -47,9 +47,6 @@ export default Yup.object().shape({
           initials: Yup.string().required(message.required)
         })
         .required(message.required)
-      //brand: Yup.object().required(message.required),
     })
-    // description: Yup.string().min(10, message.min),
-    //srp: Yup.number()
   })
 });
