@@ -1,270 +1,229 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+///
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-// ===========================================================================
-// Inventory
-// ===========================================================================
+///
 model Inventory {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  partsNumber String @unique
-  particular String @unique
-  quantity Int
-  codes String
-  srp Float?
-  description String?
-
-  uom Uom @relation(fields: [uomID], references: [id])
-  uomID String
-
+  id           String        @id @default(uuid())
+  quantity     Int
+  partsNumber  String        @unique
+  particular   String        @unique
+  uomID        String
+  dateCreated  DateTime      @default(now())
+  description  String?
+  uom          Uom           @relation(fields: [uomID], references: [id])
+  soldItems    SoldItem[]
+  variants     Variant[]
   applications Application[]
-  sizes Size[]
-  brands Brand[]
-  suppliers Supplier[]
-
-  // others
-  variants Variant[]
-  soldItems SoldItem[]
+  brands       Brand[]
+  sizes        Size[]
+  suppliers    Supplier[]
 }
 
 model Variant {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-
-  inventory Inventory @relation(fields: [inventoryID], references: [id])
+  id          String        @id @default(uuid())
+  name        String        @unique
   inventoryID String
-
-  size Size @relation(fields: [sizeID], references: [id])
-  sizeID String
-
-  brand Brand @relation(fields: [brandID], references: [id])
-  brandID String
-
-  supplier Supplier? @relation(fields: [supplierID], references: [id])
-  supplierID String?
-
-  stockIn StockIn[]
+  sizeID      String
+  brandID     String
+  supplierID  String?
+  dateCreated DateTime      @default(now())
+  codes       String
+  srp         Float?
+  brand       Brand         @relation(fields: [brandID], references: [id])
+  inventory   Inventory     @relation(fields: [inventoryID], references: [id])
+  size        Size          @relation(fields: [sizeID], references: [id])
+  supplier    Supplier?     @relation(fields: [supplierID], references: [id])
+  POItem      POItem[]
+  SoldItem    SoldItem[]
+  stockIn     StockIn[]
+  StockInItem StockInItem[]
 }
 
-// ===========================================================================
-// Stock In
-// ===========================================================================
+///
 model StockIn {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  dateReceived DateTime @default(now())
+  id              String        @id @default(uuid())
+  dateCreated     DateTime      @default(now())
   referenceNumber String
-  referenceDate DateTime
-  receivedBy String
-  checkedBy String
-  codedBy String
-  remarks String?
-  items StockInItem[]
-
-  supplier Supplier? @relation(fields: [supplierID], references: [id])
-  supplierID String?
+  referenceDate   DateTime
+  remarks         String?
+  supplierID      String?
+  receivedBy      String
+  checkedBy       String
+  codedBy         String
+  variantId       String?
+  dateReceived    DateTime      @default(now())
+  supplier        Supplier?     @relation(fields: [supplierID], references: [id])
+  Variant         Variant?      @relation(fields: [variantId], references: [id])
+  items           StockInItem[]
 }
 
-// ===========================================================================
-// Supplier
-// ===========================================================================
+///
 model Supplier {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  entry DateTime @default(now())
-  initials String @unique
-  vendor String
-  terms Int
-  owner String?
-  tin String?
-  representative String?
-  address String?
-
-  // brands
-  brands Brand[]
-
-  // items
-  items Inventory[]
-
-  // phoneNumbers
-  companyPhoneNumbers CompanyPhoneNumber[]
+  id                         String                      @id @default(uuid())
+  vendor                     String
+  entry                      DateTime                    @default(now())
+  initials                   String                      @unique
+  terms                      Int
+  owner                      String?
+  tin                        String?
+  representative             String?
+  address                    String?
+  dateCreated                DateTime                    @default(now())
+  purchaseOrders             PurchaseOrder[]
+  StockIn                    StockIn[]
+  Variant                    Variant[]
+  brands                     Brand[]
+  companyPhoneNumbers        CompanyPhoneNumber[]
+  emails                     Email[]
+  items                      Inventory[]
   representativePhoneNumbers RepresentativePhoneNumber[]
-
-  // emails
-  emails Email[]
-
-  // po
-  purchaseOrders PurchaseOrder[]
 }
 
-// ===========================================================================
-// Sales Report
-// ===========================================================================
+///
 model SalesReport {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String
-  tin String?
-  siNumber String?
-  arsNumber String?
-  drNumber String?
-  crsNumber String?
-  address String?
-  chequeNumber String?
-  chequeDate DateTime?
-  discount Float?
-  amount Float?
-
-  // type
-  type SalesType @relation(fields: [typeID], references: [id])
-  typeID String
-
-  // salesStaff
-  salesStaff SalesStaff[]
-
-  // paymentType
-  paymentType PaymentType? @relation(fields: [paymentTypeID], references: [id])
-  paymentTypeID String?
-
-  // bank
-  bank Bank? @relation(fields: [bankID], references: [id])
-  bankID String?
-
-  // soldItems
-  soldItems SoldItem[]
+  id            String       @id @default(uuid())
+  dateCreated   DateTime     @default(now())
+  name          String
+  tin           String?
+  siNumber      String?
+  arsNumber     String?
+  drNumber      String?
+  crsNumber     String?
+  address       String?
+  chequeNumber  String?
+  chequeDate    DateTime?
+  discount      Float?
+  amount        Float?
+  type          String
+  paymentType   String?
+  bankID        String?
+  bank          Bank?        @relation(fields: [bankID], references: [id])
+  salesStaff    SalesStaff[]
+  soldItems     SoldItem[]
 }
 
-// ===========================================================================
-// Purchase Order
-// ===========================================================================
+///
 model PurchaseOrder {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  supplier Supplier? @relation(fields: [supplierID], references: [id])
-  supplierID String?
-  items POItem[]
+  id          String    @id @default(uuid())
+  dateCreated DateTime  @default(now())
+  supplierID  String?
+  trackingID  String?
+  supplier    Supplier? @relation(fields: [supplierID], references: [id])
+  tracking    Tracking? @relation(fields: [trackingID], references: [id])
+  items       POItem[]
 }
 
-// ===========================================================================
-// Helpers
-// ===========================================================================
+///
 model Size {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  item Inventory[]
+  id          String      @id @default(uuid())
+  dateCreated DateTime    @default(now())
+  name        String      @unique
+  Variant     Variant[]
+  item        Inventory[]
 }
 
 model Application {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  item Inventory[]
+  id          String      @id @default(uuid())
+  name        String      @unique
+  dateCreated DateTime    @default(now())
+  item        Inventory[]
 }
 
 model Brand {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  item Inventory[]
-  supplier Supplier[]
+  id          String      @id @default(uuid())
+  name        String      @unique
+  dateCreated DateTime    @default(now())
+  Variant     Variant[]
+  item        Inventory[]
+  supplier    Supplier[]
 }
 
 model Uom {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  item Inventory[]
+  id          String      @id @default(uuid())
+  name        String      @unique
+  dateCreated DateTime    @default(now())
+  item        Inventory[]
 }
 
 model Code {
-  id String @id @default(uuid())
+  id          String   @id @default(uuid())
+  name        String   @unique
+  value       Float
   dateCreated DateTime @default(now())
-  name String @unique
-  value Float
 }
 
 model CompanyPhoneNumber {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
+  id          String     @id @default(uuid())
   phoneNumber String
-  suppliers Supplier[]
+  dateCreated DateTime   @default(now())
+  suppliers   Supplier[]
 }
 
 model RepresentativePhoneNumber {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
+  id          String     @id @default(uuid())
   phoneNumber String
-  suppliers Supplier[]
+  dateCreated DateTime   @default(now())
+  suppliers   Supplier[]
 }
 
 model Email {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  email String
-  suppliers Supplier[]
+  id          String     @id @default(uuid())
+  email       String
+  dateCreated DateTime   @default(now())
+  suppliers   Supplier[]
 }
 
 model SalesStaff {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  salesReports SalesReport[]
-}
-
-model PaymentType {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
+  id           String        @id @default(uuid())
+  name         String        @unique
+  dateCreated  DateTime      @default(now())
   salesReports SalesReport[]
 }
 
 model Bank {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
-  salesReports SalesReport[]
-}
-
-model SalesType {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  name String @unique
+  id           String        @id @default(uuid())
+  name         String        @unique
+  dateCreated  DateTime      @default(now())
   salesReports SalesReport[]
 }
 
 model StockInItem {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  quantity Int
-  item Variant? @relation(fields: [itemID], references: [id])
-  itemID String?
-  stockIns StockIn[]
+  id          String    @id @default(uuid())
+  dateCreated DateTime  @default(now())
+  quantity    Int
+  itemID      String?
+  item        Variant?  @relation(fields: [itemID], references: [id])
+  stockIns    StockIn[]
 }
 
 model SoldItem {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  quantity Int
-  item Variant? @relation(fields: [itemID], references: [id])
-  itemID String?
+  id           String        @id @default(uuid())
+  quantity     Int
+  itemID       String?
+  dateCreated  DateTime      @default(now())
+  item         Variant?      @relation(fields: [itemID], references: [id])
   salesReports SalesReport[]
 }
 
 model POItem {
-  id String @id @default(uuid())
-  dateCreated DateTime @default(now())
-  quantity Int
-  item Variant? @relation(fields: [itemID], references: [id])
-  itemID String?
+  id             String          @id @default(uuid())
+  quantity       Int
+  itemID         String?
+  dateCreated    DateTime        @default(now())
+  item           Variant?        @relation(fields: [itemID], references: [id])
+  purchaseOrders PurchaseOrder[]
+}
+
+model Tracking {
+  id             String          @id @default(uuid())
+  dateCreated    DateTime        @default(now())
+  address        String
   purchaseOrders PurchaseOrder[]
 }
