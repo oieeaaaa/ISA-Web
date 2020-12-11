@@ -1,323 +1,206 @@
 import { useEffect, useState } from 'react';
-import { Form, useFormikContext } from 'formik';
+import { useFormikContext } from 'formik';
 
 // contexts
 import useAppContext from 'js/contexts/app';
 
 // utils
+import isObjectEmpty from 'js/utils/isObjectEmpty';
 import safety from 'js/utils/safety';
-import codeCalc from 'js/utils/codeCalc';
 import goTo from 'js/utils/goTo';
 import dateFormat from 'js/utils/dateFormat';
 
 // shapes
-import {
-  itemsHeaders,
-  itemsSortOptions,
-  initialValues
-} from 'js/shapes/purchase-order';
+import { initialValues, addedItemsHeaders } from 'js/shapes/purchase-order';
 
 // components
-import Modal from 'components/modal/modal';
-import ModalInfoText from 'components/modal-info-text/modal-info-text';
-import ModalInfoDetails from 'components/modal-info-details/modal-info-details';
-import ModalActions from 'components/modal-actions/modal-actions';
+import AddToListModal from 'components/add-to-list-modal/add-to-list-modal';
 import FormActions from 'components/form-actions/form-actions';
 import InputGroup from 'components/input-group/input-group';
-import Input from 'components/input/input';
 import InputDisplay from 'components/input-display/input-display';
-import Select from 'components/select/select';
 import InputSelectWithFetch from 'components/input-select-with-fetch/input-select-with-fetch';
 import Button from 'components/button/button';
-import DatePicker from 'components/date-picker/date-picker';
-import MediumCard from 'components/medium-card/medium-card';
-import Table from 'components/table/table';
+import ProductsTable from 'components/products-table/products-table';
+import TableSelect from 'components/table-select/table-select';
 
 const PurchaseOrderForm = ({ mode = 'add', helpers, onSubmit }) => {
   // contexts
   const {
     values,
     errors,
-    isValid,
-    resetForm,
     setFieldValue,
-    dirty
+    validateForm,
+    status,
+    isSubmitting,
+    setStatus
   } = useFormikContext();
-  const { codes, notification } = useAppContext();
+  const { notification } = useAppContext();
 
   // state
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
 
   // destructures
-  const { suppliers } = helpers;
-  const { modal } = values;
-  const { selectedItem, selectedQuantity } = modal;
+  const { suppliers, tracking } = helpers;
 
-  const handleSubmit = () => {
-    if (errors.items) {
-      notification.open({
-        message: 'Items to PO is required!',
-        variant: 'danger'
+  const openAddToListModal = (product) => {
+    const item = checkIfProductExistInValues(product);
+
+    if (item) {
+      setFieldValue('listModal', {
+        data: item,
+        quantity: safety(item, 'inventory.plusQuantity', 0)
       });
+    } else {
+      setFieldValue('listModal.data', product);
     }
 
-    if (!isValid) return;
-
-    onSubmit(values, { resetForm });
+    setIsAddToListModalOpen(true);
   };
 
-  const openAddModal = () => {
-    if (!values.supplier.id) {
-      notification.open({
-        message: 'Please select a supplier first',
-        variant: 'danger'
-      });
+  const closeAddToListModal = () => {
+    setFieldValue('listModal', initialValues.listModal);
+    setIsAddToListModalOpen(false);
+  };
 
-      return;
+  const checkIfProductExistInValues = (product) =>
+    values.items.find((item) => item.id === product.id);
+
+  const handleSubmit = async () => {
+    if (!status?.isSubmitted) {
+      setStatus({ isSubmitted: true });
     }
 
-    setIsModalOpen(true);
-    setFieldValue('modal', initialValues.modal);
-  };
+    const newErrors = await validateForm(values);
 
-  const closeModal = () => setIsModalOpen(false);
-
-  const isItemInSoldItems = values.items.some(
-    (si) => si.id === selectedItem.id
-  );
-
-  const openUpdateModal = (item) => {
-    setIsModalOpen(true);
-
-    setFieldValue('modal', {
-      ...modal,
-      mode: 'edit',
-      selectedItem: {
-        ...item,
-        quantity: item.quantity
-      },
-      selectedQuantity: item.selectedQuantity
-    });
-  };
-
-  // TODO: Only use setFieldValue once, maybe replace it with setFormValues??
-  const handleAddItem = () => {
-    if (isItemInSoldItems) {
+    if ('items' in newErrors) {
       notification.open({
-        message: 'Your item is already in the list',
+        message: 'Please select an items to purchase before submitting',
         variant: 'danger',
-        duration: 3000
+        duration: 5000
       });
-
-      return;
     }
 
-    // add new item to items
-    setFieldValue(
-      'items',
-      values.items.concat({
-        ...selectedItem,
-        selectedQuantity
-      })
-    );
+    if (!isObjectEmpty(newErrors)) return;
 
-    // reset modal
-    setFieldValue('modal', initialValues.modal);
-
-    // success message
-    notification.open({
-      message: 'Yay! New item is added 🎉',
-      variant: 'success'
-    });
+    onSubmit(values);
   };
 
-  const handleUpdateItem = () => {
-    if (!isItemInSoldItems) return;
+  const removeSelectedItems = (selectedItems, isSelectedAll) => {
+    if (isSelectedAll) return setFieldValue('items', initialValues.items); // reset items
 
     setFieldValue(
       'items',
-      // we only need to update the selectedQuantity, so I'm doing this
-      values.items.map((si) =>
-        si.id === selectedItem.id ? { ...si, selectedQuantity } : si
+      values.items.filter(
+        (item) =>
+          !selectedItems.some((selectedItem) => selectedItem.id === item.id)
       )
     );
+  };
 
-    // success message
+  const onChangeSupplier = (value) => {
+    const isShouldResetItems =
+      value?.id === values.supplier.id && values.items.length;
+
+    if (!isShouldResetItems) return;
+
+    // reset the inventory fields
+    setFieldValue('items', []);
+
     notification.open({
-      message: 'Updated item! ✨',
-      variant: 'success'
+      message:
+        'A new supplier has been selected. We will reset all of your selected items',
+      variant: 'danger',
+      duration: 5000
     });
   };
 
-  const handleRemoveItem = () => {
-    if (!isItemInSoldItems) return;
-
-    setFieldValue(
-      'items',
-      values.items.filter((si) => si.id !== selectedItem.id)
-    );
-
-    setFieldValue('modal', initialValues.modal);
-
-    closeModal();
-  };
-
-  const getGrandTotal = () => {
-    const itemsTotals = values.items.map(
-      (item) => codeCalc(codes, item.codes) * item.selectedQuantity
-    );
-
-    return itemsTotals.reduce((total, cur) => (total += cur), 0);
-  };
-
-  const getTotalItems = () =>
-    values.items.reduce((total, cur) => (total += cur.selectedQuantity), 0);
-
   useEffect(() => {
-    // Reset items if the supplier changed
-    if (dirty && mode === 'add' && values.items.length) {
-      setFieldValue('items', initialValues.items);
+    if (!status?.isSubmitted) return;
+    const validate = async () => await validateForm(values);
 
-      notification.open({
-        message: 'Items is cleared 🗑',
-        variant: 'success'
-      });
-    }
-  }, [values.supplier, dirty]);
+    validate();
+  }, [status, isSubmitting, values]); // maybe listen to required values only
 
   return (
-    <Form>
-      <Modal
-        title={modal.mode === 'add' ? 'Add Item' : 'Update Item'}
-        isOpen={isModalOpen}
-        closeModal={closeModal}>
-        <ModalInfoText>
-          {modal.mode === 'add'
-            ? 'Add another item for purchase order to display on this items list.'
-            : 'Update item for purchase order to display on this items list.'}
-        </ModalInfoText>
-        <InputGroup
-          takeWhole
-          name="modal.selectedItem"
-          label="Your item"
-          initialOptions={[]}
-          serverRoute="/helpers/inventory"
-          filters={{ supplierID: values.supplier.id }}
-          component={InputSelectWithFetch}
-          mainKey="particular"
-          disabled={modal.mode === 'edit'}
-          error={safety(errors, 'soldItem.data.id', 'Invalid Item!')}
-        />
-        <InputGroup
-          name="modal.selectedQuantity"
-          label="Quantity"
-          type="number"
-          component={Input}
-          max={selectedItem.quantity}
-        />
-        {selectedItem.id && (
-          <ModalInfoDetails
-            details={[
-              {
-                title: 'Supplier',
-                value: selectedItem.supplier.initials
-              },
-              {
-                title: 'Brand',
-                value: selectedItem.brand.name
-              },
-              {
-                title: 'Unit Cost',
-                value: 1170 // TODO: Calculate this later
-              },
-              {
-                title: 'Available Qty.',
-                value: selectedItem.quantity
-              }
-            ]}
-          />
+    <div className="purchase-order-form">
+      <FormActions
+        icon="clipboard"
+        title={mode === 'view' ? 'View purchase order' : 'Add Purchase Order'}>
+        <Button onClick={() => goTo('/purchase-order')}>Go back</Button>
+        {mode === 'add' && (
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={!isObjectEmpty(errors)}>
+            {mode === 'edit' ? 'Update PO' : 'Add PO'}
+          </Button>
         )}
-        <ModalActions mode={modal.mode}>
-          {modal.mode === 'add' ? (
-            <Button variant="primary" onClick={handleAddItem}>
-              Add Item
-            </Button>
+      </FormActions>
+      <div className="purchase-order-form-container">
+        <div className="purchase-order-form__group purchase-order-form__group--top">
+          {mode === 'view' ? (
+            <>
+              <InputGroup
+                name="dateCreated"
+                label="Date Created"
+                component={InputDisplay}
+                formatVal={dateFormat}
+              />
+              <InputGroup
+                name="supplier"
+                label="Supplier"
+                component={InputDisplay}
+                formatVal={(val) => val.vendor}
+              />
+            </>
           ) : (
             <>
-              <Button variant="primary-v1" onClick={handleRemoveItem}>
-                Remove
-              </Button>
-              <Button variant="primary" onClick={handleUpdateItem}>
-                Update
-              </Button>
+              <InputGroup
+                name="supplier"
+                label="Supplier"
+                initialOptions={suppliers}
+                mainKey="initials"
+                serverRoute="/helpers/supplier"
+                error={safety(errors, 'supplier.id', 'Invalid supplier!')}
+                onSelect={onChangeSupplier}
+                component={InputSelectWithFetch}
+              />
+              <InputGroup
+                name="tracking"
+                label="Tracking"
+                initialOptions={tracking}
+                mainKey="address"
+                serverRoute="/helpers/tracking"
+                error={safety(errors, 'tracking.address', 'Invalid tracking')}
+                noIsNew
+                component={InputSelectWithFetch}
+              />
             </>
           )}
-        </ModalActions>
-      </Modal>
-      <div className="purchase-order-form">
-        <FormActions title={mode === 'view' ? 'View PO' : 'Add PO'}>
-          <Button onClick={() => goTo('/purchase-order')}>Go back</Button>
-          {mode === 'add' && (
-            <Button variant="primary" onClick={handleSubmit}>
-              {mode === 'edit' ? 'Update PO' : 'Add PO'}
-            </Button>
-          )}
-        </FormActions>
-        <div className="purchase-order-form-container">
-          <div className="purchase-order-form__group">
-            {mode === 'view' ? (
-              <>
-                <InputGroup
-                  name="dateCreated"
-                  label="Date Created"
-                  component={InputDisplay}
-                  formatVal={dateFormat}
-                />
-                <InputGroup
-                  name="supplier"
-                  label="Supplier"
-                  component={InputDisplay}
-                  formatVal={(val) => val.vendor}
-                />
-              </>
-            ) : (
-              <>
-                <InputGroup
-                  name="dateCreated"
-                  label="Date Created"
-                  component={DatePicker}
-                />
-                <InputGroup
-                  name="supplier"
-                  label="Supplier"
-                  options={suppliers}
-                  component={Select}
-                  displayKey="initials"
-                  error={safety(errors, 'supplier.id', 'Invalid supplier!')}
-                />
-              </>
-            )}
-          </div>
-          <div className="purchase-order-form__group purchase-order-form__group--info">
-            <MediumCard title="Grand Total" content={`₱ ${getGrandTotal()}`} />
-            <MediumCard title="Total Items" content={getTotalItems()} />
-          </div>
         </div>
       </div>
       <div className="purchase-order-form__table">
-        <Table
-          local
-          locked={mode === 'view'}
-          title="Items to PO"
-          icon="clipboard"
-          headers={itemsHeaders(codes)}
-          data={values.items}
-          sortOptions={itemsSortOptions}
-          onAdd={openAddModal}
-          onRowClick={openUpdateModal}
+        <ProductsTable
+          onCreateProduct={null}
+          onClickProduct={openAddToListModal}
         />
       </div>
-    </Form>
+      {!!values.items.length && (
+        <div className="stock-in-form-container">
+          <TableSelect
+            title="Items to PO"
+            headers={addedItemsHeaders}
+            itemsKey="items"
+            onSubmit={removeSelectedItems}
+            submitButtonLabel="Remove Marked"
+          />
+        </div>
+      )}
+      <AddToListModal
+        isOpen={isAddToListModalOpen}
+        onClose={closeAddToListModal}
+      />
+    </div>
   );
 };
 

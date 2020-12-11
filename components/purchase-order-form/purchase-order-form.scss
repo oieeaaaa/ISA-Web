@@ -17,42 +17,21 @@
       @include desktop {
         display: flex;
         align-items: flex-end;
+      }
+    }
 
-        .medium-card:last-of-type {
-          width: rem(240);
+    &--top {
+      @include desktop {
+        display: grid;
+        grid-template-columns: rem(240) rem(300);
+        grid-column-gap: rem(60);
+        width: 100%;
+
+        .input-group {
+          margin-bottom: 0;
+          width: 100%;
         }
       }
-    }
-
-    .medium-card:first-of-type {
-      margin-bottom: rem(20);
-
-      @include desktop {
-        margin: 0;
-        margin-right: rem(60);
-        width: rem(300);
-      }
-    }
-
-    &:not(:first-of-type) {
-      @include margin-y(30);
-
-      @include desktop {
-        @include margin-y(0);
-      }
-    }
-  }
-
-  .input-group--dateCreated {
-    @include desktop {
-      width: rem(240);
-    }
-  }
-
-  .input-group--supplier {
-    @include desktop {
-      margin-bottom: 0;
-      width: rem(240);
     }
   }
 }
