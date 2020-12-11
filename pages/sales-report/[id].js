@@ -5,9 +5,9 @@ import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
 import safety from 'js/utils/safety';
 import {
-  updatePayload,
-  initialValues,
-  toSoldItems
+  editInitialPayload,
+  editPayload,
+  initialValues
 } from 'js/shapes/sales-report';
 import validationSchema from 'js/validations/sales-report';
 
@@ -19,19 +19,19 @@ const SalesReportItem = ({ item, helpers }) => {
   const { notification } = useAppContext();
   const router = useRouter();
 
-  const handleSubmit = async (values, actions) => {
+  const handleSubmit = async (values) => {
     try {
-      await fetcher(`/sales-report/${router.query.id}`, {
+      await fetcher(`/sales-report/${item.id}`, {
         method: 'PUT',
-        body: JSON.stringify(updatePayload(values))
+        body: JSON.stringify(editPayload(values))
       });
 
-      actions.resetForm();
-      router.push('/sales-report');
       notification.open({
         variant: 'success',
         message: messages.success.update
       });
+
+      router.push('/sales-report');
     } catch (error) {
       notification.open({
         variant: 'danger',
@@ -45,10 +45,12 @@ const SalesReportItem = ({ item, helpers }) => {
       <Formik
         initialValues={{
           ...initialValues,
-          ...item,
-          soldItems: toSoldItems(item.soldItems)
+          ...editInitialPayload(item)
         }}
-        validationSchema={validationSchema}>
+        validationSchema={validationSchema}
+        validateOnBlur={false}
+        validateOnChange={false}
+        validateOnMount={false}>
         <SalesReportForm
           mode="edit"
           helpers={helpers}
@@ -61,9 +63,7 @@ const SalesReportItem = ({ item, helpers }) => {
 
 export async function getServerSideProps({ params }) {
   const item = await fetcher(`/sales-report/${params.id}`);
-  const paymentTypes = await fetcher('/helpers/payment-type');
   const banks = await fetcher('/helpers/bank');
-  const salesTypes = await fetcher('/helpers/sales-type');
   const inventory = await fetcher('/helpers/inventory');
 
   return {
@@ -71,9 +71,7 @@ export async function getServerSideProps({ params }) {
       item: safety(item, 'data', {}),
       helpers: {
         inventory: safety(inventory, 'data', []),
-        paymentTypes: safety(paymentTypes, 'data', []),
-        banks: safety(banks, 'data', []),
-        salesTypes: safety(salesTypes, 'data', [])
+        banks: safety(banks, 'data', [])
       }
     }
   };

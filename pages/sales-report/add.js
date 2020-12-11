@@ -14,19 +14,19 @@ import SalesReportForm from 'components/sales-report-form/sales-report-form';
 const SalesReportAdd = ({ helpers }) => {
   const { notification } = useAppContext();
 
-  const handleSubmit = async (values, actions) => {
+  const handleSubmit = async (values) => {
     try {
-      await fetcher('/sales-report', {
+      const { data } = await fetcher('/sales-report', {
         method: 'POST',
         body: JSON.stringify(submitPayload(values))
       });
 
-      actions.resetForm();
-      Router.push('/sales-report');
       notification.open({
         variant: 'success',
         message: messages.success.add
       });
+
+      Router.push(`/sales-report/${data.id}`);
     } catch (error) {
       notification.open({
         variant: 'danger',
@@ -37,7 +37,12 @@ const SalesReportAdd = ({ helpers }) => {
 
   return (
     <Layout>
-      <Formik initialValues={initialValues} validationSchema={validationSchema}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        validateOnBlur={false}
+        validateOnChange={false}
+        validateOnMount={false}>
         <SalesReportForm helpers={helpers} onSubmit={handleSubmit} />
       </Formik>
     </Layout>
