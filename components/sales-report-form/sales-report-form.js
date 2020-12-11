@@ -1,404 +1,293 @@
-import { useState } from 'react';
-import { Form, useFormikContext } from 'formik';
+import { useState, useEffect } from 'react';
+import { useFormikContext } from 'formik';
 
 // contexts
 import useAppContext from 'js/contexts/app';
 
 // utils
-import safety, { safeType } from 'js/utils/safety';
+import safety from 'js/utils/safety';
 import goTo from 'js/utils/goTo';
-import codeCalc from 'js/utils/codeCalc';
+import isObjectEmpty from 'js/utils/isObjectEmpty';
 
 // shapes
 import {
-  soldItemsHeaders,
-  soldItemsSortOptions,
-  initialValues
+  initialValues,
+  types,
+  paymentTypes,
+  addedItemsHeaders
 } from 'js/shapes/sales-report';
 
 // components
-import Modal from 'components/modal/modal';
-import ModalInfoText from 'components/modal-info-text/modal-info-text';
-import ModalInfoDetails from 'components/modal-info-details/modal-info-details';
-import ModalActions from 'components/modal-actions/modal-actions';
 import FormActions from 'components/form-actions/form-actions';
 import FormSection from 'components/form-section/form-section';
 import InputGroup from 'components/input-group/input-group';
 import Input from 'components/input/input';
 import InputSelectWithFetch from 'components/input-select-with-fetch/input-select-with-fetch';
+import Select from 'components/select/select';
 import Button from 'components/button/button';
 import DatePicker from 'components/date-picker/date-picker';
 import TextArea from 'components/text-area/text-area';
 import MultiInput from 'components/multi-input/multi-input';
-import MediumCard from 'components/medium-card/medium-card';
-import Table from 'components/table/table';
+import ProductsTable from 'components/products-table/products-table';
+import TableSelect from 'components/table-select/table-select';
+import AddToListModal from 'components/add-to-list-modal/add-to-list-modal';
 
 const SalesReportForm = ({ mode = 'add', helpers, onSubmit }) => {
   // contexts
   const {
+    status,
     values,
     errors,
-    isValid,
-    resetForm,
+    validateForm,
+    setStatus,
+    isSubmitting,
     setFieldValue
   } = useFormikContext();
-  const { codes, notification } = useAppContext();
+  const { notification } = useAppContext();
 
   // state
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
 
   // vars
-  const { inventory, banks, salesTypes, paymentTypes } = helpers;
+  const { banks } = helpers;
+  const isEditMode = mode === 'edit';
+  const isAccount = values.type?.name === 'Account';
+  const isCheque = values.saleFields?.paymentType?.name === 'Cheque';
 
-  const { modal } = values;
-  const { selectedItem, selectedQuantity } = modal;
+  const openAddToListModal = (product) => {
+    const item = checkIfProductExistInValues(product);
 
-  const handleSubmit = () => {
-    if (errors.soldItems) {
-      notification.open({
-        message: 'Sold Items is required!',
-        variant: 'danger'
+    if (item) {
+      setFieldValue('listModal', {
+        data: item,
+        quantity: safety(item, 'inventory.plusQuantity', 0)
       });
+    } else {
+      setFieldValue('listModal.data', product);
     }
 
-    if (!isValid) return;
-
-    onSubmit(values, { resetForm });
+    setIsAddToListModalOpen(true);
   };
 
-  const openAddModal = () => {
-    setIsModalOpen(true);
-    setFieldValue('modal', initialValues.modal);
+  const closeAddToListModal = () => {
+    setFieldValue('listModal', initialValues.listModal);
+    setIsAddToListModalOpen(false);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const checkIfProductExistInValues = (product) =>
+    values.items.find((item) => item.id === product.id);
 
-  const isItemInSoldItems = values.soldItems.some(
-    (si) => si.id === selectedItem.id
-  );
+  const handleSubmit = async () => {
+    if (!status?.isSubmitted) {
+      setStatus({ isSubmitted: true });
+    }
 
-  const isItemInRemovedItems = values.removedItems.some(
-    ({ id }) => id === selectedItem.id
-  );
+    const newErrors = await validateForm(values);
 
-  const openUpdateModal = (item) => {
-    setIsModalOpen(true);
-
-    setFieldValue('modal', {
-      ...modal,
-      mode: 'edit',
-      selectedItem: {
-        ...item,
-        quantity: item.quantity
-      },
-      selectedQuantity: item.selectedQuantity
-    });
-  };
-
-  // TODO: Only use setFieldValue once, maybe replace it with setFormValues??
-  const handleAddItem = () => {
-    if (isItemInSoldItems) {
+    if ('items' in newErrors) {
       notification.open({
-        message: 'Your item is already in the list',
+        message: 'Please select sold items before submitting',
         variant: 'danger',
-        duration: 3000
+        duration: 5000
       });
-
-      return;
     }
 
-    if (isItemInRemovedItems) {
-      setFieldValue(
-        'removedItems',
-        values.removedItems.filter(({ id }) => id !== selectedItem.id)
-      );
-    }
+    if (!isObjectEmpty(newErrors)) return;
 
-    // add new item to soldItems
-    setFieldValue(
-      'soldItems',
-      values.soldItems.concat({
-        ...selectedItem,
-        selectedQuantity
-      })
-    );
-
-    // reset modal
-    setFieldValue('modal', initialValues.modal);
-
-    // success message
-    notification.open({
-      message: 'Yay! New item is added 🎉',
-      variant: 'success'
-    });
+    onSubmit(values);
   };
 
-  const handleUpdateItem = () => {
-    if (!isItemInSoldItems) return;
+  const removeSelectedItems = (selectedItems, isSelectedAll) => {
+    if (isSelectedAll) return setFieldValue('items', initialValues.items); // reset items
+
+    if (isEditMode) {
+      setFieldValue('removedItems', [
+        ...values.removedItems,
+        ...selectedItems.reduce((removedItems, current) => {
+          if (
+            !current.itemID ||
+            values.removedItems.some((ri) => ri.itemID === current.itemID)
+          ) {
+            return removedItems;
+          }
+
+          return [...removedItems, current];
+        }, [])
+      ]);
+    }
 
     setFieldValue(
-      'soldItems',
-      // we only need to update the selectedQuantity, so I'm doing this
-      values.soldItems.map((si) =>
-        si.id === selectedItem.id ? { ...si, selectedQuantity } : si
+      'items',
+      values.items.filter(
+        (item) =>
+          !selectedItems.some((selectedItem) => selectedItem.id === item.id)
       )
     );
-
-    // success message
-    notification.open({
-      message: 'Updated item! ✨',
-      variant: 'success'
-    });
   };
 
-  const handleRemoveItem = () => {
-    if (!isItemInSoldItems) return;
+  useEffect(() => {
+    if (!status?.isSubmitted) return;
+    const validate = async () => await validateForm(values);
 
-    if (mode === 'edit') {
-      setFieldValue(
-        'removedItems',
-        values.removedItems.concat({
-          id: selectedItem.soldItemID,
-          itemID: selectedItem.id,
-          quantity: selectedItem.selectedQuantity
-        })
-      );
-    }
-
-    setFieldValue(
-      'soldItems',
-      values.soldItems.filter((si) => si.id !== selectedItem.id)
-    );
-
-    setFieldValue('modal', initialValues.modal);
-
-    closeModal();
-  };
-
-  const getGrossSales = () => {
-    const itemsTotals = values.soldItems.map(
-      (item) => codeCalc(codes, item.codes) * item.selectedQuantity
-    );
-
-    return itemsTotals.reduce((total, cur) => (total += cur), 0);
-  };
-
-  const getNetSales = () => getGrossSales() - values.discount;
+    validate();
+  }, [status, isSubmitting, values]); // maybe listen to required values only
 
   return (
-    <Form>
-      <Modal
-        title={modal.mode === 'add' ? 'Add Item' : 'Update Item'}
-        isOpen={isModalOpen}
-        closeModal={closeModal}>
-        <ModalInfoText>
-          {modal.mode === 'add'
-            ? 'Add sales report for purchase order to display on this items list.'
-            : 'Update item for sales report to display on this items list.'}
-        </ModalInfoText>
-        <InputGroup
-          name="modal.selectedItem"
-          label="Your item"
-          initialOptions={inventory}
-          serverRoute="/helpers/inventory"
-          component={InputSelectWithFetch}
-          mainKey="particular"
-          error={safety(errors, 'soldItem.data.id', 'Invalid Item!')}
-          takeWhole
-          disabled={modal.mode === 'edit'}
-        />
-        <InputGroup
-          name="modal.selectedQuantity"
-          label="Quantity"
-          type="number"
-          component={Input}
-          max={selectedItem.quantity}
-        />
-        {selectedItem.id && (
-          <ModalInfoDetails
-            details={[
-              {
-                title: 'Supplier',
-                value: selectedItem.supplier.initials
-              },
-              {
-                title: 'Brand',
-                value: selectedItem.brand.name
-              },
-              {
-                title: 'Unit Cost',
-                value: 1170 // TODO: Calculate this later
-              },
-              {
-                title: 'Available Qty.',
-                value:
-                  selectedItem.quantity -
-                  (selectedQuantity - safeType.number(selectedItem.prevQty))
-              }
-            ]}
+    <div className="sales-report-form">
+      <FormActions
+        icon="activity"
+        title={isEditMode ? 'Update Sales Report' : 'Add Sales Report'}>
+        <Button onClick={() => goTo('/sales-report')}>Go back</Button>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={!isObjectEmpty(errors)}>
+          {isEditMode ? 'Update' : 'Save'}
+        </Button>
+      </FormActions>
+      <div className="sales-report-form-container">
+        <div className="sales-report-form__top">
+          <InputGroup
+            name="type"
+            label="Type"
+            options={types}
+            mainKey="name"
+            error={safety(errors, 'type.name', 'Invalid type!')}
+            component={Select}
           />
-        )}
-        <ModalActions mode={modal.mode}>
-          {modal.mode === 'add' ? (
-            <Button variant="primary" onClick={handleAddItem}>
-              Add Item
-            </Button>
-          ) : (
-            <>
-              <Button variant="primary-v1" onClick={handleRemoveItem}>
-                Remove
-              </Button>
-              <Button variant="primary" onClick={handleUpdateItem}>
-                Update
-              </Button>
-            </>
-          )}
-        </ModalActions>
-      </Modal>
-      <div className="sales-report-form">
-        <FormActions
-          title={mode === 'edit' ? 'Update Sales Report' : 'Add Sales Report'}>
-          <Button onClick={() => goTo('/sales-report')}>Cancel</Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            {mode === 'edit' ? 'Update SR' : 'Add SR'}
-          </Button>
-        </FormActions>
-        <div className="sales-report-form-container">
-          <div className="sales-report-form__top">
+        </div>
+        <FormSection title="Details">
+          <div className="sales-report-form__group">
+            <InputGroup name="name" label="Customer" component={Input} />
+            {isAccount ? (
+              <>
+                <InputGroup
+                  name="accountFields.drNumber"
+                  label="DR Number"
+                  component={Input}
+                />
+                <InputGroup
+                  name="accountFields.crsNumber"
+                  label="CRS Number"
+                  component={Input}
+                />
+              </>
+            ) : (
+              <>
+                <InputGroup
+                  name="saleFields.tin"
+                  label="Tin"
+                  component={Input}
+                />
+                <InputGroup
+                  name="saleFields.siNumber"
+                  label="SI Number"
+                  component={Input}
+                />
+                <InputGroup
+                  name="saleFields.arsNumber"
+                  label="ARS Number"
+                  component={Input}
+                />
+              </>
+            )}
+          </div>
+          <div className="sales-report-form__group">
+            <InputGroup name="address" label="Address" component={TextArea} />
             <InputGroup
-              name="type"
-              label="Type"
-              initialOptions={salesTypes}
-              serverRoute="/helpers/sales-type"
-              component={InputSelectWithFetch}
-              error={safety(errors, 'type.name', 'Invalid type!')}
-            />
-            <InputGroup
-              name="dateCreated"
-              label="Date Created"
-              component={DatePicker}
+              name="salesStaff"
+              label="Sales Staff"
+              mainKey="name"
+              captureRemoved={isEditMode}
+              noIsNew
+              component={MultiInput}
             />
           </div>
-          <FormSection title="Details">
-            <div className="sales-report-form__group">
-              <InputGroup name="name" label="Name" component={Input} />
-              {values.type.name.toLowerCase() === 'account' ? (
+        </FormSection>
+        <FormSection title="Payment">
+          {isAccount ? (
+            <InputGroup
+              name="discount"
+              label="Discount"
+              type="number"
+              component={Input}
+            />
+          ) : (
+            <>
+              <InputGroup
+                name="saleFields.paymentType"
+                label="Payment Type"
+                options={paymentTypes}
+                mainKey="name"
+                error={safety(
+                  errors,
+                  'paymentType.name',
+                  'Invalid payment type!'
+                )}
+                component={Select}
+              />
+              {isCheque ? (
                 <>
                   <InputGroup
-                    name="drNumber"
-                    label="DR Number"
+                    name="saleFields.bank"
+                    label="Bank"
+                    initialOptions={banks}
+                    serverRoute="/helpers/bank"
+                    component={InputSelectWithFetch}
+                    error={safety(errors, 'bank.id', 'Invalid bank!')}
+                  />
+                  <InputGroup
+                    name="saleFields.chequeNumber"
+                    label="Cheque Number"
                     component={Input}
                   />
                   <InputGroup
-                    name="crsNumber"
-                    label="CRS Number"
-                    component={Input}
+                    name="saleFields.chequeDate"
+                    label="Cheque Date"
+                    minDate={new Date()}
+                    component={DatePicker}
                   />
                 </>
               ) : (
-                <>
-                  <InputGroup name="tin" label="Tin" component={Input} />
-                  <InputGroup
-                    name="siNumber"
-                    label="SI Number"
-                    component={Input}
-                  />
-                  <InputGroup
-                    name="arsNumber"
-                    label="ARS Number"
-                    component={Input}
-                  />
-                </>
+                <InputGroup
+                  name="saleFields.amount"
+                  label="Amount"
+                  type="number"
+                  component={Input}
+                />
               )}
-            </div>
-            <div className="sales-report-form__group">
-              <InputGroup name="address" label="Address" component={TextArea} />
-              <InputGroup
-                name="salesStaff"
-                label="Sales Staff"
-                mainKey="name"
-                captureRemoved={mode === 'edit'}
-                component={MultiInput}
-              />
-            </div>
-          </FormSection>
-          <FormSection title="Payment">
-            {values.type.name.toLowerCase() === 'account' ? (
               <InputGroup
                 name="discount"
                 label="Discount"
                 type="number"
                 component={Input}
               />
-            ) : (
-              <>
-                <InputGroup
-                  name="paymentType"
-                  label="Type"
-                  initialOptions={paymentTypes}
-                  serverRoute="/helpers/payment-type"
-                  component={InputSelectWithFetch}
-                  error={safety(errors, 'type.id', 'Invalid payment type!')}
-                />
-                <InputGroup
-                  name="discount"
-                  label="Discount"
-                  type="number"
-                  component={Input}
-                />
-                {safety(values, 'paymentType.name', '').toLowerCase() ===
-                'cheque' ? (
-                  <>
-                    <InputGroup
-                      name="bank"
-                      label="Bank"
-                      initialOptions={banks}
-                      serverRoute="/helpers/bank"
-                      component={InputSelectWithFetch}
-                      error={safety(errors, 'bank.id', 'Invalid bank!')}
-                    />
-                    <InputGroup
-                      name="chequeNumber"
-                      label="Number"
-                      component={Input}
-                    />
-                    <InputGroup
-                      name="chequeDate"
-                      label="Date"
-                      component={DatePicker}
-                    />
-                  </>
-                ) : (
-                  <InputGroup
-                    name="amount"
-                    label="Amount"
-                    type="number"
-                    component={Input}
-                  />
-                )}
-              </>
-            )}
-          </FormSection>
-          <div className="sales-report-form__pricing-info">
-            <MediumCard title="Gross Sales" content={`₱ ${getGrossSales()}`} />
-            <MediumCard title="Net Sales" content={`₱ ${getNetSales()}`} />
-            <MediumCard title="Discounts" content={`₱ ${values.discount}`} />
-          </div>
-        </div>
+            </>
+          )}
+        </FormSection>
       </div>
-      <div className="sales-report-form__table">
-        <Table
-          local
-          title="Sold Items"
-          icon="clipboard"
-          headers={soldItemsHeaders}
-          data={values.soldItems}
-          sortOptions={soldItemsSortOptions}
-          onAdd={openAddModal}
-          onRowClick={openUpdateModal}
+      <div className="purchase-order-form__table">
+        <ProductsTable
+          onCreateProduct={null}
+          onClickProduct={openAddToListModal}
         />
       </div>
-    </Form>
+      {!!values.items.length && (
+        <div className="purchase-order-form-container">
+          <TableSelect
+            title="Sold Items"
+            headers={addedItemsHeaders}
+            itemsKey="items"
+            onSubmit={removeSelectedItems}
+            submitButtonLabel="Remove Marked"
+          />
+        </div>
+      )}
+      <AddToListModal
+        isOpen={isAddToListModalOpen}
+        onClose={closeAddToListModal}
+      />
+    </div>
   );
 };
 

@@ -1,6 +1,8 @@
 .sales-report-form {
   $this: &;
 
+  padding-bottom: rem(40);
+
   &-container {
     @include container;
 
@@ -9,34 +11,15 @@
     }
   }
 
-  &__pricing-info {
-    @include margin-y(30);
-
-    display: grid;
-    grid-row-gap: rem(25);
-
+  &__top {
     @include desktop {
-      @include margin-y(40);
-
       display: flex;
-      justify-content: space-between;
-
-      .medium-card {
-        width: rem(240);
-      }
-
-      & > .medium-card:nth-child(2) {
-        width: rem(300);
-      }
+      justify-content: flex-end;
     }
   }
 
-  @include desktop {
-    &__top {
-      display: flex;
-    }
-
-    &__sold-item-filters {
+  &__sold-item-filters {
+    @include desktop {
       margin-top: rem(30);
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -47,35 +30,41 @@
         margin-bottom: 0;
       }
     }
+  }
 
-    .input-group--type {
-      margin-right: rem(60);
-    }
-
-    .input-group--type,
-    .input-group--dateCreated {
+  .input-group--type,
+  .input-group--dateCreated {
+    @include desktop {
       margin-bottom: 0;
       display: inline-block;
       width: rem(240);
     }
+  }
 
-    .form-section--details {
-      .form-section__content {
+  .form-section--details {
+    .form-section__content {
+      @include desktop {
         display: flex;
+      }
 
-        #{$this}__group:first-child {
+      #{$this}__group:first-child {
+        @include desktop {
           width: rem(360);
           margin-right: rem(60);
         }
+      }
 
-        #{$this}__group:last-child {
+      #{$this}__group:last-child {
+        @include desktop {
           width: rem(480);
         }
       }
     }
+  }
 
-    .form-section--payment {
-      .form-section__content {
+  .form-section--payment {
+    .form-section__content {
+      @include desktop {
         display: grid;
         grid-template-columns: rem(240) rem(300) rem(240);
         grid-column-gap: rem(60);
