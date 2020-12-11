@@ -26,6 +26,7 @@
 @import './pages/sales-report';
 @import './pages/purchase-order';
 @import './pages/stock-in';
+@import './pages/purchase-order-detail.scss';
 
 // styleguide
 @import 'styleguide/grid-guide';
@@ -68,8 +69,9 @@
 @import 'components/input-display/input-display';
 @import 'components/settings/settings';
 @import 'components/profile/profile';
-
-
 @import 'components/stock-in-form/stock-in-form';
 @import 'components/table-select/table-select';
 @import 'components/checkbox/checkbox';
+@import 'components/products-table/products-table';
+@import 'components/add-to-list-modal/add-to-list-modal';
+
