@@ -3,6 +3,7 @@ import { select, selectSingle } from 'js/shapes/prisma-query';
 import api from 'js/utils/api';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
+import codeCalc from 'js/utils/codeCalc';
 
 export default api({
   get: async (req, res) => {
@@ -32,7 +33,7 @@ export default api({
         AND: toFilterQuery(filters)
       };
 
-      const items = await prisma.variant.findMany({
+      let variants = await prisma.variant.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
@@ -43,12 +44,13 @@ export default api({
           id: true,
           name: true,
           dateCreated: true,
+          codes: true,
+          srp: true,
           inventory: select([
             'id',
             'particular',
             'partsNumber',
             'quantity',
-            'codes',
             'uom'
           ]),
           supplier: select(['initials', 'vendor']),
@@ -57,13 +59,20 @@ export default api({
         }
       });
 
+      const codes = await prisma.code.findMany({});
+
+      variants = variants.map((variant) => ({
+        ...variant,
+        unitCost: codeCalc(codes, variant.codes)
+      }));
+
       const { count: totalItems } = await prisma.variant.aggregate({
         where,
         count: true
       });
 
       res.success({
-        items,
+        items: variants,
         totalItems
       });
     } catch (error) {
