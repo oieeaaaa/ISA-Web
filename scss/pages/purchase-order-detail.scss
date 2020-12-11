@@ -1,0 +1,25 @@
+.purchase-order-detail {
+  &-container {
+    @include container;
+
+    @include desktop {
+      @include padding-x(0);
+    }
+  }
+
+  &__head {
+    @include desktop {
+      display: grid;
+      grid-template-columns: rem(180) 1fr 1fr;
+      grid-column-gap: rem(60);
+
+      .input-group {
+        margin-bottom: 0;
+      }
+    }
+
+    .input-group--tracking\.address {
+      margin-bottom: 0;
+    }
+  }
+}
