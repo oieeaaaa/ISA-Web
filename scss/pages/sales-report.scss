@@ -3,15 +3,33 @@
     @include desktop {
       margin-top: rem(30);
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr rem(420);
+      grid-column-gap: rem(60);
+    }
 
-      .input-group--dateCreated {
+    .input-group--dateCreated {
+      @include desktop {
         grid-column: 1 / 1;
       }
+    }
 
-      &__group {
+    &__types {
+      @include desktop {
         grid-column: 2 / 2;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-column-gap: rem(60);
+      }
+
+      .input-group--customer {
+        grid-column: 1 / -1;
+      }
+
+      .input-group--salesStaff {
+        grid-column: 1 / -1;
       }
     }
+
+    //&__others {}
   }
 }
