@@ -10,8 +10,7 @@ const MultiInput = ({
   mainKey = 'name',
   customInput: CustomInput,
   captureRemoved,
-  noIsNew,
-  ...etc
+  noIsNew
 }) => {
   const { values, setFieldValue } = useFormikContext();
 
@@ -125,7 +124,6 @@ const MultiInput = ({
                   })
                 }
                 onBlur={helpers.onBlur}
-                {...etc}
               />
             )}
             {index !== 0 && (
