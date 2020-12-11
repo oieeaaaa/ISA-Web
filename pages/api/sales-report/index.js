@@ -3,9 +3,12 @@ import api from 'js/utils/api';
 import toFilterQuery from 'js/utils/toFilterQuery';
 import toFullTextSearchQuery from 'js/utils/toFullTextSearchQuery';
 import {
-  connectOrCreateMultiple,
-  connectOrCreateSingle
-} from 'js/utils/connectOrCreate';
+  multiCreate,
+  multiConnectOrCreateByName,
+  connect,
+  connectOrCreateByName,
+  select
+} from 'js/shapes/prisma-query';
 
 export default api({
   get: async (req, res) => {
@@ -14,50 +17,63 @@ export default api({
         page = 1,
         limit = 5,
         search,
-        sortBy = 'name',
+        sortBy = 'dateCreated',
         direction = 'desc',
         ...filters
       } = req.query;
 
+      const where = {
+        AND: toFilterQuery(filters),
+        OR: toFullTextSearchQuery(
+          [
+            'name',
+            'type',
+            'paymentType',
+            'tin',
+            'siNumber',
+            'arsNumber',
+            'drNumber',
+            'crsNumber',
+            'chequeNumber',
+            'bank.name',
+            'salesStaff.some.name',
+            'address'
+          ],
+          search
+        )
+      };
+
       const query = {
+        where,
         skip: (page - 1) * limit,
         orderBy: {
           [sortBy]: direction
         },
-        where: {
-          AND: toFilterQuery(filters),
-          OR: toFullTextSearchQuery(
-            [
-              'name',
-              'tin',
-              'siNumber',
-              'arsNumber',
-              'drNumber',
-              'crsNumber',
-              'address'
-            ],
-            search
-          )
-        },
         take: limit,
         include: {
           salesStaff: true,
-          paymentType: true,
           bank: true,
-          type: true,
-          soldItems: {
-            include: {
-              item: true
-            }
-          }
+          soldItems: select(['id', 'quantity'])
         }
       };
 
-      const items = await prisma.salesReport.findMany(query);
-      const totalItems = await prisma.salesReport.count();
+      let salesReports = await prisma.salesReport.findMany(query);
+
+      salesReports = salesReports.map((salesReport) => ({
+        ...salesReport,
+        totalSoldItems: salesReport.soldItems.reduce(
+          (totalQuantity, current) => (totalQuantity += current.quantity),
+          0
+        )
+      }));
+
+      const { count: totalItems } = await prisma.salesReport.aggregate({
+        where,
+        count: true
+      });
 
       res.success({
-        items,
+        items: salesReports,
         totalItems
       });
     } catch (error) {
@@ -65,57 +81,42 @@ export default api({
     }
   },
   post: async (req, res) => {
-    const {
-      type,
-      paymentType,
-      bank,
-      salesStaff,
-      soldItems,
-      ...payload
-    } = req.body;
+    const { bank, salesStaff, soldItems, ...payload } = req.body;
 
     try {
       const createSalesReport = prisma.salesReport.create({
         data: {
           ...payload,
-          type: connectOrCreateSingle(type),
-          paymentType: connectOrCreateSingle(paymentType),
-          bank: connectOrCreateSingle(bank),
-          salesStaff: connectOrCreateMultiple(salesStaff),
-          soldItems: {
-            create: soldItems.map(({ id, selectedQuantity }) => ({
-              quantity: selectedQuantity,
-              item: {
-                connect: {
-                  id
-                }
-              }
+          bank: connectOrCreateByName(bank),
+          salesStaff: multiConnectOrCreateByName(salesStaff),
+          soldItems: multiCreate(
+            soldItems.map(({ quantity, ...item }) => ({
+              quantity,
+              item: connect(item)
             }))
-          }
+          )
         }
       });
 
-      // this is freakin' awesome
-      // TODO:
-      // Find a way to do this the DB way
-      const multiUpdateInventoryItemQuantity = soldItems.map(
-        ({ id, selectedQuantity }) =>
+      // outbound -> Reduce item quantities
+      const decrementItemsQuantity = soldItems.map(
+        ({ inventoryID, quantity }) =>
           prisma.inventory.update({
-            where: { id },
+            where: { id: inventoryID },
             data: {
               quantity: {
-                decrement: selectedQuantity
+                decrement: quantity
               }
             }
           })
       );
 
-      await prisma.$transaction([
+      const result = await prisma.$transaction([
         createSalesReport,
-        ...multiUpdateInventoryItemQuantity
+        ...decrementItemsQuantity
       ]);
 
-      res.success();
+      res.success(result[0]);
     } catch (error) {
       console.error(error);
       res.error(error);

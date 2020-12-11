@@ -1,39 +1,38 @@
 import prisma from 'prisma-client';
 import omit from 'lodash.omit';
-import safety, { safeType } from 'js/utils/safety';
+import { select } from 'js/shapes/prisma-query';
+import { variantAttributes } from 'js/shapes/variant';
+import { safeType } from 'js/utils/safety';
 import api from 'js/utils/api';
 import { disconnectMultiple } from 'js/utils/disconnect';
 import {
-  connectOrCreateMultiple,
-  connectOrCreateSingle
-} from 'js/utils/connectOrCreate';
+  multiConnectOrCreateByName,
+  connectOrCreate
+} from 'js/shapes/prisma-query';
 import { disconnectSingle } from 'js/utils/disconnect';
 
 export default api({
   get: async (req, res) => {
     try {
-      const item = await prisma.salesReport.findOne({
+      const salesReport = await prisma.salesReport.findOne({
         where: {
           id: req.query.id
         },
         include: {
           salesStaff: true,
-          paymentType: true,
           bank: true,
-          type: true,
           soldItems: {
             include: {
               item: {
-                include: {
-                  applications: true,
-                  uom: true,
-                  brand: true,
-                  supplier: {
-                    select: {
-                      id: true,
-                      initials: true
-                    }
-                  }
+                select: {
+                  ...variantAttributes,
+                  supplier: select(['vendor', 'initials']),
+                  inventory: select([
+                    'id',
+                    'particular',
+                    'partsNumber',
+                    'quantity'
+                  ])
                 }
               }
             }
@@ -41,120 +40,125 @@ export default api({
         }
       });
 
-      res.success(item);
+      res.success(salesReport);
     } catch (error) {
       res.error(error);
     }
   },
   put: async (req, res) => {
     const {
-      type,
-      paymentType,
-      bank,
+      // common
       salesStaff,
-      salesStaffX,
       soldItems,
+      type,
+
+      // sale
+      bank,
+      paymentType,
+
+      // deleted/removed
+      salesStaffX,
       removedItems,
       ...payload
     } = req.body;
 
-    let updateItemQuery = {
-      where: {
-        id: req.query.id
-      },
-      data: {
-        ...omit(payload, ['typeID', 'paymentTypeID', 'bankID']),
-        type: connectOrCreateSingle(type),
-        paymentType: connectOrCreateSingle(safeType.object(paymentType)),
-        bank: connectOrCreateSingle(safeType.object(bank)),
-        salesStaff: {
-          ...disconnectMultiple(salesStaffX),
-          ...connectOrCreateMultiple(salesStaff)
+    try {
+      let updateItemQuery = {
+        where: {
+          id: req.query.id
         },
-        soldItems: {
-          disconnect: removedItems.map(({ id }) => ({
-            id: safeType.string(id)
-          })),
-          upsert: soldItems.map(({ soldItemID, id, selectedQuantity }) => ({
-            where: {
-              id: safeType.string(soldItemID)
-            },
-            update: {
-              quantity: selectedQuantity
-            },
-            create: {
-              quantity: selectedQuantity,
-              item: {
-                connect: {
-                  id
+        data: {
+          ...omit(payload, ['bankID']),
+          type,
+          salesStaff: {
+            ...disconnectMultiple(salesStaffX),
+            ...multiConnectOrCreateByName(salesStaff)
+          },
+          soldItems: {
+            disconnect: safeType.array(removedItems).map(({ itemID }) => ({
+              id: safeType.string(itemID)
+            })),
+            upsert: soldItems.map(({ itemID, variantID, quantity }) => ({
+              where: {
+                id: safeType.string(itemID)
+              },
+              update: {
+                quantity
+              },
+              create: {
+                quantity,
+                item: {
+                  connect: {
+                    id: variantID
+                  }
                 }
               }
-            }
-          }))
+            }))
+          }
         }
+      };
+
+      // NOTE: Restrict the user to only use type of Account | Sale and payment type of Cash | Cheque
+      if (type === 'Account') {
+        updateItemQuery.data = {
+          ...updateItemQuery.data,
+          siNumber: null,
+          arsNumber: null,
+          tin: null,
+          chequeDate: null,
+          chequeNumber: null,
+          paymentType: null,
+          bank: disconnectSingle(bank)
+        };
       }
-    };
 
-    // TODO: Find a way to restrict the user to only use type of Account | Sale and payment type of Cash | Cheque
-    if (type.name.toLowerCase() === 'account') {
-      updateItemQuery.data = {
-        ...updateItemQuery.data,
-        siNumber: null,
-        crsNumber: null,
-        tin: null,
-        chequeDate: null,
-        chequeNumber: null,
-        paymentType: disconnectSingle(paymentType),
-        bank: disconnectSingle(bank)
-      };
-    }
+      if (type === 'Sale') {
+        updateItemQuery.data = {
+          ...updateItemQuery.data,
+          paymentType,
+          drNumber: null,
+          crsNumber: null
+        };
+      }
 
-    if (type.name.toLowerCase() === 'sale') {
-      updateItemQuery.data = {
-        ...updateItemQuery.data,
-        drNumber: null,
-        crsNumber: null
-      };
-    }
+      if (paymentType === 'Cash') {
+        updateItemQuery.data = {
+          ...updateItemQuery.data,
+          chequeDate: null,
+          chequeNumber: null,
+          bank: disconnectSingle(bank)
+        };
+      }
 
-    if (safety(paymentType, 'name', '').toLowerCase() === 'cash') {
-      updateItemQuery.data = {
-        ...updateItemQuery.data,
-        chequeDate: null,
-        chequeNumber: null,
-        bank: disconnectSingle(bank)
-      };
-    }
+      if (paymentType === 'Cheque') {
+        updateItemQuery.data = {
+          ...updateItemQuery.data,
+          bank: connectOrCreate(safeType.object(bank)),
+          amount: null
+        };
+      }
 
-    if (safety(paymentType, 'name', '').toLowerCase() === 'cheque') {
-      updateItemQuery.data = {
-        ...updateItemQuery.data,
-        amount: null
-      };
-    }
-
-    try {
       const updateItem = prisma.salesReport.update(updateItemQuery);
 
       const updateItemsQuantity = soldItems.map(
-        ({ id, selectedQuantity, prevQty }) =>
+        ({ inventoryID, quantity, prevQty }) =>
           prisma.inventory.update({
-            where: { id },
+            where: { id: inventoryID },
             data: {
               quantity: {
-                decrement: selectedQuantity - safeType.number(prevQty)
+                decrement: quantity - safeType.number(prevQty)
               }
             }
           })
       );
 
       const putBackRemovedItemsQuantity = removedItems.length
-        ? removedItems.map((ri) =>
+        ? removedItems.map(({ inventoryID, quantity }) =>
             prisma.inventory.update({
-              where: { id: ri.itemID },
+              where: { id: inventoryID },
               data: {
                 quantity: {
-                  increment: ri.quantity
+                  increment: quantity
                 }
               }
             })
