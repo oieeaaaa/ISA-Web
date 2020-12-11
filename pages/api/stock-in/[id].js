@@ -2,6 +2,7 @@ import prisma from 'prisma-client';
 import omit from 'lodash.omit';
 import api from 'js/utils/api';
 import { safeType } from 'js/utils/safety';
+import codeCalc from 'js/utils/codeCalc';
 import { connect, select } from 'js/shapes/prisma-query';
 import { variantAttributes } from 'js/shapes/variant';
 
@@ -10,7 +11,7 @@ export default api({
     try {
       const { id } = req.query;
 
-      const result = await prisma.stockIn.findOne({
+      let stockIn = await prisma.stockIn.findOne({
         where: { id },
         include: {
           supplier: select(['id', 'initials', 'vendor']),
@@ -34,7 +35,20 @@ export default api({
         }
       });
 
-      res.success(result);
+      const codes = await prisma.code.findMany({});
+
+      stockIn = {
+        ...stockIn,
+        items: stockIn.items.map((item) => ({
+          ...item,
+          item: {
+            ...item.item,
+            unitCost: codeCalc(codes, item.item?.codes)
+          }
+        }))
+      };
+
+      res.success(stockIn);
     } catch (error) {
       res.error(error);
     }
