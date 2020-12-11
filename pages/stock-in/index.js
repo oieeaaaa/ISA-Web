@@ -1,6 +1,7 @@
 import fetcher from 'js/utils/fetcher';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import safety from 'js/utils/safety';
+import goTo from 'js/utils/goTo';
 import {
   tableHeaders,
   tableFilters,
@@ -43,6 +44,7 @@ const StockIn = ({ data, helpers }) => {
         totalItems={data.totalItems}
         filters={tableFilters}
         sortOptions={tableSortOptions}
+        onAdd={() => goTo('/stock-in/add')}
         renderFilter={() => (
           <div className="stock-in-filters">
             <InputGroup
