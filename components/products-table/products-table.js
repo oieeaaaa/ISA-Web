@@ -53,7 +53,7 @@ const ProductsTable = ({ onCreateProduct, onClickProduct }) => {
   };
 
   return (
-    <div className="stock-in-form__table">
+    <div className="products-table">
       <Table
         title="Products"
         icon="archive"
@@ -66,7 +66,7 @@ const ProductsTable = ({ onCreateProduct, onClickProduct }) => {
         onRowClick={onClickProduct}
         onAdd={onCreateProduct}
         renderFilter={() => (
-          <div className="stock-in-form__table-filters">
+          <div className="products-table-filters">
             <InputGroup
               name="supplier"
               label="Supplier"

@@ -1,0 +1,20 @@
+.products-table {
+  @include margin-y(30);
+
+  @include desktop {
+    @include margin-y(40);
+  }
+
+  &-filters {
+    @include desktop {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-column-gap: rem(60);
+      grid-row-gap: rem(30);
+
+      .input-group {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
