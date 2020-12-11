@@ -1,5 +1,8 @@
 import omit from 'lodash.omit';
+import { initialValues as listModalInitialValues } from 'js/shapes/add-to-list-modal';
+import { safeType } from 'js/utils/safety';
 import dateFormat from 'js/utils/dateFormat';
+import toMoney from 'js/utils/toMoney';
 
 export const stockInAttributes = {
   id: true,
@@ -33,21 +36,18 @@ export const initialValues = {
   removedItems: [],
 
   // don't send this to BE
-  listModal: {
-    data: {},
-    quantity: ''
-  },
+  listModal: listModalInitialValues,
   inventoryModal: {
     particular: { particular: '' },
     partsNumber: { partsNumber: '' },
     quantity: 0,
     uom: { name: '' },
-    codes: '',
-    srp: 0,
     description: '',
     applications: [],
     variant: {
       name: '',
+      codes: '',
+      srp: 0,
       size: { name: '' },
       brand: { name: '' },
       supplier: { initials: '' }
@@ -143,6 +143,16 @@ export const addedItemsHeaders = [
     accessKey: 'name'
   },
   {
+    label: 'Unit Cost',
+    accessKey: 'unitCost',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'SRP',
+    accessKey: 'srp',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
     label: 'Particular',
     accessKey: 'inventory.particular'
   },
@@ -219,9 +229,9 @@ export const editPayload = ({
   ...stockIn
 }) => ({
   ...stockIn,
-  receivedBy: receivedBy.receivedBy,
-  codedBy: codedBy.codedBy,
-  checkedBy: checkedBy.checkedBy,
+  receivedBy: safeType.string(receivedBy.receivedBy),
+  codedBy: safeType.string(codedBy.codedBy),
+  checkedBy: safeType.string(checkedBy.checkedBy),
   items: items.map(({ id: variantID, itemID, prevQty, inventory }) => ({
     prevQty,
     itemID,
