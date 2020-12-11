@@ -228,19 +228,6 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
         component={InputSelectWithFetch}
       />
       <InputGroup
-        name="inventoryModal.codes"
-        label="Codes"
-        disabled={isPreSelected}
-        component={Input}
-      />
-      <InputGroup
-        name="inventoryModal.srp"
-        label="SRP (Suggested retail price)"
-        type="number"
-        disabled={isPreSelected}
-        component={Input}
-      />
-      <InputGroup
         name="inventoryModal.description"
         label="Description"
         disabled={isPreSelected}
@@ -257,6 +244,17 @@ const CreateInventoryModal = ({ isOpen, onClose }) => {
       <InputGroup
         name="inventoryModal.variant.name"
         label="Variant Name"
+        component={Input}
+      />
+      <InputGroup
+        name="inventoryModal.variant.codes"
+        label="Codes"
+        component={Input}
+      />
+      <InputGroup
+        name="inventoryModal.variant.srp"
+        label="SRP (Suggested retail price)"
+        type="number"
         component={Input}
       />
       <InputGroup
