@@ -7,8 +7,6 @@ export const inventoryAttributes = {
   partsNumber: true,
   particular: true,
   quantity: true,
-  codes: true,
-  srp: true,
   description: true,
   uom: true,
   applications: true,
