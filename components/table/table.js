@@ -121,24 +121,15 @@ const Table = ({
         currentPage={pageField.value}
         onPageChange={movePage}
       />
-      {!locked &&
-        (onAdd ? (
-          <Button
-            className="table__add table__add-button"
-            variant="primary-v1"
-            onClick={onAdd}
-            icon="plus">
-            Create new
-          </Button>
-        ) : (
-          <Link href={`${router.pathname}/add`}>
-            <a className="table__add table__add--link">
-              <Button variant="primary-v1" icon="plus">
-                Create new
-              </Button>
-            </a>
-          </Link>
-        ))}
+      {onAdd && (
+        <Button
+          className="table__add table__add-button"
+          variant="primary-v1"
+          onClick={onAdd}
+          icon="plus">
+          Create new
+        </Button>
+      )}
     </div>
   );
 };
