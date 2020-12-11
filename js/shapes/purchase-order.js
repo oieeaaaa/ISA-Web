@@ -1,9 +1,9 @@
 import omit from 'lodash.omit';
-import { safeType } from 'js/utils/safety';
+import { initialValues as listModalInitialValues } from 'js/shapes/add-to-list-modal';
 import dateFormat from 'js/utils/dateFormat';
-import codeCalc from 'js/utils/codeCalc';
+import toMoney from 'js/utils/toMoney';
 
-export const tableHeaders = (codes) => [
+export const tableHeaders = [
   {
     label: 'Date Created',
     accessKey: 'dateCreated',
@@ -11,29 +11,29 @@ export const tableHeaders = (codes) => [
   },
   {
     label: 'Supplier',
-    accessKey: 'supplier.vendor'
+    accessKey: 'supplier',
+    customCell: ({ value }) =>
+      value ? `(${value.initials}) ${value.vendor}` : 'N/A'
   },
   {
-    label: 'Quantity',
-    accessKey: 'items',
-    customCell: ({ value }) =>
-      value.reduce((total, cur) => (total += cur.quantity), 0)
+    label: 'Tracking',
+    accessKey: 'tracking.address'
   },
   {
-    label: 'Grand Total',
-    accessKey: 'items',
-    customCell: ({ value }) =>
-      `Php ${value.reduce(
-        (total, cur) =>
-          (total += codeCalc(codes, cur.item.codes) * cur.quantity),
-        0
-      )}`
+    label: 'Total Quantity',
+    accessKey: 'totalQuantity'
+  },
+  {
+    label: 'Total Costs',
+    accessKey: 'grandTotal',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
   }
 ];
 
 export const tableFilters = {
   dateCreated: null,
-  supplier: {}
+  supplier: { initials: '' },
+  tracking: { address: '' }
 };
 
 export const tableSortOptions = [
@@ -44,69 +44,26 @@ export const tableSortOptions = [
 ];
 
 export const initialValues = {
-  dateCreated: new Date(),
-  supplier: {},
+  supplier: { initials: '' },
+  tracking: { address: '' },
   items: [],
 
   // Modal related stuff
   // NOTE: Properties below should not be submitted as a payload
-  modal: {
-    mode: 'add',
-    selectedItem: { particular: '' },
-    selectedQuantity: 0
-  }
+  listModal: listModalInitialValues
 };
 
-export const submitPayload = (payload) => omit(payload, ['modal']);
-
-export const itemsHeaders = (codes) => [
-  {
-    label: 'Quantity',
-    accessKey: 'selectedQuantity'
-  },
-  {
-    label: 'Unit of Measurement',
-    accessKey: 'uom.name'
-  },
-  {
-    label: 'Particular',
-    accessKey: 'particular'
-  },
-  {
-    label: 'Parts Number',
-    accessKey: 'partsNumber'
-  },
-  {
-    label: 'Applications',
-    accessKey: 'applications',
-    customCell: ({ value }) =>
-      safeType
-        .array(value)
-        .map((val) => val.name)
-        .join(', ')
-  },
-  {
-    label: 'Description',
-    accessKey: 'description'
-  },
-  {
-    label: 'Size',
-    accessKey: 'size'
-  },
-  {
-    label: 'Codes',
-    accessKey: 'codes'
-  },
-  {
-    label: 'Unit Cost',
-    accessKey: 'codes',
-    customCell: ({ value }) => `₱ ${codeCalc(codes, value)}`
-  },
-  {
-    label: 'Remarks',
-    accessKey: 'remarks'
-  }
-];
+export const submitPayload = ({ items, ...purchaseOrder }) =>
+  omit(
+    {
+      ...purchaseOrder,
+      items: items.map(({ inventory, ...item }) => ({
+        ...item,
+        quantity: inventory.plusQuantity
+      }))
+    },
+    ['listModal']
+  );
 
 export const itemsSortOptions = [
   {
@@ -149,17 +106,46 @@ export const itemsSortOptions = [
 
 export const toItems = (items) =>
   items.map((item) => ({
-    selectedQuantity: item.quantity,
-    ...item.item
+    ...item.item,
+    inventory: {
+      ...item.item?.inventory,
+      plusQuantity: item.quantity
+    }
   }));
 
-export default {
-  initialValues,
-  submitPayload,
-  tableHeaders,
-  tableSortOptions,
-  tableFilters,
-  itemsHeaders,
-  itemsSortOptions,
-  toItems
-};
+export const addedItemsHeaders = [
+  {
+    label: 'Quantity',
+    accessKey: 'inventory.plusQuantity'
+  },
+  {
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'unitCost',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'SRP',
+    accessKey: 'srp',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'Particular',
+    accessKey: 'inventory.particular'
+  },
+  {
+    label: 'Parts No.',
+    accessKey: 'inventory.partsNumber'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size.name'
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
+  }
+];
