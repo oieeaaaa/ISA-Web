@@ -35,7 +35,7 @@ const TableContainer = ({ className, headers, data, onRowClick }) => (
               <td
                 className={joinClassName('table__cell', customClass)}
                 key={v4()}>
-                {Cell ? <Cell key={accessKey} value={value} /> : value}
+                {Cell ? <Cell key={accessKey} value={value} /> : value || 'N/A'}
               </td>
             );
           })}
