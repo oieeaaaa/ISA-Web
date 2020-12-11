@@ -33,8 +33,6 @@ export default api({
           id: true,
           particular: true,
           partsNumber: true,
-          codes: true,
-          srp: true,
           quantity: true
         }
       };
