@@ -2,4 +2,8 @@
   @include font('Bold');
 
   color: var(--dark);
+
+  @include desktop {
+    font-size: rem(18);
+  }
 }
