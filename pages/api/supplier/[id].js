@@ -76,7 +76,12 @@ export default api({
 
     try {
       const result = await prisma.supplier.delete({
-        where: { id }
+        where: { id },
+        include: {
+          brands: true,
+          items: true,
+          purchaseOrders: true
+        }
       });
 
       res.success(result);
