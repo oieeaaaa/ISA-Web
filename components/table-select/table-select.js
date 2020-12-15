@@ -67,8 +67,15 @@ const TableSelect = ({
   const tableSelectHeaders = [
     {
       customClass: 'table-select__checkbox-cell',
-      customLabel: () => <Checkbox value={isSelectedAll} onClick={onSelectAllItem} />, // eslint-disable-line
-      customCell: ({value}) => <Checkbox value={value.isSelected} onClick={() => onSelectItem(value)} />, // eslint-disable-line
+      customLabel: () => (
+        <Checkbox value={isSelectedAll} onClick={onSelectAllItem} />
+      ), // eslint-disable-line
+      customCell: ({ value }) => (
+        <Checkbox
+          value={value.isSelected}
+          onClick={() => onSelectItem(value)}
+        />
+      ) // eslint-disable-line
     },
     ...headers
   ];

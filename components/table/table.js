@@ -1,6 +1,5 @@
 import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { Formik, useFormikContext, useField } from 'formik';
 import debounce from 'lodash.debounce';
 import useAppContext from 'js/contexts/app';

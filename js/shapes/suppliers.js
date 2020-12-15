@@ -37,7 +37,7 @@ export const tableHeaders = [
   {
     label: 'Brands',
     accessKey: 'brands',
-    customCell: ({ value }) => { // eslint-disable-line
+    customCell: ({ value }) => {
       const brands = value.map((val) => val.name).join(', ');
 
       return <p>{brands}</p>;
@@ -46,7 +46,7 @@ export const tableHeaders = [
   {
     label: 'Representative Phone Numbers',
     accessKey: 'representativePhoneNumbers',
-    customCell: ({ value }) => { // eslint-disable-line
+    customCell: ({ value }) => {
       const representativePhoneNumbers = value
         .map((val) => val.phoneNumber)
         .join(', ');
@@ -57,7 +57,7 @@ export const tableHeaders = [
   {
     label: 'Company Phone Numbers',
     accessKey: 'companyPhoneNumbers',
-    customCell: ({ value }) => { // eslint-disable-line
+    customCell: ({ value }) => {
       const companyPhoneNumbers = value
         .map((val) => val.phoneNumber)
         .join(', ');
@@ -68,7 +68,8 @@ export const tableHeaders = [
   {
     label: 'Emails',
     accessKey: 'emails',
-    customCell: ({ value }) => { // eslint-disable-line
+    customCell: ({ value }) => {
+      // eslint-disable-line
       const emails = value.map((val) => val.email).join(', ');
 
       return <p>{emails}</p>;
