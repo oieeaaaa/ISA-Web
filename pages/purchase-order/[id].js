@@ -5,6 +5,7 @@ import {
   toItems
 } from 'js/shapes/purchase-order';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import dateFormat from 'js/utils/dateFormat';
 import goTo from 'js/utils/goTo';
@@ -63,7 +64,9 @@ const PurchaseOrderDetail = ({ item }) => (
   </Layout>
 );
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const item = await fetcher(`/purchase-order/${params.id}`);
 
   return {

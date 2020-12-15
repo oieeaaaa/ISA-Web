@@ -2,6 +2,7 @@ import Router from 'next/router';
 import { Formik } from 'formik';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import { initialValues } from 'js/shapes/suppliers';
 import validationSchema from 'js/validations/supplier';
@@ -49,7 +50,9 @@ const SupplierAdd = ({ helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const brands = await fetcher('/helpers/brand');
 
   return {

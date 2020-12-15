@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import safety from 'js/utils/safety';
 import {
@@ -69,7 +70,9 @@ const PurchaseOrder = ({ data, helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const po = await fetcher('/purchase-order');
 
   // helpers

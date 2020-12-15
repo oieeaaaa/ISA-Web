@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import {
   editInitialPayload,
@@ -61,7 +62,9 @@ const SalesReportItem = ({ item, helpers }) => {
   );
 };
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const item = await fetcher(`/sales-report/${params.id}`);
   const banks = await fetcher('/helpers/bank');
   const inventory = await fetcher('/helpers/inventory');

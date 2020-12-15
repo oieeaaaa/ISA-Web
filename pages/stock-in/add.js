@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import safety from 'js/utils/safety';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import { submitPayload, initialValues } from 'js/shapes/stock-in';
 import validationSchema from 'js/validations/stock-in';
 
@@ -50,7 +51,9 @@ const StockInAdd = ({ helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const suppliers = await fetcher('/helpers/supplier');
   const codedBy = await fetcher('/helpers/coded-by');
   const checkedBy = await fetcher('/helpers/checked-by');

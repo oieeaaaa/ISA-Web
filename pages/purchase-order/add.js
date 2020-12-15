@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import { submitPayload, initialValues } from 'js/shapes/purchase-order';
 import validationSchema from 'js/validations/purchase-order';
@@ -49,7 +50,9 @@ const PurchaseOrderAdd = ({ helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const suppliers = await fetcher('/helpers/supplier');
 
   return {

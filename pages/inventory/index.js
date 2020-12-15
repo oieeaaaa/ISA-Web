@@ -1,5 +1,5 @@
-import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import safety from 'js/utils/safety';
 import {
@@ -14,8 +14,6 @@ import Select from 'components/select/select';
 import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const Inventory = ({ data, helpers }) => {
-  const { codes } = useAppContext();
-
   const parameterizer = ({ brand, dateReceived, referenceDate, supplier }) => ({
     'brand.id': brand.id,
     'supplier.id': supplier.id,
@@ -30,7 +28,7 @@ const Inventory = ({ data, helpers }) => {
         parameterizer={parameterizer}
         title="Inventory"
         icon="archive"
-        headers={tableHeaders({ codes })}
+        headers={tableHeaders}
         data={data.items}
         totalItems={data.totalItems}
         filters={tableFilters}
@@ -68,7 +66,9 @@ const Inventory = ({ data, helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const inventory = await fetcher('/inventory');
   const brands = await fetcher('/helpers/brand');
   const suppliers = await fetcher('/helpers/supplier');

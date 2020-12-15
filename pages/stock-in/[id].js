@@ -4,6 +4,7 @@ import messages from 'js/messages';
 import safety from 'js/utils/safety';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import {
   editInitialPayload,
   editPayload,
@@ -81,7 +82,9 @@ const StockInEdit = ({ data, helpers }) => {
   );
 };
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const { data } = await fetcher(`/stock-in/${params.id}`);
 
   const suppliers = await fetcher('/helpers/supplier');

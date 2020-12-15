@@ -1,4 +1,5 @@
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import {
@@ -64,7 +65,9 @@ const Supplier = ({ data, helpers }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const supplier = await fetcher('/supplier');
   const brands = await fetcher('/helpers/brand');
 

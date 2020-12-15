@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import messages from 'js/messages';
 import useAppContext from 'js/contexts/app';
 import fetcher from 'js/utils/fetcher';
+import verifyLogin from 'js/utils/verifyLogin';
 import safety from 'js/utils/safety';
 import { initialValues } from 'js/shapes/suppliers';
 import validationSchema from 'js/validations/supplier';
@@ -76,7 +77,9 @@ const SupplierItem = ({ item, helpers }) => {
   );
 };
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, req, res }) {
+  if (!verifyLogin(req, res)) return { props: {} };
+
   const item = await fetcher(`/supplier/${params.id}`);
   const brands = await fetcher('/helpers/brand');
 
