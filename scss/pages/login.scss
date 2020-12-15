@@ -1,0 +1,39 @@
+.login {
+  @include container;
+
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+
+  @include desktop {
+    @include grid;
+  }
+
+  &__title {
+    @include font(Bold);
+
+    margin-bottom: rem(30);
+    font-size: rem(34);
+    color: var(--dark);
+    text-align: center;
+
+    @include desktop {
+      grid-column: 8 / -8;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+
+    @include desktop {
+      grid-column: 8 / -8;
+    }
+  }
+
+  &__button {
+    align-self: flex-end;
+  }
+}
