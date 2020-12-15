@@ -90,7 +90,7 @@
 
     //&__item {}
 
-    &__link {
+    &__button {
       @include padding-y(10);
       @include padding-x(20);
       @include font('Bold');
