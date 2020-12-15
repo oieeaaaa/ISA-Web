@@ -26,23 +26,24 @@ export default api({
         ...filters
       } = req.query;
 
+      const where = {
+        OR: toFullTextSearchQuery(
+          ['particular', 'partsNumber', 'description'],
+          search
+        ),
+        AND: toFilterQuery(filters)
+      };
+
       const query = {
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {
           [sortBy]: direction
         },
-        where: {
-          OR: toFullTextSearchQuery(
-            ['particular', 'partsNumber', 'description'],
-            search
-          ),
-          AND: toFilterQuery(filters)
-        },
         select: {
           ...inventoryAttributes,
           uom: selectSingle('name'),
-          variants: selectSingle('name'),
           applications: selectSingle('name'),
           brands: selectSingle('name'),
           sizes: selectSingle('name'),
@@ -50,9 +51,17 @@ export default api({
         }
       };
 
-      const result = await prisma.inventory.findMany(query);
+      const { count: totalItems } = await prisma.inventory.aggregate({
+        where,
+        count: true
+      });
 
-      res.success(result);
+      const items = await prisma.inventory.findMany(query);
+
+      res.success({
+        items,
+        totalItems
+      });
     } catch (error) {
       res.error(error);
     }
