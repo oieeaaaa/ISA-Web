@@ -37,24 +37,10 @@ export const tableHeaders = [
     accessKey: 'uom.name'
   },
   {
-    label: 'Number of Applications',
-    accessKey: 'applications',
-    customCell: ({ value }) => value.length
-  },
-  {
-    label: 'Number of Sizes',
-    accessKey: 'sizes',
-    customCell: ({ value }) => value.length
-  },
-  {
-    label: 'Number of Brands',
-    accessKey: 'brands',
-    customCell: ({ value }) => value.length
-  },
-  {
-    label: 'Number of Suppliers',
-    accessKey: 'suppliers',
-    customCell: ({ value }) => value.length
+    label: 'Variants',
+    accessKey: 'variants',
+    customCell: ({ value }) =>
+      !value.length ? 'N/A' : value.map(({ name }) => name).join(', ')
   }
 ];
 

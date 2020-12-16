@@ -6,7 +6,6 @@ import {
   multiConnectOrCreateByName,
   connectByName,
   selectSingle,
-  select,
   multiCreate
 } from 'js/shapes/prisma-query';
 import { inventoryAttributes } from 'js/shapes/inventory';
@@ -44,10 +43,7 @@ export default api({
         select: {
           ...inventoryAttributes,
           uom: selectSingle('name'),
-          applications: selectSingle('name'),
-          brands: selectSingle('name'),
-          sizes: selectSingle('name'),
-          suppliers: select(['vendor', 'initials'])
+          variants: selectSingle('name')
         }
       };
 
