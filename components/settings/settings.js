@@ -22,9 +22,7 @@ const Settings = ({ isOpen, onClose }) => {
     try {
       await fetcher('/helpers/code', {
         method: 'POST',
-        body: JSON.stringify(
-          values.codes.map((code) => omit(code, ['undefined', 'isNew']))
-        )
+        body: JSON.stringify(values.codes)
       });
 
       notification.open({
@@ -77,6 +75,7 @@ const Settings = ({ isOpen, onClose }) => {
           name="codes"
           label="Codes"
           component={MultiInput}
+          noIsNew
           customInput={({ name }) => (
             <div className="settings__codes">
               <Input
