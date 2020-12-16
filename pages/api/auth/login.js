@@ -36,8 +36,9 @@ export default api({
           res.success({
             user: {
               id,
-              username,
-              dateCreated
+              dateCreated,
+              username: user.username,
+              displayName: user.displayName
             },
             token: 'Bearer ' + token
           });

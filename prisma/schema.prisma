@@ -13,6 +13,7 @@ model User {
   dateCreated DateTime @default(now())
   username String @unique
   password String
+  displayName String?
 }
 
 ///

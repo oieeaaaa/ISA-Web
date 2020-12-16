@@ -3,6 +3,7 @@ import { Formik, Form } from 'formik';
 import { useCookies } from 'react-cookie';
 import useAppContext from 'js/contexts/app';
 import { initialValues } from 'js/shapes/login';
+import { AUTH_KEY } from 'js/shapes/cookies';
 import fetcher from 'js/utils/fetcher';
 import safety from 'js/utils/safety';
 import parseCookies from 'js/utils/parseCookies';
@@ -13,7 +14,7 @@ import Button from 'components/button/button';
 const Login = () => {
   const { notification } = useAppContext();
   const router = useRouter();
-  const [, setCookie] = useCookies('user');
+  const [, setCookie] = useCookies(AUTH_KEY);
 
   const handleSubmit = async (values) => {
     try {
@@ -28,7 +29,7 @@ const Login = () => {
           message
         });
 
-      setCookie('user', data);
+      setCookie(AUTH_KEY, data);
       router.push('/inventory');
     } catch (error) {
       notification.open({
@@ -62,7 +63,7 @@ const Login = () => {
 export function getServerSideProps({ req, res }) {
   const data = parseCookies(req);
 
-  if (safety(data, 'user', '')) {
+  if (safety(data, AUTH_KEY, '')) {
     res.writeHead(301, { Location: '/' });
     res.end();
   }
