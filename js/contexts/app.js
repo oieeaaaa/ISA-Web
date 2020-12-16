@@ -11,6 +11,19 @@ export const AppProvider = ({ children }) => {
   const [notification, setNotification] = useState(defaultValues.notification);
   const [codes, setCodes] = useState([]);
 
+  const getCodes = async () => {
+    try {
+      const { data } = await fetcher('/helpers/code');
+
+      setCodes(data);
+    } catch (error) {
+      appContextValue.notification.open({
+        variant: 'danger',
+        message: messages.error.retrieve
+      });
+    }
+  };
+
   const appContextValue = {
     notification: {
       ...notification,
@@ -27,19 +40,6 @@ export const AppProvider = ({ children }) => {
         }))
     },
     codes
-  };
-
-  const getCodes = async () => {
-    try {
-      const { data } = await fetcher('/helpers/code');
-
-      setCodes(data);
-    } catch (error) {
-      appContextValue.notification.open({
-        variant: 'danger',
-        message: messages.error.retrieve
-      });
-    }
   };
 
   // init stuff here
