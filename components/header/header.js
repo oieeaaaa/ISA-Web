@@ -90,48 +90,50 @@ const Header = () => {
   }, []);
 
   return (
-    <header className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
-      <div
-        className={cssClassModifier(
-          'header-dropdown',
-          ['open'],
-          [isDropdownOpen]
-        )}>
-        <button
-          className="header-dropdown__toggler"
-          type="button"
-          onClick={toggleDropdown}>
-          <p className="header-greeting">
-            {safety(user, 'displayName', 'Admin')}
-          </p>
-          <Icon icon="chevron-down" />
-        </button>
-        <ul className="header-dropdown-list">
-          {menus.map(({ key, label }) => (
-            <li key={key} className="header-dropdown__item">
+    <>
+      <header
+        className={cssClassModifier('header', ['scrolled'], [isScrolled])}>
+        <div
+          className={cssClassModifier(
+            'header-dropdown',
+            ['open'],
+            [isDropdownOpen]
+          )}>
+          <button
+            className="header-dropdown__toggler"
+            type="button"
+            onClick={toggleDropdown}>
+            <p className="header-greeting">
+              {safety(user, 'displayName', 'Admin')}
+            </p>
+            <Icon icon="chevron-down" />
+          </button>
+          <ul className="header-dropdown-list">
+            {menus.map(({ key, label }) => (
+              <li key={key} className="header-dropdown__item">
+                <button
+                  className="header-dropdown__button"
+                  onClick={handleOpenModal(key)}>
+                  {label}
+                </button>
+              </li>
+            ))}
+            <li className="header-dropdown__item">
               <button
-                className="header-dropdown__button"
-                onClick={handleOpenModal(key)}>
-                {label}
+                className="header-dropdown__button header-dropdown__button--logout"
+                onClick={auth.logout}>
+                Logout
               </button>
             </li>
-          ))}
-          <li className="header-dropdown__item">
-            <button
-              className="header-dropdown__button header-dropdown__button--logout"
-              onClick={auth.logout}>
-              Logout
-            </button>
-          </li>
-        </ul>
-      </div>
-      <button
-        className="header-menu"
-        type="button"
-        onClick={handlers.openSidebar}>
-        <Icon icon="menu" />
-      </button>
-
+          </ul>
+        </div>
+        <button
+          className="header-menu"
+          type="button"
+          onClick={handlers.openSidebar}>
+          <Icon icon="menu" />
+        </button>
+      </header>
       {/* MODALS ARE RENDERED HERE */}
       {menus.map(
         ({ key, initialValues, validationSchema, modal: MenuModal }) => (
@@ -146,7 +148,7 @@ const Header = () => {
           </Formik>
         )
       )}
-    </header>
+    </>
   );
 };
 

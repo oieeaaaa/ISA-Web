@@ -59,10 +59,9 @@ export const tableHeaders = [
 ];
 
 export const tableFilters = {
-  dateReceived: null,
-  referenceDate: null,
-  brand: {},
-  supplier: {}
+  dateCreated: null,
+  brands: [],
+  suppliers: []
 };
 
 export const tableSortOptions = [

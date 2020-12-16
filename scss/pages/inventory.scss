@@ -1,28 +1,25 @@
 .inventory {
   &-filters {
     @include desktop {
-      margin-top: rem(30);
       display: grid;
-      grid-template-areas: 'dateReceived referenceDate' 'brand supplier';
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto 1fr;
       grid-column-gap: rem(60);
       grid-row-gap: rem(20);
     }
 
     @include desktop {
-      .input-group--dateReceived {
-        grid-area: dateReceived;
+      .input-group--dateCreated {
+        grid-column: 1 / 1;
+        grid-row: 1 / -1;
       }
 
-      .input-group--referenceDate {
-        grid-area: referenceDate;
+      .input-group--brands {
+        grid-column: 2 / -1;
       }
 
-      .input-group--brand {
-        grid-area: brand;
-      }
-
-      .input-group--supplier {
-        grid-area: supplier;
+      .input-group--suppliers {
+        grid-column: 2 / -1;
       }
     }
 

@@ -144,7 +144,7 @@ const MultiSelect = ({
   };
 
   const createNewValue = () => {
-    const isInValue = field.value.some((val) => val.name === query);
+    const isInValue = field.value.some((val) => val[mainKey] === query);
 
     if (!query || isInValue) return;
 
@@ -235,7 +235,7 @@ const MultiSelect = ({
               className="multi-select__value"
               type="button"
               onClick={(e) => removeValue(e, value)}>
-              {value.name}
+              {value[mainKey]}
             </button>
           ))}
           <input
@@ -261,7 +261,7 @@ const MultiSelect = ({
               type="button"
               onClick={(e) => selectValue(e, option)}>
               <span>{index + 1}.</span>
-              <span>{option.name}</span>
+              <span>{option[mainKey]}</span>
             </button>
           </li>
         ))}

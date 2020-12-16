@@ -2,6 +2,7 @@ import fetcher from 'js/utils/fetcher';
 import verifyLogin from 'js/utils/verifyLogin';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import safety from 'js/utils/safety';
+import goTo from 'js/utils/goTo';
 import {
   tableHeaders,
   tableFilters,
@@ -10,15 +11,14 @@ import {
 import Layout from 'components/layout/layout';
 import TableWithFetch from 'components/table-with-fetch/table-with-fetch';
 import InputGroup from 'components/input-group/input-group';
-import Select from 'components/select/select';
+import MultiSelectWithFetch from 'components/multi-select-with-fetch/multi-select-with-fetch';
 import DateRangePicker from 'components/date-range-picker/date-range-picker';
 
 const Inventory = ({ data, helpers }) => {
-  const parameterizer = ({ brand, dateReceived, referenceDate, supplier }) => ({
-    'brand.id': brand.id,
-    'supplier.id': supplier.id,
-    dateReceived_range: toStringifyDate(dateReceived),
-    referenceDate_range: toStringifyDate(referenceDate)
+  const parameterizer = ({ brands, dateCreated, suppliers }) => ({
+    'suppliers_multiple.id': suppliers.map(({ id }) => id).join(','),
+    'brands_multiple.id': brands.map(({ id }) => id).join(','),
+    dateCreated_range: toStringifyDate(dateCreated)
   });
 
   return (
@@ -33,31 +33,30 @@ const Inventory = ({ data, helpers }) => {
         totalItems={data.totalItems}
         filters={tableFilters}
         sortOptions={tableSortOptions}
+        onAdd={() => goTo('/inventory/add')}
         renderFilter={() => (
           <div className="inventory-filters">
             <InputGroup
-              name="dateReceived"
-              label="Date Received"
+              name="dateCreated"
+              label="Date Created"
               component={DateRangePicker}
             />
             <InputGroup
-              name="referenceDate"
-              label="Reference Date"
-              component={DateRangePicker}
+              name="brands"
+              label="Brands"
+              initialOptions={helpers.brands}
+              serverRoute="/helpers/brand"
+              component={MultiSelectWithFetch}
+              noCreate
             />
             <InputGroup
-              name="brand"
-              label="Brand"
-              component={Select}
-              options={helpers.brands}
-              mainKey="name"
-            />
-            <InputGroup
-              name="supplier"
-              label="Supplier"
-              component={Select}
-              options={helpers.suppliers}
-              displayKey="initials"
+              name="suppliers"
+              label="Suppliers"
+              initialOptions={helpers.suppliers}
+              serverRoute="/helpers/supplier"
+              component={MultiSelectWithFetch}
+              mainKey="initials"
+              noCreate
             />
           </div>
         )}
