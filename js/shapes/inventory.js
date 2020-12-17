@@ -1,4 +1,5 @@
 import dateFormat from 'js/utils/dateFormat';
+import toMoney from 'js/utils/toMoney';
 
 export const inventoryAttributes = {
   id: true,
@@ -78,13 +79,57 @@ export const initialValues = {
   applications: [],
 
   // for Variant
-  variants: []
+  variants: [],
+
+  // modal
+  variantModal: {
+    name: '',
+    codes: '',
+    srp: 0,
+    supplier: { initials: '' },
+    size: { name: '' },
+    brand: { name: '' },
+    unitCost: 0
+  }
 };
 
-export default {
-  inventoryAttributes,
-  initialValues,
-  tableHeaders,
-  tableSortOptions,
-  tableFilters
-};
+export const variantsHeaders = [
+  {
+    label: 'Variant Name',
+    accessKey: 'name'
+  },
+  {
+    label: 'Codes',
+    accessKey: 'codes'
+  },
+  {
+    label: 'Unit Cost',
+    accessKey: 'unitCost',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'SRP',
+    accessKey: 'srp',
+    customCell: ({ value }) => `Php ${toMoney(value)}`
+  },
+  {
+    label: 'Particular',
+    accessKey: 'inventory.particular'
+  },
+  {
+    label: 'Parts No.',
+    accessKey: 'inventory.partsNumber'
+  },
+  {
+    label: 'Size',
+    accessKey: 'size.name'
+  },
+  {
+    label: 'Brand',
+    accessKey: 'brand.name'
+  },
+  {
+    label: 'Supplier',
+    accessKey: 'supplier.vendor'
+  }
+];

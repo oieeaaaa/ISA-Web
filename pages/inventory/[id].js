@@ -23,10 +23,9 @@ const InventoryItem = ({ item, helpers }) => {
         body: JSON.stringify(values)
       });
 
-      router.push('/inventory');
       notification.open({
         variant: 'success',
-        message: messages.success.update
+        message: 'Updated inventory!'
       });
     } catch (error) {
       notification.open({
@@ -44,8 +43,10 @@ const InventoryItem = ({ item, helpers }) => {
           ...item
         }}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
-        <InventoryForm mode="edit" helpers={helpers} />
+        validateOnMount={false}
+        validateOnBlur={false}
+        validateOnChange={false}>
+        <InventoryForm helpers={helpers} onSubmit={handleSubmit} />
       </Formik>
     </Layout>
   );
@@ -55,11 +56,7 @@ export async function getServerSideProps({ params, req, res }) {
   if (!verifyLogin(req, res)) return { props: {} };
 
   const item = await fetcher(`/inventory/${params.id}`);
-
-  // TODO: Make helpers relative to the current item's values
   const uoms = await fetcher('/helpers/uom');
-  const brands = await fetcher('/helpers/brand');
-  const suppliers = await fetcher('/helpers/supplier');
   const applications = await fetcher('/helpers/application');
 
   return {
@@ -67,8 +64,6 @@ export async function getServerSideProps({ params, req, res }) {
       item: safety(item, 'data', {}),
       helpers: {
         uoms: safety(uoms, 'data', []),
-        brands: safety(brands, 'data', []),
-        suppliers: safety(suppliers, 'data', []),
         applications: safety(applications, 'data', [])
       }
     }

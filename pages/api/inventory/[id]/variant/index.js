@@ -6,6 +6,8 @@ import {
   connectByName
 } from 'js/shapes/prisma-query';
 import api from 'js/utils/api';
+import { safeType } from 'js/utils/safety';
+import { disconnectMultiple } from 'js/utils/disconnect';
 
 export default api({
   // TODO: handle validation
@@ -20,7 +22,7 @@ export default api({
         },
         data: {
           quantity: {
-            increment: Number(quantity)
+            increment: Number(safeType.number(quantity))
           },
           suppliers: connect(supplier),
           brands: connectOrCreateByName(brand),
@@ -38,6 +40,29 @@ export default api({
             orderBy: {
               dateCreated: 'desc'
             }
+          }
+        }
+      });
+
+      res.success(result);
+    } catch (error) {
+      console.error(error);
+      res.error(error);
+    }
+  },
+  delete: async (req, res) => {
+    try {
+      const { id } = req.query;
+
+      const result = await prisma.inventory.update({
+        where: { id },
+        data: {
+          variants: {
+            disconnect: safeType
+              .array(req.body)
+              .map(({ itemID: variantID }) => ({
+                id: safeType.string(variantID)
+              }))
           }
         }
       });

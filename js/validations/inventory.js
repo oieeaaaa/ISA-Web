@@ -4,34 +4,30 @@ import messages from 'js/messages';
 const { validation: message } = messages;
 
 export default Yup.object().shape({
-  dateReceived: Yup.date().required(message.required),
-
-  // reference
-  referenceNumber: Yup.string().required(message.required),
-  referenceDate: Yup.date().required(message.required),
-
-  // details
   particular: Yup.string().required(message.required),
   partsNumber: Yup.string().required(message.required),
-  quantity: Yup.number().min(1).required(message.required),
-  brand: Yup.object().shape({
-    name: Yup.string().required(message.required)
-  }),
-  supplier: Yup.object().shape({
-    id: Yup.string().required(message.required)
-  }),
-  description: Yup.string().min(10, message.min),
-
-  // pricing
-  codes: Yup.string().required(message.required),
-  uom: Yup.object().shape({
-    name: Yup.string().required(message.required)
-  }),
-  srp: Yup.number(),
-
-  // other info
-  remarks: Yup.string().min(10, message.min),
-  receivedBy: Yup.string(),
-  checkedBy: Yup.string(),
-  codedBy: Yup.string()
+  quantity: Yup.number()
+    .min(1, 'Quantity must be greater than or equal to 1')
+    .required(message.required),
+  applications: Yup.array().required(message.required),
+  uom: Yup.object()
+    .shape({
+      name: Yup.string().required(message.required)
+    })
+    .required(message.required),
+  variantModal: Yup.object().shape({
+    name: Yup.string().required(message.required),
+    codes: Yup.string().required(message.required),
+    unitCost: Yup.number(),
+    size: Yup.object()
+      .shape({
+        name: Yup.string().required(message.required)
+      })
+      .required(message.required),
+    supplier: Yup.object()
+      .shape({
+        initials: Yup.string().required(message.required)
+      })
+      .required(message.required)
+  })
 });

@@ -2,7 +2,6 @@ import fetcher from 'js/utils/fetcher';
 import verifyLogin from 'js/utils/verifyLogin';
 import toStringifyDate from 'js/utils/toStringifyDate';
 import safety from 'js/utils/safety';
-import goTo from 'js/utils/goTo';
 import {
   tableHeaders,
   tableFilters,
@@ -33,7 +32,6 @@ const Inventory = ({ data, helpers }) => {
         totalItems={data.totalItems}
         filters={tableFilters}
         sortOptions={tableSortOptions}
-        onAdd={() => goTo('/inventory/add')}
         renderFilter={() => (
           <div className="inventory-filters">
             <InputGroup
