@@ -11,6 +11,8 @@ const TableSelect = ({
   onSubmit,
   itemsKey,
   submitButtonLabel = 'Submit',
+  addButtonLabel = 'Add new',
+  onAdd,
   ...etc
 }) => {
   const [isSelectedAll, setIsSelectedAll] = useState(false);
@@ -73,7 +75,10 @@ const TableSelect = ({
       customCell: ({ value }) => (
         <Checkbox
           value={value.isSelected}
-          onClick={() => onSelectItem(value)}
+          onClick={(e) => {
+            e.stopPropagation(); // prevent trigger if table row have click events
+            onSelectItem(value);
+          }}
         />
       ) // eslint-disable-line
     },
@@ -89,14 +94,25 @@ const TableSelect = ({
         data={values[itemsKey]}
         {...etc}
       />
-      {isSomeItemSelected() && (
-        <Button
-          className="table-select__submit"
-          variant="primary"
-          onClick={submitAllSelectedItem}>
-          {submitButtonLabel}
-        </Button>
-      )}
+      <div className="table-select__actions">
+        {isSomeItemSelected() && (
+          <Button
+            className="table-select__submit"
+            variant="danger"
+            onClick={submitAllSelectedItem}>
+            {submitButtonLabel}
+          </Button>
+        )}
+        {onAdd && (
+          <Button
+            variant="primary"
+            icon="plus"
+            className="table-select__add"
+            onClick={onAdd}>
+            {addButtonLabel}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
